@@ -32,6 +32,17 @@ app.use(function(req, res, next) {
     next(err);
 });
 
+// database connection
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/wtfapp');
+
+//
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function (callback) {
+  // yay!
+});
+
 // error handlers
 
 // development error handler
