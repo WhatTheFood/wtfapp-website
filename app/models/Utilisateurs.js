@@ -19,7 +19,7 @@ var UtilisateursSchema = new Schema({
  * Validations
  */
 
-UtilisateursSchema.path('email').required(true, 'Article title cannot be blank');
-UtilisateursSchema.path('password').required(true, 'Article body cannot be blank');
+UtilisateursSchema.path('email').required(true, 'User email cannot be blank');
+UtilisateursSchema.path('password').required(true, 'User password cannot be blank');
 
 mongoose.model('Utilisateurs', UtilisateursSchema);
