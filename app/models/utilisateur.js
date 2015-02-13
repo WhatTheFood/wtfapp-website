@@ -10,7 +10,7 @@ var Schema = mongoose.Schema;
  * Article Schema
  */
 
-var UtilisateursSchema = new Schema({
+var UtilisateurSchema = new Schema({
   email: {type : String, default : '', trim : true},
   password: {type : String, default : '', trim : true},
 });
@@ -19,7 +19,7 @@ var UtilisateursSchema = new Schema({
  * Validations
  */
 
-UtilisateursSchema.path('email').required(true, 'User email cannot be blank');
-UtilisateursSchema.path('password').required(true, 'User password cannot be blank');
+UtilisateurSchema.path('email').required(true, 'User email cannot be blank');
+UtilisateurSchema.path('password').required(true, 'User password cannot be blank');
 
-mongoose.model('Utilisateurs', UtilisateursSchema);
+mongoose.model('Utilisateur', UtilisateurSchema);
