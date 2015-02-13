@@ -1,6 +1,9 @@
 # WTFapp-website
 
-## Dependencies :
+## Installing dependencies
 
-npm install express
-npm install mongoose
+npm install
+
+## Launching the server
+
+DEBUG=wtf:* ./bin/www
