@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-require('../models/restaurant')
+var RestaurantModel = require('../models/restaurant');
 
 /* get restaurants */
 exports.getRestaurants = function (req, res){
