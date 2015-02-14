@@ -1,27 +1,13 @@
 var express = require('express');
 var router = express.Router();
+var restaurantController = require('../controllers/restaurant');
 
-require('../models/restaurant')
+/* users */
+router.route('/')
+  .get(restaurantController.getRestaurants);
 
-/* get restaurants */
-router.get('/', function (req, res){
-  return RestaurantModel.find(function (err, objects) {
-    if (!err) {
-      return res.send(objects);
-    } else {
-      return console.log(err);
-    }
-  });
-});
-
-router.get('/:id', function (req, res){
-  return RestaurantModel.findById(req.params.id, function (err, user) {
-    if (!err) {
-      return res.send(user);
-    } else {
-      return console.log(err);
-    }
-  });
-});
+/* user */
+router.route('/:id')
+  .get(restaurantController.getRestaurant);
 
 module.exports = router;
