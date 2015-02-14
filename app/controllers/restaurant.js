@@ -15,9 +15,14 @@ exports.getRestaurants = function (req, res){
 }
 
 exports.getRestaurant = function (req, res){
-  return RestaurantModel.findOne({"id": req.params.id}, function (err, user) {
+  return RestaurantModel.findOne({"id": req.params.id}, function (err, objects) {
     if (!err) {
-      return res.send(user);
+      return res.send(objects);
+    } else {
+      return console.log(err);
+    }
+  });
+}
     } else {
       return console.log(err);
     }
