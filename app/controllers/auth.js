@@ -9,7 +9,7 @@ passport.use(new BasicStrategy(
     UserModel.findOne({ email: email }, function (err, user) {
       if (err) { return callback(err); }
 
-      // No user found with that username
+      // No user found with that email address
       if (!user) { return callback(null, false); }
 
       // Make sure the password is correct
