@@ -15,7 +15,8 @@ exports.getRestaurants = function (req, res) {
             if (!err) {
                 return res.send(restaurant);
             } else {
-                return console.log(err);
+                console.log(err);
+                return res.status(400).send(err);
             }
         });
     }
@@ -34,7 +35,8 @@ exports.getRestaurant = function (req, res) {
         if (!err) {
             return res.send(restaurant);
         } else {
-            return console.log(err);
+            console.log(err);
+            return res.status(400).send(err);
         }
     });
 };
