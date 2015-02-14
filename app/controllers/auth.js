@@ -1,7 +1,7 @@
 // Load required packages
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
-var secret = require('./secret')
+var secret = require('../config/secret')
 var BasicStrategy = require('passport-http').BasicStrategy;
 
 var UserModel = require('../models/user');

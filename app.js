@@ -27,8 +27,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // allow cross domain
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization');
     next();
 }
 app.use(allowCrossDomain);
