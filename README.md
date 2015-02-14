@@ -57,6 +57,14 @@ Example :
 
 It returns a token to used on each requests.
 
+#### Facebook login (GET)
+
+To get an access token with facebook, send JSON to /api/users/login/facebook  :
+
+```
+{ "email": "test@example.net", "token": "theFacebookToken" }
+```
+
 ##### Get (Get user information)
 
 To get a user's information or any other information, GET on /api/users/[mongodb_user_id].
