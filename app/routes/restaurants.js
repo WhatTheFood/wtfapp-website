@@ -7,8 +7,13 @@ var restaurantController = require('../controllers/restaurant');
 router.route('/')
   .get(authController.isAuthenticated, restaurantController.getRestaurants);
 
+/* refresh admin command */
+router.route('/refresh')
+  .get(authController.isAuthenticated, restaurantController.refreshAll);
+
 /* restaurant */
 router.route('/:id')
   .get(authController.isAuthenticated, restaurantController.getRestaurant);
+
 
 module.exports = router;
