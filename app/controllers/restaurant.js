@@ -1,32 +1,40 @@
-var express = require('express');
-var router = express.Router();
-
 var RestaurantModel = require('../models/restaurant');
 
-/* get restaurants */
-exports.getRestaurants = function (req, res){
-  return RestaurantModel.find(function (err, restaurant) {
-    if (!err) {
-      return res.send(restaurant);
-    } else {
-      console.log(err);
-      return res.status(400).send(err);
-    }
-  });
-};
-
-exports.getRestaurant = function (req, res) {
+/**
+ * Get restaurants
+ *
+ * @param req
+ * @param res
+ * @returns {*}
+ */
+exports.getRestaurants = function (req, res) {
     if (req.query.lat && req.query.lng) {
-        // todo : geospatial querying
+        console.log('Geospatial querying with ' + req.query);
     } else {
-        return RestaurantModel.findOne({"id": req.params.id}, function (err, restaurant) {
-            console.log(req.query);
+        return RestaurantModel.find(function (err, restaurant) {
             if (!err) {
                 return res.send(restaurant);
             } else {
-              console.log(err);
-              return res.status(400).send(err);
+                return console.log(err);
             }
         });
     }
+};
+
+/**
+ * Get restaurant
+ *
+ * @param req
+ * @param res
+ * @returns {*}
+ */
+exports.getRestaurant = function (req, res) {
+    return RestaurantModel.findOne({"id": req.params.id}, function (err, restaurant) {
+        console.log(req.query);
+        if (!err) {
+            return res.send(restaurant);
+        } else {
+            return console.log(err);
+        }
+    });
 };
