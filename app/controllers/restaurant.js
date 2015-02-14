@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-require('../models/restaurant')
+var RestaurantModel = require('../models/restaurant');
 
 /* get restaurants */
 exports.getRestaurants = function (req, res){
@@ -18,11 +18,6 @@ exports.getRestaurant = function (req, res){
   return RestaurantModel.findOne({"id": req.params.id}, function (err, objects) {
     if (!err) {
       return res.send(objects);
-    } else {
-      return console.log(err);
-    }
-  });
-}
     } else {
       return console.log(err);
     }
