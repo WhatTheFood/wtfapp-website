@@ -60,4 +60,4 @@ var restaurantSchema = new Schema({
     menus: [menuSchema]
 });
 
-mongoose.model('Restaurant', restaurantSchema);
+RestaurantModel = mongoose.model('Restaurant', restaurantSchema);
