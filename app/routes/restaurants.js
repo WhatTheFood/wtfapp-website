@@ -3,21 +3,17 @@ var router = express.Router();
 var authController = require('../controllers/auth');
 var restaurantController = require('../controllers/restaurant');
 
-/**********************************************************************************************************************/
-/********************************************************** GET *******************************************************/
-/**********************************************************************************************************************/
-
 /* restaurants */
 router.route('/')
-    .get(authController.isAuthenticated, restaurantController.getRestaurants);
+  .get(restaurantController.getRestaurants);
 
 /* refresh admin command */
 router.route('/refresh')
-    .get(authController.isAuthenticated, restaurantController.refreshAll);
+  .get(restaurantController.refreshAll);
 
 /* restaurant */
 router.route('/:id')
-    .get(authController.isAuthenticated, restaurantController.getRestaurant);
+    .get(restaurantController.getRestaurant);
 
 /**********************************************************************************************************************/
 /********************************************************** POST ******************************************************/
@@ -28,7 +24,7 @@ router.route('/:id')
 /**********************************************************************************************************************/
 
 router.route('/:id/queue')
-    .put(authController.isAuthenticated, restaurantController.updateRestaurantQueue);
+    .put(restaurantController.updateRestaurantQueue);
 
 /**********************************************************************************************************************/
 /********************************************************** DELETE ****************************************************/
