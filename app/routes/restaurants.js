@@ -3,11 +3,11 @@ var router = express.Router();
 var authController = require('../controllers/auth');
 var restaurantController = require('../controllers/restaurant');
 
-/* users */
+/* restaurants */
 router.route('/')
   .get(authController.isAuthenticated, restaurantController.getRestaurants);
 
-/* user */
+/* restaurant */
 router.route('/:id')
   .get(authController.isAuthenticated, restaurantController.getRestaurant);
 
