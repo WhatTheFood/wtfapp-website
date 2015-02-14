@@ -9,7 +9,8 @@ exports.getUsers = function (req, res){
     if (!err) {
       return res.send(users);
     } else {
-      return console.log(err);
+      console.log(err);
+      return res.status(400).send(err);
     }
   });
 }
@@ -25,12 +26,13 @@ exports.postUser = function (req, res){
   });
   user.save(function (err) {
     if (!err) {
-      return console.log("created");
+      console.log("created");
+      return res.send(user);
     } else {
-      return console.log(err);
+      console.log(err);
+      return res.status(400).send(err);
     }
   });
-  return res.send(user);
 }
 
 /* GET user. with id */
@@ -39,7 +41,8 @@ exports.getUser = function (req, res){
     if (!err) {
       return res.send(user);
     } else {
-      return console.log(err);
+      console.log(err);
+      return res.status(400).send(err);
     }
   });
 }
@@ -52,10 +55,11 @@ exports.putUser = function (req, res){
     return user.save(function (err) {
       if (!err) {
         console.log("updated");
+        return res.send(user);
       } else {
         console.log(err);
+        return res.status(400).send(err);
       }
-      return res.send(user);
     });
   });
 }
@@ -69,6 +73,7 @@ exports.deleteUser = function (req, res){
         return res.send('');
       } else {
         console.log(err);
+        return res.status(400).send(err);
       }
     });
   });

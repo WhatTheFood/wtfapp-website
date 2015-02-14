@@ -24,7 +24,7 @@ If you want Node.JS to watch for any changes and reload the server when a change
 
 ```$ DEBUG=wtf:* nodemon```
 
-## API
+## REST API
 
 ### User
 
@@ -40,7 +40,40 @@ To create a user, POST a JSON following the following schema to /api/users :
 
 ```{"email": "test@example.net", password: "test"}```
 
+Password field should be at least 5 and at most 30 characters.
+
+Example :
+
+```curl -X POST -H "Content-Type:application/json" --data '{"email": "test@test.fr", "password":"testtt"}' http://localhost:5000/api/users/```
+
 ##### Get (Get user information)
 
 To get a user's information or any other information, GET on /api/users/[mongodb_user_id] with email and password given in a basic authentication.
 
+10 authentication tries are allowed per half-hour.
+
+Example :
+
+```curl -X GET http://test%40test.fr:testtt@localhost:5000/api/users/54deeba72736858d49a647dc```
+
+### Restaurant
+
+#### Load restaurant informations
+
+```wget http://thepbm.ovh.org/static/json/crous-poitiers.min.json```
+```sed "s/{\"restaurants\"\://g" crous-poitiers.min.json | cut -c 2- > crous-poitiers.min.clean.json```
+```mongoimport -d wtfapp -c restaurants --file crous-poitiers.min.clean.json --jsonArray```
+
+#### GET /restaurants
+
+Retrieve a list of all restaurants
+
+#### GET /restaurants?lat={latitude}&lng={longitude}
+
+Retrieve a list of GeoResult. A GeoResult is composed of a dis property being the distance of the restaurant from the requested coordinates and an obj property being a restaurant.
+
+An optional maxDistance parameter can be given to the API to reduce the radius of the request. By default, maxDistance equals 0.5 (500 m). 
+
+#### GET /restaurants/{id}
+
+Retrieve the restaurant with the given id

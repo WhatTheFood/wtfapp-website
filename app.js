@@ -47,7 +47,12 @@ mongoose.connect('mongodb://localhost/wtfapp');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
-  // yay!
+    var restaurants = db.collection('restaurants');
+    restaurants.ensureIndex({geolocation: '2dsphere'}, {}, function(err, result) {
+        if(err) {
+            return console.dir(err);
+        }
+    });
 });
 
 // error handlers

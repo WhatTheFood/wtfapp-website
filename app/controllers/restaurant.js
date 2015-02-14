@@ -4,26 +4,58 @@ var router = express.Router();
 
 var RestaurantModel = require('../models/restaurant');
 
-/* get restaurants */
-exports.getRestaurants = function (req, res){
-  return RestaurantModel.find(function (err, restaurants) {
-    if (!err) {
-      return res.send(restaurants);
-    } else {
-      return console.log(err);
-    }
-  });
-}
+/**
+ * Get restaurant
+ *
+ * @param req
+ * @param res
+ * @returns {*}
+ */
+exports.getRestaurant = function (req, res) {
+    return RestaurantModel.findOne({"id": req.params.id}, function (err, restaurant) {
+        console.log(req.query);
+        if (!err) {
+            return res.send(restaurant);
+        } else {
+            console.log(err);
+            return res.status(400).send(err);
+        }
+    });
+};
 
-exports.getRestaurant = function (req, res){
-  return RestaurantModel.findOne({"id": req.params.id}, function (err, restaurant) {
-    if (!err) {
-      return res.send(restaurant);
-    } else {
-      return console.log(err);
+/**
+ * Get restaurants
+ *
+ * @param req
+ * @param res
+ * @returns {*}
+ */
+exports.getRestaurants = function (req, res) {
+    if (req.query.lat && req.query.lng) { // geospatial querying
+        var geoJsonTarget = {
+            type: 'Point',
+            coordinates: [Number(req.query.lng), Number(req.query.lat)]
+        };
+        var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
+        RestaurantModel.geoNear(geoJsonTarget, {spherical : true, maxDistance : maxDistance}, function (err, restaurants, stats) {
+            if (!err) {
+                return res.send(restaurants);
+            } else {
+                console.log(err);
+                return res.status(400).send(err);
+            }
+        });
+    } else { // regular query
+        return RestaurantModel.find(function (err, restaurants) {
+            if (!err) {
+                return res.send(restaurants);
+            } else {
+                console.log(err);
+                return res.status(400).send(err);
+            }
+        });
     }
-  });
-}
+};
 
 /* update db with remote business data */
 exports.refreshAll = function (req, res){
@@ -49,5 +81,4 @@ exports.refreshAll = function (req, res){
   });
 
   return res.send({});
-
 }

@@ -33,6 +33,14 @@ var restaurantSchema = new Schema({
     title: {type : String},
     lat: {type: Number},
     lon: {type: Number},
+    geolocation: {
+        'type': {
+            type: String,
+            enum: 'Point',
+            default: 'Point'
+        },
+        coordinates: {type: [Number]}
+    },
     area: {type: String},
     opening: {type: String},
     closing: {type: String},
@@ -58,6 +66,22 @@ var restaurantSchema = new Schema({
         name: {type: String}
     }],
     menus: [menuSchema]
+});
+
+/**
+ * Presave
+ */
+
+restaurantSchema.pre('save', function(callback) {
+    var restaurant = this;
+
+    // set 2dsphere index for geospatial querying
+    restaurant.geolocation = {
+        type: 'Point',
+        coordinates: [restaurant.lon, restaurant.lat]
+    };
+
+    callback();
 });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);

@@ -6,23 +6,33 @@ var UserModel = require('../models/user');
 
 passport.use(new BasicStrategy(
   function(email, password, callback) {
-    UserModel.findOne({ email: email }, function (err, user) {
-      if (err) { return callback(err); }
+    UserModel.getAuthenticated(email, password, function(err, user, reason, email) {
 
-      // No user found with that email address
-      if (!user) { return callback(null, false); }
+          // login was successful if we have a user
+          if (user) {
+              // handle login success
+              console.log('login success');
+              return callback(null, user);
+          }
 
-      // Make sure the password is correct
-      user.verifyPassword(password, function(err, isMatch) {
-        if (err) { return callback(err); }
-
-        // Password did not match
-        if (!isMatch) { return callback(null, false); }
-
-        // Success
-        return callback(null, user);
+          // otherwise we can determine why we failed
+          var reasons = UserModel.failedLogin;
+          switch (reason) {
+              case reasons.NOT_FOUND:
+              case reasons.PASSWORD_INCORRECT:
+                  // note: these cases are usually treated the same - don't tell
+                  // the user *why* the login failed, only that it did
+                  console.log("Mauvais identifiant.");
+                  return callback(null, false);
+                  break;
+              case reasons.MAX_ATTEMPTS:
+                  // send email or otherwise notify user that account is
+                  // temporarily locked 
+                  console.log("Trop de tentatives !");
+                  return callback(null, false);
+                  break;
+          }
       });
-    });
   }
 ));
 
