@@ -17,6 +17,7 @@ exports.getUserBasicInfos = function(token) {
             }
         }
         else {
+            console.log("============================================")
             console.log(res);
         }
     })

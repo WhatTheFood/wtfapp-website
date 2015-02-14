@@ -13,7 +13,7 @@ router.route('/login')
   .get(authController.isAuthenticated, authController.login)
 
 router.route('/login/facebook')
-  .get(authController.facebookLogin)
+  .put(authController.facebookLogin)
 
 router.route('/')
   .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getUsers)

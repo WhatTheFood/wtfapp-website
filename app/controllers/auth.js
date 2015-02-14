@@ -13,8 +13,8 @@ exports.login = function(req, res) {
 }
 
 exports.facebookLogin = function(req, res) {
-    fb_token = req.query.token;
-    email = req.query.email
+    fb_token = req.body.token;
+    email = req.body.email
     if (!fb_token || !email) {
         return res.status(400).send({"error": "Invalid request"})
     }
