@@ -8,15 +8,10 @@ var UserTool = require('../tools/user.js');
 exports.getUserBasicInfos = function(user) {
     var infos = {
         'email': user.email,
-        'name': ""
-    }
-
-    /*
-     * Call fb api and update infos.
-     */
-    if (user.facebook_token) {
-        var fbInfos = Facebook.getUserBasicInfos(user.facebook_token);
-        // TODO update infos
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'avatar': user.avatar,
+        'facebook_id': user.facebook_id
     }
 
     return infos;
@@ -34,3 +29,11 @@ exports.getUserBasicInfosById = function(userId) {
         }
     });
 }
+
+exports.updateUserInfosWithFacebook = function(user) {
+    if (user.facebook_token) {
+        Facebook.updateUserBasicInfos(user);
+    }
+    return UserTool.getUserBasicInfos(user);
+}
+

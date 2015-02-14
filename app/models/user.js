@@ -46,7 +46,24 @@ var UserSchema = new Schema({
   facebook_token: {
       type: String,
       trim: true
+  },
+  facebook_id: {
+      type: Number,
+      default: 0
+  },
+  first_name: {
+    type: String,
+    default: ""
+  },
+  last_name: {
+      type: String,
+      default: ""
+  },
+  avatar: {
+      type: String,
+      default: ""
   }
+
 });
 
 UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });

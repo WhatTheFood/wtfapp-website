@@ -28,7 +28,7 @@ exports.getCurrentUser = function(req, res) {
     var token = tokenManager.getToken(req.headers);
 
     UserModel.findOne({token: token }, function (err, user) {
-        console.log(user);
+        //console.log(user);
         if (err) {
             return res.status(503).send(err)
         }
@@ -36,8 +36,7 @@ exports.getCurrentUser = function(req, res) {
             return res.status(503).send({ 'message': 'An error occured' });
         }
         else {
-            userInfos = UserTool.getUserBasicIndos(user);
-            return res.status(200).send(userInfos);
+            return res.status(200).send(UserTool.getUserBasicInfos(user));
         }
     });
 }

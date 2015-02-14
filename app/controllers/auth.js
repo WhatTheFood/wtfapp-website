@@ -4,11 +4,11 @@ var jwt = require('jsonwebtoken');
 var secret = require('../config/secret')
 var BasicStrategy = require('passport-http').BasicStrategy;
 var TokenStrategy =  require('passport-token').Strategy;
+var UserTool = require('../tools/user.js');
 
 var UserModel = require('../models/user');
 
 exports.login = function(req, res) {
-    console.log("LOGIN")
     return res.send(req.user.token)
 }
 
@@ -20,7 +20,11 @@ exports.facebookLogin = function(req, res) {
     }
     UserModel.findOne({'email': email}, function(err, user) {
         if (user) {
-            user.set({'fb_token' : fb_token});
+            user.update({ "facebook_token" : fb_token}, function(err) {
+                if (err) {
+                    return res.status(503).send(err);
+                }
+            });
             if (!user.token) {
                 user = createUserToken(user);
             }
@@ -40,6 +44,7 @@ exports.facebookLogin = function(req, res) {
                 user = createUserToken(user);
             }
         }
+        user = UserTool.updateUserInfosWithFacebook(user);
         return res.status(200).send(user.token);
     });
 }
@@ -53,7 +58,6 @@ passport.use(new BasicStrategy(
               // handle login success
               console.log('login success');
               user = createUserToken(user);
-              console.log(user);
               user.update({ token: user.token}, function(err) {
                 if (err) {
                     console.log(err);
