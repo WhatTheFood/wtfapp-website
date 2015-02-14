@@ -11,9 +11,9 @@ exports.getRestaurants = function (req, res) {
     if (req.query.lat && req.query.lng) {
         console.log('Geospatial querying with ' + req.query);
     } else {
-        return RestaurantModel.find(function (err, restaurant) {
+        return RestaurantModel.find(function (err, restaurants) {
             if (!err) {
-                return res.send(restaurant);
+                return res.send(restaurants);
             } else {
                 console.log(err);
                 return res.status(400).send(err);
