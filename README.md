@@ -8,6 +8,10 @@ To install all the dependencies, execute command :
 
 ```$ npm install```
 
+If you also want to use the node changes watcher, execute :
+
+```$ sudo npm install -g nodemon```
+
 This command will create the node_modules directory at the project root.
 
 ### Launching the server
