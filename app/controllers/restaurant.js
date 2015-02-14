@@ -103,9 +103,36 @@ exports.refreshAll = function (req, res){
 /********************************************************** PUT *******************************************************/
 /**********************************************************************************************************************/
 
+/**
+ * Update restaurant queue
+ *
+ * @param req
+ * @param res
+ */
 exports.updateRestaurantQueue = function(req, res) {
-    console.log('update queue !');
-    return res.send({});
+    RestaurantModel.findOne({'id': req.params.id}, function(err, restaurant) {
+        if (!err) {
+            // compute new queue value
+            var timeSlotIndex = Number(req.body.timeSlotIndex);
+            var requestedValue = (50 / restaurant.queue.timeSlots.length) * (2 * timeSlotIndex + 1);
+            var newValue = (restaurant.queue.value * restaurant.queue.votes + requestedValue) / (restaurant.queue.votes + 1);
+            // update restaurant queue
+            restaurant.queue.value = newValue;
+            restaurant.queue.votes++;
+            restaurant.queue.updatedAt = Date.now();
+            restaurant.save(function(err) {
+                if (!err) {
+                    return res.send(restaurant);
+                } else {
+                    console.log(err);
+                    return res.status(400).send(err);
+                }
+            });
+        } else {
+            console.log(err);
+            return res.status(400).send(err);
+        }
+    });
 };
 
 /**********************************************************************************************************************/
