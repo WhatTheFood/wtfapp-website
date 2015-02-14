@@ -17,10 +17,29 @@ var menuSchema = new Schema({
         foodcategory: [{
             name: {type: String},
             dishes: [{
-                name: {type: String}
+                name: {type: String},
+                feedback: [{
+                    thrown: { type: Number }
+                    user_id: { type: Number },
+                }]
             }]
-
         }]
+    }],
+
+    feedback: [{
+      ate_alone: { type: Boolean },
+      convivial_restaurant: { type: Boolean },
+      enough_time_to_eat: { type: Boolean },
+      seasoning: { type: Number },
+      cooking: { type: Number },
+      hot_meal: { type: Number },
+      meal_quality: { type: Number },
+      enjoyed_my_meal: { type: Number },
+      usually_enjoyis_meal: { type: Number },
+      threw_away_food_itooked: { type: Boolean },
+      threw_away_food_was_served: { type: Boolean },
+      bread_thrown: { type: Number },
+      user_id: { type: Number }
     }]
 });
 

@@ -89,9 +89,6 @@ exports.putUser = function (req, res){
       }
     }
 
-    if(req.body.poll)
-      user.poll = req.body.poll;
-
 
     return user.save(function (err) {
       if (!err) {
