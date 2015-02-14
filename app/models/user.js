@@ -40,7 +40,12 @@ var UserSchema = new Schema({
   token: {
       type: String,
       trim: true
+  },
+  facebook_token: {
+      type: String,
+      trim: true
   }
+
 });
 
 UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });

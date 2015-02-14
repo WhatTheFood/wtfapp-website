@@ -12,9 +12,16 @@ var jwt = require('express-jwt')
 router.route('/login')
   .get(authController.isAuthenticated, authController.login)
 
+router.route('/login/facebook')
+  .get(authController.facebookLogin)
+
 router.route('/')
   .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getUsers)
   .post(userController.postUser);
+
+router.route('/me')
+  .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getCurrentUser);
+
 
 /* user */
 router.route('/:id', jwt({secret: secret.secretToken}))

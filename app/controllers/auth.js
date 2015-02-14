@@ -3,12 +3,30 @@ var passport = require('passport');
 var jwt = require('jsonwebtoken');
 var secret = require('../config/secret')
 var BasicStrategy = require('passport-http').BasicStrategy;
+var TokenStrategy =  require('passport-token').Strategy;
 
 var UserModel = require('../models/user');
 
 exports.login = function(req, res) {
     console.log("LOGIN")
     return res.send(req.user.token)
+}
+
+exports.facebookLogin = function(req, res) {
+    fb_token = req.body.token; // TODO change
+    email = req.body.email
+    password = "?$#T#$*(%$(XJEWNDJb@@)#(I)O)JI(@(IWQI()!)" // TODO
+    UserModel.findOne({'facebook_token': fb_token}, function(err, user) {
+        if (!user) {
+            user = new UserModel({
+                'email': email,
+                'password': password,
+                'facebook_token': fb_token
+            })
+        }
+        user = createUserToken(user);
+        return res.status(200).send(user.token);
+    });
 }
 
 passport.use(new BasicStrategy(
@@ -19,9 +37,7 @@ passport.use(new BasicStrategy(
           if (user) {
               // handle login success
               console.log('login success');
-              var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
-              user.set({ token : token})
-              console.log(user)
+              user = createUserToken(user);
               return callback(null, user);
           }
 
@@ -45,5 +61,11 @@ passport.use(new BasicStrategy(
       });
   }
 ));
+
+createUserToken = function(user) {
+    var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
+    user.set({ token : token})
+    return user
+}
 
 exports.isAuthenticated = passport.authenticate('basic', { session : false });
