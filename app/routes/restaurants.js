@@ -1,13 +1,14 @@
 var express = require('express');
 var router = express.Router();
+var authController = require('../controllers/auth');
 var restaurantController = require('../controllers/restaurant');
 
 /* users */
 router.route('/')
-  .get(restaurantController.getRestaurants);
+  .get(authController.isAuthenticated, restaurantController.getRestaurants);
 
 /* user */
 router.route('/:id')
-  .get(restaurantController.getRestaurant);
+  .get(authController.isAuthenticated, restaurantController.getRestaurant);
 
 module.exports = router;
