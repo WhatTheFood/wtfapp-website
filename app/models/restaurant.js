@@ -60,4 +60,20 @@ var restaurantSchema = new Schema({
     menus: [menuSchema]
 });
 
+/**
+ * Presave
+ */
+
+restaurantSchema.pre('save', function(callback) {
+    var restaurant = this;
+
+    // set 2dsphere index for geospatial querying
+    restaurant.geolocation = {
+        type: 'Point',
+        coordinates: [restaurant.lon, restaurant.lat]
+    };
+
+    callback();
+});
+
 module.exports = mongoose.model('Restaurant', restaurantSchema);
