@@ -27,4 +27,4 @@ var RestaurantSchema = new Schema({
     operationalhours: {type: String, default: ''}
 });
 
-mongoose.model('Restaurant', RestaurantSchema);
+RestaurantModel = mongoose.model('Restaurant', RestaurantSchema);
