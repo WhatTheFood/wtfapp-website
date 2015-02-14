@@ -33,6 +33,14 @@ var restaurantSchema = new Schema({
     title: {type : String},
     lat: {type: Number},
     lon: {type: Number},
+    geolocation: {
+        'type': {
+            type: String,
+            enum: 'Point',
+            default: 'Point'
+        },
+        coordinates: {type: [Number]}
+    },
     area: {type: String},
     opening: {type: String},
     closing: {type: String},
