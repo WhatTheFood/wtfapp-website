@@ -21,7 +21,7 @@ var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
   email: {
-    type : String, 
+    type : String,
     unique: true,
     trim : true
   },
@@ -36,6 +36,10 @@ var UserSchema = new Schema({
   },
   lockUntil: {
     type: Number
+  },
+  token: {
+      type: String,
+      trim: true
   }
 });
 
@@ -85,7 +89,7 @@ UserSchema.pre('save', function(callback) {
  * Password checking
  */
 
-// expose enum on the model, and provide an internal convenience reference 
+// expose enum on the model, and provide an internal convenience reference
 var reasons = UserSchema.statics.failedLogin = {
     NOT_FOUND: 0,
     PASSWORD_INCORRECT: 1,

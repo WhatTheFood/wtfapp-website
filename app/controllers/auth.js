@@ -1,8 +1,15 @@
 // Load required packages
 var passport = require('passport');
+var jwt = require('jsonwebtoken');
+var secret = require('./secret')
 var BasicStrategy = require('passport-http').BasicStrategy;
 
 var UserModel = require('../models/user');
+
+exports.login = function(req, res) {
+    console.log("LOGIN")
+    return res.send(req.user.token)
+}
 
 passport.use(new BasicStrategy(
   function(email, password, callback) {
@@ -12,6 +19,9 @@ passport.use(new BasicStrategy(
           if (user) {
               // handle login success
               console.log('login success');
+              var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
+              user.set({ token : token})
+              console.log(user)
               return callback(null, user);
           }
 
@@ -27,7 +37,7 @@ passport.use(new BasicStrategy(
                   break;
               case reasons.MAX_ATTEMPTS:
                   // send email or otherwise notify user that account is
-                  // temporarily locked 
+                  // temporarily locked
                   console.log("Trop de tentatives !");
                   return callback(null, false);
                   break;
