@@ -5,6 +5,7 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 var validator = require('validator');
+var uniqueValidator = require('mongoose-unique-validator');
 
 var Schema = mongoose.Schema;
 
@@ -24,6 +25,8 @@ var UserSchema = new Schema({
   },
 });
 
+UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
+
 /**
  * Validations
  */
@@ -33,14 +36,8 @@ UserSchema.path('email').required(true, 'User email cannot be blank')
 
 UserSchema.path('password').required(true, 'User password cannot be blank')
   .validate(function(v) {
-    if (this._password || this._passwordConfirmation) {
-      if (!val.check(this._password).min(6)) {
-        this.invalidate('password', 'must be at least 6 characters.');
-      }
-      if (this._password !== this._passwordConfirmation) {
-        this.invalidate('passwordConfirmation', 'must match confirmation.');
-      }
-    }
+    if (v != "" && !validator.isLength(v, 5, 30))
+      this.invalidate('password', 'must be at least 6 characters.');
   }, null);
 
 /**
