@@ -22,4 +22,4 @@ var UtilisateurSchema = new Schema({
 UtilisateurSchema.path('email').required(true, 'User email cannot be blank');
 UtilisateurSchema.path('password').required(true, 'User password cannot be blank');
 
-mongoose.model('Utilisateur', UtilisateurSchema);
+UtilisateurModel = mongoose.model('Utilisateur', UtilisateurSchema);
