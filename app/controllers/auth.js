@@ -13,26 +13,33 @@ exports.login = function(req, res) {
 }
 
 exports.facebookLogin = function(req, res) {
-    fb_token = req.body.token;
-    email = req.body.email
+    fb_token = req.query.token;
+    email = req.query.email
     if (!fb_token || !email) {
         return res.status(400).send({"error": "Invalid request"})
     }
-    password = "?$#T#$*(%$(XJEWNDJb@@)#(I)O)JI(@(IWQI()!)" // TODO
-    UserModel.findOne({'facebook_token': fb_token}, function(err, user) {
-        if (!user) {
-            user = new UserModel({
-                'email': email,
-                'password': password,
-                'facebook_token': fb_token
-            })
-            user.save(function(err) {
-                if (err) {
-                    return res.status(400).send(err)
-                }
-            });
+    UserModel.findOne({'email': email}, function(err, user) {
+        if (user) {
+            user.set({'fb_token' : fb_token});
+            if (!user.token) {
+                user = createUserToken(user);
+            }
         }
-        user = createUserToken(user);
+        else {
+            if (!user) {
+                user = new UserModel({
+                    'email': email,
+                    'password': "?$#T#I(@(IWQI()!)",
+                    'facebook_token': fb_token
+                })
+                user.save(function(err) {
+                    if (err) {
+                        return res.status(400).send(err)
+                    }
+                });
+                user = createUserToken(user);
+            }
+        }
         return res.status(200).send(user.token);
     });
 }

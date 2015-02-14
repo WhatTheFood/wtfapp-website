@@ -3,8 +3,12 @@ var router = express.Router();
 
 var tokenManager = require('../config/token_manager');
 var UserModel = require('../models/user');
+var UserTool = require('../tools/user.js');
 
-/* GET users listing. */
+/*
+ * /users
+ * GET users listing
+*/
 exports.getUsers = function(req, res) {
   return UserModel.find(function (err, users) {
     if (!err) {
@@ -17,7 +21,8 @@ exports.getUsers = function(req, res) {
 }
 
 /*
-** TODO: always return 503 but it's the good token
+ * /users/me
+ * Get current user infos
 */
 exports.getCurrentUser = function(req, res) {
     var token = tokenManager.getToken(req.headers);
@@ -31,8 +36,8 @@ exports.getCurrentUser = function(req, res) {
             return res.status(503).send({ 'message': 'An error occured' });
         }
         else {
-            console.log(user)
-            return res.status(200).send(user)
+            userInfos = UserTool.getUserBasicIndos(user);
+            return res.status(200).send(userInfos);
         }
     });
 }

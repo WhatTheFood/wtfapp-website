@@ -85,7 +85,7 @@ UserSchema.path('email').required(true, 'User email cannot be blank')
 
 UserSchema.path('password').required(true, 'User password cannot be blank')
   .validate(function(v) {
-    if (v != "")
+    if (v == "" || v.length < 5)
       this.invalidate('password', 'must be at least 5 characters and at most 30.');
   }, null);
 
