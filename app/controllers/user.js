@@ -15,6 +15,7 @@ exports.getUsers = function (req, res){
   });
 }
 
+/* POST user listing. */
 exports.postUser = function (req, res){
   var user;
   console.log("POST: ");
@@ -33,6 +34,7 @@ exports.postUser = function (req, res){
   return res.send(user);
 }
 
+/* GET user. with id */
 exports.getUser = function (req, res){
   return UserModel.findById(req.params.id, function (err, user) {
     if (!err) {
@@ -43,6 +45,7 @@ exports.getUser = function (req, res){
   });
 }
 
+/* PUT user. with id */
 exports.putUser = function (req, res){
   return UserModel.findById(req.params.id, function (err, user) {
     user.email = req.body.email;
@@ -58,6 +61,7 @@ exports.putUser = function (req, res){
   });
 }
 
+/* DEL user.with id */
 exports.deleteUser = function (req, res){
   return UserModel.findById(req.params.id, function (err, user) {
     return user.remove(function (err) {
@@ -70,5 +74,3 @@ exports.deleteUser = function (req, res){
     });
   });
 }
-
-//module.exports = router;
