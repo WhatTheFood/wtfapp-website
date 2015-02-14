@@ -40,7 +40,18 @@ To create a user, POST a JSON following the following schema to /api/users :
 
 ```{"email": "test@example.net", password: "test"}```
 
+Password field should be at least 5 and at most 30 characters.
+
+Example :
+
+```curl -X POST -H "Content-Type:application/json" --data '{"email": "test@test.fr", "password":"testtt"}' http://localhost:5000/api/users/```
+
 ##### Get (Get user information)
 
 To get a user's information or any other information, GET on /api/users/[mongodb_user_id] with email and password given in a basic authentication.
 
+10 authentication tries are allowed per half-hour.
+
+Example :
+
+```curl -X GET http://test%40test.fr:testtt@localhost:5000/api/users/54deeba72736858d49a647dc```
