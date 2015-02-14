@@ -20,7 +20,7 @@ var menuSchema = new Schema({
                 name: {type: String},
                 feedback: [{
                     thrown: { type: Number },
-                    user_id: { type: Number },
+                    user_id: { type: String },
                 }]
             }]
         }]
