@@ -23,11 +23,13 @@ var UserSchema = new Schema({
   email: {
     type : String,
     unique: true,
-    trim : true
+    trim : true,
+    required: true
   },
   password: {
     type : String,
-    trim : true
+    trim : true,
+    required: true,
   },
   loginAttempts: {
     type: Number,
@@ -59,7 +61,11 @@ var UserSchema = new Schema({
       id: {type: Number},
       thrown: { type: Number }
     }],
-  }]
+  }],
+  facebook_token: {
+      type: String,
+      trim: true
+  }
 });
 
 UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
@@ -79,7 +85,7 @@ UserSchema.path('email').required(true, 'User email cannot be blank')
 
 UserSchema.path('password').required(true, 'User password cannot be blank')
   .validate(function(v) {
-    if (v != "" && !validator.isLength(v, 5, 30))
+    if (v != "")
       this.invalidate('password', 'must be at least 5 characters and at most 30.');
   }, null);
 

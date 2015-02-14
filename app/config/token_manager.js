@@ -1,23 +1,26 @@
 
 var UserModel = require('../models/user');
+var tokenManager = require('../config/token_manager');
 var TOKEN_EXPIRATION = 60;
 var TOKEN_EXPIRATION_SEC = TOKEN_EXPIRATION * 60;
 
 // Middleware for token verification
 exports.verifyToken = function (req, res, next) {
-    var token = getToken(req.headers);
+    var token = tokenManager.getToken(req.headers);
 
-    UserModel.findOne({'token': token }, function (err, user) {
+    UserModel.findOne({token: token }, function (err, user) {
+
+        console.log(user)
         if (err) {
             console.log(err);
             return res.send(500);
         }
 
         if (user) {
-            res.send(401);
+            next()
         }
         else {
-            next();
+            res.send(403);
         }
 
     });
@@ -32,14 +35,13 @@ exports.expireToken = function(headers) {
     }
 };
 
-var getToken = function(headers) {
+exports.getToken = function(headers) {
     if (headers && headers.authorization) {
         var authorization = headers.authorization;
         var part = authorization.split(' ');
 
         if (part.length == 2) {
             var token = part[1];
-
             return part[1];
         }
         else {

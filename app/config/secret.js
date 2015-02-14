@@ -1,1 +1,1 @@
-exports.secretToken = 'aMdoeb5ed87zorRdkD6greDML81DcnrzeSD648ferFejmplx';
+exports.secretToken = 'aMdoeb5ed87zorRdkD6greDML81dwejdjwejdejwjekjpp494DcnrzeSD648ferFejmplxdew';
