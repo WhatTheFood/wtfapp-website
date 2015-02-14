@@ -41,6 +41,7 @@ var restaurantSchema = new Schema({
         },
         coordinates: {type: [Number]}
     },
+    distance: {type: Number},
     area: {type: String},
     opening: {type: String},
     closing: {type: String},

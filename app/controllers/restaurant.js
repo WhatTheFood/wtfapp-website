@@ -41,7 +41,14 @@ exports.getRestaurants = function (req, res) {
             coordinates: [Number(req.query.lng), Number(req.query.lat)]
         };
         var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
-        RestaurantModel.geoNear(geoJsonTarget, {spherical : true, maxDistance : maxDistance}, function (err, restaurants, stats) {
+        RestaurantModel.geoNear(geoJsonTarget, {spherical : true, maxDistance : maxDistance}, function (err, geoResults, stats) {
+            var restaurants = [];
+            for (var i = 0, length = geoResults.length; i < length; i++) {
+                var geoResult = geoResults[i];
+                var restaurant = geoResult.obj;
+                restaurant.distance = geoResult.dis;
+                restaurants.push(restaurant);
+            }
             if (!err) {
                 return res.send(restaurants);
             } else {
