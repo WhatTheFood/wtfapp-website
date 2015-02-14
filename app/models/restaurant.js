@@ -89,7 +89,7 @@ restaurantSchema.pre('save', function(next) {
     };
 
     // set queue info upon first insertion
-    if (!restaurant.queue || restaurant.queue.length === 0) {
+    if (!restaurant.queue || restaurant.queue.timeSlots.length === 0) {
         restaurant.queue = {
             value: 0,
             votes: 0,
