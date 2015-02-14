@@ -20,9 +20,8 @@ router.post('/', function (req, res){
   console.log("POST: ");
   console.log(req.body);
   user = new UserModel({
-    email: req.body.title,
-    password: req.body.description,
-    style: req.body.style,
+    email: req.body.email,
+    password: req.body.password,
   });
   user.save(function (err) {
     if (!err) {
