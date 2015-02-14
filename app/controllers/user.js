@@ -55,10 +55,11 @@ exports.putUser = function (req, res){
     return user.save(function (err) {
       if (!err) {
         console.log("updated");
+        return res.send(user);
       } else {
         console.log(err);
+        return res.status(400).send(err);
       }
-      return res.send(user);
     });
   });
 }
@@ -72,6 +73,7 @@ exports.deleteUser = function (req, res){
         return res.send('');
       } else {
         console.log(err);
+        return res.status(400).send(err);
       }
     });
   });
