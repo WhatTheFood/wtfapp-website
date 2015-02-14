@@ -50,8 +50,18 @@ exports.getUser = function (req, res){
 /* PUT user. with id */
 exports.putUser = function (req, res){
   return UserModel.findById(req.params.id, function (err, user) {
-    user.email = req.body.email;
-    user.password = req.body.password;
+
+    if(req.body.email)
+      user.email = req.body.email;
+
+    if(req.body.password)
+      user.password = req.body.password;
+
+    console.log(req.body);
+
+    if(req.body.poll)
+      user.poll = req.body.poll;
+
     return user.save(function (err) {
       if (!err) {
         console.log("updated");

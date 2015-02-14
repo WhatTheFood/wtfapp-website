@@ -84,3 +84,16 @@ An optional maxDistance parameter can be given to the API to reduce the radius o
 #### GET /restaurants/{id}
 
 Retrieve the restaurant with the given id
+
+#### PUT /users/{id}
+
+Send your opinion about a meal.
+
+curl -H "Content-Type:ap -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5mciIsInBhc3N3b3JkIjoiJDJhJDEwJDRyNU1CMi83MWRkZGpvNEd0dFhiNGVpTGR6UXZKVmlYQ0NNc3dKT0xMSVF6bU9Oc3hpRXVhIiwiX2lkIjoiNTRkZWY4YTU3Njk4NTlhNDU0ZTM5OTc0IiwiX192IjowLCJwb2xsIjpbXSwibG9naW5BdHRlbXB0cyI6MH0.v8ojBQR20jbm-gln57ljafixBBXn6yU5pnDLMQx88XE"  -X PUT -d '{"poll": {"date": "2015-02-14", "ate_alone": false, "convivial_restaurant": true, "enough_time_to_eat": true, "seasoning": 2, "cooking": 2, "hot_meal": 2, "meal_quality": 3, "enjoyed_my_meal": 2, "threw_away_food_itook": false, "threw_away_food_was_served": true, "bread_thrown": 2, "dishes": [{"_id": "54df23b6842142426fdfa111", "thrown": 3}]}}' http://localhost:5000/api/users/54def8a5769859a454e39974
+
+#### GET /users/{id}
+
+Get the informations about user and the poll to which he participated.
+
+curl -X GET http://localhost:5000/api/users/54def8a5769859a454e39974 -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5mciIsInBhc3N3b3JkIjoiJDJhJDEwJDRyNU1CMi83MWRkZGpvNEd0dFhiNGVpTGR6UXZKVmlYQ0NNc3dKT0xMSVF6bU9Oc3hpRXVhIiwiX2lkIjoiNTRkZWY4YTU3Njk4NTlhNDU0ZTM5OTc0IiwiX192IjowLCJwb2xsIjpbXSwibG9naW5BdHRlbXB0cyI6MH0.v8ojBQR20jbm-gln57ljafixBBXn6yU5pnDLMQx88XE"
+{"__v":3,"_id":"54def8a5769859a454e39974","email":"test@test.fr","password":"$2a$10$4r5MB2/71dddjo4GttXb4eiLdzQvJViXCCMswJOLLIQzmONsxiEua","poll":[{"date":"2015-02-14T00:00:00.000Z","ate_alone":false,"convivial_restaurant":true,"enough_time_to_eat":true,"seasoning":2,"cooking":2,"hot_meal":2,"meal_quality":3,"enjoyed_my_meal":2,"threw_away_food_was_served":true,"bread_thrown":2,"_id":"54df8588341325ac2a413e55","dishes":[{"_id":"54df23b6842142426fdfa111","thrown":3}]}],"loginAttempts":0}[

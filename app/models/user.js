@@ -40,7 +40,26 @@ var UserSchema = new Schema({
   token: {
       type: String,
       trim: true
-  }
+  },
+  poll: [{
+    date: {type: Date},
+    ate_alone: { type: Boolean },
+    convivial_restaurant: { type: Boolean },
+    enough_time_to_eat: { type: Boolean },
+    seasoning: { type: Number },
+    cooking: { type: Number },
+    hot_meal: { type: Number },
+    meal_quality: { type: Number },
+    enjoyed_my_meal: { type: Number },
+    usually_enjoyis_meal: { type: Number },
+    threw_away_food_itooked: { type: Boolean },
+    threw_away_food_was_served: { type: Boolean },
+    bread_thrown: { type: Number },
+    dishes: [{
+      id: {type: Number},
+      thrown: { type: Number }
+    }],
+  }]
 });
 
 UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
@@ -54,6 +73,7 @@ UserSchema.virtual('isLocked').get(function() {
  * Validations
  */
 
+/*
 UserSchema.path('email').required(true, 'User email cannot be blank')
   .validate(validator.isEmail, 'Invalid email');
 
@@ -62,6 +82,8 @@ UserSchema.path('password').required(true, 'User password cannot be blank')
     if (v != "" && !validator.isLength(v, 5, 30))
       this.invalidate('password', 'must be at least 5 characters and at most 30.');
   }, null);
+
+*/
 
 /**
  * Presave
