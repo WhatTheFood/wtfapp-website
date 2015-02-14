@@ -57,7 +57,7 @@ var restaurantSchema = new Schema({
     payment: [{
         name: {type: String}
     }],
-    menus: [MenuSchema]
+    menus: [menuSchema]
 });
 
 mongoose.model('Restaurant', restaurantSchema);
