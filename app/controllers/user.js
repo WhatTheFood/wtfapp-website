@@ -72,6 +72,10 @@ exports.getUser = function (req, res){
 /* PUT user. with id */
 exports.putUser = function (req, res){
   return UserModel.findById(req.params.id, function (err, user) {
+
+    if (req.body.password.length > 30) {
+        return res.status(400).send({ 'password': 'must be at least 5 characters and at most 30.'})
+    }
     user.email = req.body.email;
     user.password = req.body.password;
     return user.save(function (err) {
