@@ -13,7 +13,7 @@ exports.login = function(req, res) {
 }
 
 exports.facebookLogin = function(req, res) {
-    fb_token = req.body.token; // TODO change
+    fb_token = req.body.token;
     email = req.body.email
     password = "?$#T#$*(%$(XJEWNDJb@@)#(I)O)JI(@(IWQI()!)" // TODO
     UserModel.findOne({'facebook_token': fb_token}, function(err, user) {
@@ -23,6 +23,11 @@ exports.facebookLogin = function(req, res) {
                 'password': password,
                 'facebook_token': fb_token
             })
+            user.save(function(err) {
+                if (err) {
+                    return res.status(400).send(err)
+                }
+            });
         }
         user = createUserToken(user);
         return res.status(200).send(user.token);
@@ -38,6 +43,12 @@ passport.use(new BasicStrategy(
               // handle login success
               console.log('login success');
               user = createUserToken(user);
+              console.log(user);
+              user.update({ token: user.token}, function(err) {
+                if (err) {
+                    console.log(err);
+                }
+              });
               return callback(null, user);
           }
 

@@ -8,19 +8,19 @@ var TOKEN_EXPIRATION_SEC = TOKEN_EXPIRATION * 60;
 exports.verifyToken = function (req, res, next) {
     var token = tokenManager.getToken(req.headers);
 
-    UserModel.findOne({'token': token }, function (err, user) {
+    UserModel.findOne({token: token }, function (err, user) {
 
+        console.log(user)
         if (err) {
             console.log(err);
             return res.send(500);
         }
 
         if (user) {
-            res.send(401);
+            next()
         }
         else {
-            next()
-            //res.send(403);
+            res.send(403);
         }
 
     });

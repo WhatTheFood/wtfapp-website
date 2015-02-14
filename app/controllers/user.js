@@ -20,10 +20,9 @@ exports.getUsers = function(req, res) {
 ** TODO: always return 503 but it's the good token
 */
 exports.getCurrentUser = function(req, res) {
-    var token = tokenManager.getToken(req.headers)
-    console.log(token)
+    var token = tokenManager.getToken(req.headers);
 
-    UserModel.findOne({'token': token }, function (err, user) {
+    UserModel.findOne({token: token }, function (err, user) {
         console.log(user);
         if (err) {
             return res.status(503).send(err)

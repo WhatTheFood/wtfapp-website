@@ -23,11 +23,13 @@ var UserSchema = new Schema({
   email: {
     type : String,
     unique: true,
-    trim : true
+    trim : true,
+    required: true
   },
   password: {
     type : String,
-    trim : true
+    trim : true,
+    required: true,
   },
   loginAttempts: {
     type: Number,
