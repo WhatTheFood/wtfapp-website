@@ -17,6 +17,7 @@
     "passport": "^0.2.1",
     "passport-http": "^0.2.2",
     "railway": "^1.0.1-1",
-    "serve-favicon": "~2.2.0"
+    "serve-favicon": "~2.2.0",
+    "validator": "^3.30.0"
   }
 }
