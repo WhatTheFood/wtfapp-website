@@ -12,7 +12,13 @@ This command will create the node_modules directory at the project root.
 
 ### Launching the server
 
+Standard server launching is :
+
 ```$ DEBUG=wtf:* ./bin/www```
+
+If you want Node.JS to watch for any changes and reload the server when a change is detected, execute instead :
+
+```$ DEBUG=wtf:* nodemon```
 
 ## API
 
