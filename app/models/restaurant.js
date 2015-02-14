@@ -65,14 +65,17 @@ var restaurantSchema = new Schema({
     payment: [{
         name: {type: String}
     }],
-    menus: [menuSchema]
+    menus: [menuSchema],
+    queue: {
+        updatedAt: {type: Date}
+    }
 });
 
 /**
  * Presave
  */
 
-restaurantSchema.pre('save', function(callback) {
+restaurantSchema.pre('save', function(next) {
     var restaurant = this;
 
     // set 2dsphere index for geospatial querying
@@ -81,7 +84,14 @@ restaurantSchema.pre('save', function(callback) {
         coordinates: [restaurant.lon, restaurant.lat]
     };
 
-    callback();
+    // set queue info upon first insertion
+    if (!restaurant.queue) {
+        restaurant.queue = {
+            updatedAt: Date.now()
+        }
+    }
+
+    next();
 });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);
