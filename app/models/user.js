@@ -8,10 +8,10 @@ var validator = require('validator');
 var uniqueValidator = require('mongoose-unique-validator');
 
 SALT_WORK_FACTOR = 10,
-// these values can be whatever you want - we're defaulting to a
-// max of 5 attempts, resulting in a 2 hour lock
-MAX_LOGIN_ATTEMPTS = 5,
-LOCK_TIME = 2 * 60 * 60 * 1000;
+
+// max of 10 attempts, resulting in a 30 minutes lock
+MAX_LOGIN_ATTEMPTS = 10,
+LOCK_TIME = 30 * 60 * 1000;
 
 var Schema = mongoose.Schema;
 
@@ -70,7 +70,7 @@ UserSchema.pre('save', function(callback) {
   if (!user.isModified('password')) return callback();
 
   // Password changed so we need to hash it
-  bcrypt.genSalt(5, function(err, salt) {
+  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
     if (err) return callback(err);
 
     bcrypt.hash(user.password, salt, null, function(err, hash) {
