@@ -5,9 +5,9 @@ var RestaurantModel = require('../models/restaurant');
 
 /* get restaurants */
 exports.getRestaurants = function (req, res){
-  return RestaurantModel.find(function (err, objects) {
+  return RestaurantModel.find(function (err, restaurants) {
     if (!err) {
-      return res.send(objects);
+      return res.send(restaurants);
     } else {
       return console.log(err);
     }
