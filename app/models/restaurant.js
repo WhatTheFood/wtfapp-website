@@ -67,7 +67,10 @@ var restaurantSchema = new Schema({
     }],
     menus: [menuSchema],
     queue: {
-        updatedAt: {type: Date}
+        value: {type: Number},
+        votes: {type: Number},
+        updatedAt: {type: Date},
+        timeSlots: {type: [String]}
     }
 });
 
@@ -87,7 +90,10 @@ restaurantSchema.pre('save', function(next) {
     // set queue info upon first insertion
     if (!restaurant.queue) {
         restaurant.queue = {
-            updatedAt: Date.now()
+            value: 0,
+            votes: 0,
+            updatedAt: Date.now(),
+            timeSlots: ['-10', '10-20', '+20'] // default time slots
         }
     }
 
