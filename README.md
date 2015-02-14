@@ -58,11 +58,9 @@ Example :
 
 ### Restaurant
 
-#### Load restaurant informations
+#### GET /restaurants/refresh
 
-```wget http://thepbm.ovh.org/static/json/crous-poitiers.min.json```
-```sed "s/{\"restaurants\"\://g" crous-poitiers.min.json | cut -c 2- > crous-poitiers.min.clean.json```
-```mongoimport -d wtfapp -c restaurants --file crous-poitiers.min.clean.json --jsonArray```
+Load initial restaurant informations
 
 #### GET /restaurants
 
@@ -72,7 +70,7 @@ Retrieve a list of all restaurants
 
 Retrieve a list of GeoResult. A GeoResult is composed of a dis property being the distance of the restaurant from the requested coordinates and an obj property being a restaurant.
 
-An optional maxDistance parameter can be given to the API to reduce the radius of the request. By default, maxDistance equals 0.5 (500 m). 
+An optional maxDistance parameter can be given to the API to reduce the radius of the request. By default, maxDistance equals 0.5 (500 m).
 
 #### GET /restaurants/{id}
 
