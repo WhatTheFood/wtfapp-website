@@ -46,15 +46,24 @@ Example :
 
 ```curl -X POST -H "Content-Type:application/json" --data '{"email": "test@test.fr", "password":"testtt"}' http://localhost:5000/api/users/```
 
-##### Get (Get user information)
+##### Token access
 
-To get a user's information or any other information, GET on /api/users/[mongodb_user_id] with email and password given in a basic authentication.
-
+To get an access token, GET /api/users/login with email and password given in a basic authentification.
 10 authentication tries are allowed per half-hour.
 
 Example :
 
-```curl -X GET http://test%40test.fr:testtt@localhost:5000/api/users/54deeba72736858d49a647dc```
+```curl -X GET http://test%40test.fr:testtt@localhost:5000/api/users/login```
+
+It returns a token to used on each requests.
+
+##### Get (Get user information)
+
+To get a user's information or any other information, GET on /api/users/[mongodb_user_id].
+
+Example :
+
+```curl -X GET http://localhost:5000/api/users/54deeba72736858d49a647dc -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGRmNDkyNTY1ZDdhZWM2YjBmM2QxMDAiLCJlbWFpbCI6InRlc3RAdGVzdC5mciIsInBhc3N3b3JkIjoiJDJhJDEwJEJmSFpsaHVpTVhIVnZlVUNwVTBJQXUxRGpJNU5jOEQyOENCaGszQUJSMVZhRUIvNVBhVHYyIiwiX192IjowLCJsb2dpbkF0dGVtcHRzIjowfQ.B7qiir3Cx5zu3tF7V4TaFAqWQqZ6hfTVPcJIJOOnoTI"```
 
 ### Restaurant
 
