@@ -42,9 +42,14 @@ exports.postUser = function (req, res){
   var user;
   console.log("POST: ");
   console.log(req.body);
+  email = req.body.email;
+  pwd = req.body.password;
+  if (!email || !pwd) {
+    return res.status(400).send({"error": "Invalid request"});
+  }
   user = new UserModel({
-    email: req.body.email,
-    password: req.body.password,
+    email:email,
+    password: password,
   });
   user.save(function (err) {
     if (!err) {
