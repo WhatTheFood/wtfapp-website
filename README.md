@@ -73,9 +73,18 @@ Example :
 
 ```curl -X GET http://localhost:5000/api/users/54deeba72736858d49a647dc -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGRmNDkyNTY1ZDdhZWM2YjBmM2QxMDAiLCJlbWFpbCI6InRlc3RAdGVzdC5mciIsInBhc3N3b3JkIjoiJDJhJDEwJEJmSFpsaHVpTVhIVnZlVUNwVTBJQXUxRGpJNU5jOEQyOENCaGszQUJSMVZhRUIvNVBhVHYyIiwiX192IjowLCJsb2dpbkF0dGVtcHRzIjowfQ.B7qiir3Cx5zu3tF7V4TaFAqWQqZ6hfTVPcJIJOOnoTI"```
 
-#### Get user friend list (GET)
+##### Get user friend list (GET)
 
 Route: `/api/me/friends/`
+
+
+##### Set user today restaurant (POST)
+
+Route: `/api/me/restaurant`
+
+```
+{ "restaurantId": 705}
+```
 
 ### Restaurant
 
