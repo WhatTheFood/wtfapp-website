@@ -44,7 +44,9 @@ exports.updateUserInfosWithFacebook = function(user, callback) {
     if (user.facebook_token) {
         Facebook.updateUserBasicInfos(user, callback);
     }
-    return UserTool.getUserBasicInfos(user);
+    else {
+        return UserTool.getUserBasicInfos(user);
+    }
 }
 
 exports.getUserFriends = function(user, callback) {
@@ -53,7 +55,6 @@ exports.getUserFriends = function(user, callback) {
         var datas = [];
         if (friends && friends !== false) {
             var nb = friends.data.length;
-            console.log("NB:", nb);
             friends.data.forEach(function(friend)  {
                 UserModel.findOne({ 'facebook_id': friend.id }, function(err, user) {
                     if (user) {
@@ -62,10 +63,13 @@ exports.getUserFriends = function(user, callback) {
                     }
                     if (--nb == 0) {
                         console.log("END: " + datas);
-                        callback(datas);
+                        callback(err, datas);
                     }
                 });
             });
+        }
+        else {
+            callback([], null);
         }
     });
 }

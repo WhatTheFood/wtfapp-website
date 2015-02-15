@@ -87,7 +87,11 @@ exports.getFriendsAtRestaurant = function(req, res) {
         if (!restaurant_id) {
             return res.status(400).send("You must post a restaurant id");
         }
-        UserTool.getUserFriends(user, function(friends) {
+        UserTool.getUserFriends(user, function(err, friends) {
+
+            if (err) {
+                return res.status(200).send(err);
+            }
             var datas = [];
             friends.forEach(function(friend) {
                 if (friend.today_destination !== 'undifined') {
