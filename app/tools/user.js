@@ -11,7 +11,8 @@ exports.getUserBasicInfos = function(user) {
         'first_name': user.first_name,
         'last_name': user.last_name,
         'avatar': user.avatar,
-        'facebook_id': user.facebook_id
+        'facebook_id': user.facebook_id,
+        'id': user._id
     }
 
     return infos;
