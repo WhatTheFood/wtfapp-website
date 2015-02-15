@@ -57,7 +57,7 @@ Example :
 
 It returns a token to used on each requests.
 
-#### Facebook login (GET)
+#### Facebook login (PUT)
 
 To get an access token with facebook, send JSON to /api/users/login/facebook  :
 
@@ -65,13 +65,17 @@ To get an access token with facebook, send JSON to /api/users/login/facebook  :
 { "email": "test@example.net", "token": "theFacebookToken" }
 ```
 
-##### Get (Get user information)
+##### Get user information (GET)
 
 To get a user's information or any other information, GET on /api/users/[mongodb_user_id].
 
 Example :
 
 ```curl -X GET http://localhost:5000/api/users/54deeba72736858d49a647dc -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGRmNDkyNTY1ZDdhZWM2YjBmM2QxMDAiLCJlbWFpbCI6InRlc3RAdGVzdC5mciIsInBhc3N3b3JkIjoiJDJhJDEwJEJmSFpsaHVpTVhIVnZlVUNwVTBJQXUxRGpJNU5jOEQyOENCaGszQUJSMVZhRUIvNVBhVHYyIiwiX192IjowLCJsb2dpbkF0dGVtcHRzIjowfQ.B7qiir3Cx5zu3tF7V4TaFAqWQqZ6hfTVPcJIJOOnoTI"```
+
+#### Get user friend list (GET)
+
+Route: `/api/me/friends/`
 
 ### Restaurant
 
