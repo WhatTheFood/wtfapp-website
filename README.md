@@ -86,7 +86,7 @@ Route: `/api/users/me/restaurant`
 { "restaurantId": 705}
 ```
 
-##### Get friends at a restaurant (GET)
+##### Get friends at a restaurant (PUT)
 
 Route: `/api/users/me/friends/restaurant`
 
