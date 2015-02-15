@@ -12,7 +12,16 @@ exports.getUserBasicInfos = function(user) {
         'last_name': user.last_name,
         'avatar': user.avatar,
         'facebook_id': user.facebook_id,
+        'today_destination': "",
         'id': user._id
+    }
+    var actualDate = new Date();
+    if (user.today_destination && user.today_destination.date) {
+        var isNotToday = user.today_destination.date.getDay() !== actualDate.getDay()
+            || user.today_destination.date < actualDate - 24 * 60 * 60 * 1000;
+        if (!isNotToday) {
+            infos.today_destination = user.today_destination;
+        }
     }
 
     return infos;

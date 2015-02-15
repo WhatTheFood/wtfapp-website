@@ -3,7 +3,8 @@ var router = express.Router();
 
 var tokenManager = require('../config/token_manager');
 var UserModel = require('../models/user');
-var UserTool = require('../tools/user.js');
+var RestaurantModel = require('../models/restaurant');
+var UserTool = require('../tools/user');
 
 /*
  * /users
@@ -25,40 +26,70 @@ exports.getUsers = function(req, res) {
  * Get current user infos
 */
 exports.getCurrentUser = function(req, res) {
-    var token = tokenManager.getToken(req.headers);
 
-    UserModel.findOne({token: token }, function (err, user) {
-        //console.log(user);
-        if (err) {
-            return res.status(503).send(err)
-        }
-        else if (!user) {
-            return res.status(503).send({ 'message': 'An error occured' });
-        }
-        else {
-            return res.status(200).send(UserTool.getUserBasicInfos(user));
-        }
+    getCurrentUser(req, res, function(user) {
+        return res.status(200).send(UserTool.getUserBasicInfos(user));
     });
 }
 
 /*
- * /usrs/me/friends
+ * /users/me/friends
  */
 exports.getCurrentUserFriends = function(req, res) {
+
+    getCurrentUser(req, res, function(user) {
+        UserTool.getUserFriends(user, function(datas) {
+            return res.status(200).send(datas)
+        });
+    });
+}
+
+/*
+ * /users/me/restaurant
+ * POST restaurant: id
+ * @Return OK 200
+ */
+exports.addUserDestination = function(req, res) {
+    getCurrentUser(req, res, function(user) {
+        var today = "";
+        var restaurant_id = req.body.restaurantId
+        if (!restaurant_id) {
+            return res.status(400).send("You must post a restaurant id");
+        }
+        RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
+            console.log(restaurant_id)
+            if (err) {
+                return res.status(503).send(err);
+            }
+            else if (!restaurant) {
+                return res.status(400).send("Invalid id");
+            }
+            else {
+                user.set({
+                    'today_destination': {
+                        'restaurant': restaurant,
+                        'date': Date.now(),
+                    }
+                });
+                user.save();
+                return res.status(200).send(user);
+            }
+        });
+    });
+}
+
+getCurrentUser = function(req, res, callback) {
     var token = tokenManager.getToken(req.headers);
 
     UserModel.findOne({token: token }, function (err, user) {
-        //console.log(user);
         if (err) {
             return res.status(503).send(err)
         }
         else if (!user) {
-            return res.status(503).send({ 'message': 'An error occured' });
+            return res.status(503).send({ 'message': 'Invalid token.' });
         }
         else {
-            UserTool.getUserFriends(user, function(datas) {
-                return res.status(200).send(datas)
-            });
+            callback(user);
         }
     });
 }
@@ -66,8 +97,6 @@ exports.getCurrentUserFriends = function(req, res) {
 /* POST user listing. */
 exports.postUser = function (req, res){
   var user;
-  console.log("POST: ");
-  console.log(req.body);
   email = req.body.email;
   pwd = req.body.password;
   if (!email || !pwd) {

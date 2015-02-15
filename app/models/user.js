@@ -62,6 +62,14 @@ var UserSchema = new Schema({
   avatar: {
       type: String,
       default: ""
+  },
+  today_destination: {
+      date: {
+          type: Date
+      },
+      restaurant: {
+      }
+
   }
 
 });

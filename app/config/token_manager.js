@@ -10,7 +10,6 @@ exports.verifyToken = function (req, res, next) {
 
     UserModel.findOne({token: token }, function (err, user) {
 
-        console.log(user)
         if (err) {
             console.log(err);
             return res.send(500);
