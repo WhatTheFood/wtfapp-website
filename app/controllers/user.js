@@ -56,7 +56,6 @@ exports.addUserDestination = function(req, res) {
             return res.status(400).send("You must post a restaurant id");
         }
         RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
-            console.log(restaurant_id)
             if (err) {
                 return res.status(503).send(err);
             }
@@ -66,7 +65,7 @@ exports.addUserDestination = function(req, res) {
             else {
                 user.set({
                     'today_destination': {
-                        'restaurant': restaurant,
+                        'restaurant': restaurant.id,
                         'date': Date.now(),
                     }
                 });
