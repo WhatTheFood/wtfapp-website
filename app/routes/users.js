@@ -22,6 +22,8 @@ router.route('/')
 router.route('/me')
   .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getCurrentUser);
 
+router.route('/me/friends')
+  .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getCurrentUserFriends);
 
 /* user */
 router.route('/:id', jwt({secret: secret.secretToken}))

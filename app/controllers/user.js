@@ -41,6 +41,28 @@ exports.getCurrentUser = function(req, res) {
     });
 }
 
+/*
+ * /usrs/me/friends
+ */
+exports.getCurrentUserFriends = function(req, res) {
+    var token = tokenManager.getToken(req.headers);
+
+    UserModel.findOne({token: token }, function (err, user) {
+        //console.log(user);
+        if (err) {
+            return res.status(503).send(err)
+        }
+        else if (!user) {
+            return res.status(503).send({ 'message': 'An error occured' });
+        }
+        else {
+            UserTool.getUserFriends(user, function(datas) {
+                return res.status(200).send(datas)
+            });
+        }
+    });
+}
+
 /* POST user listing. */
 exports.postUser = function (req, res){
   var user;

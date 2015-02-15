@@ -37,3 +37,25 @@ exports.updateUserInfosWithFacebook = function(user) {
     return UserTool.getUserBasicInfos(user);
 }
 
+exports.getUserFriends = function(user, callback) {
+
+    Facebook.getUserFacebookFriends(user, function(err, friends) {
+        var datas = [];
+        if (friends && friends !== false) {
+            var nb = friends.data.length;
+            console.log("NB:", nb);
+            friends.data.forEach(function(friend)  {
+                UserModel.findOne({ 'facebook_id': friend.id }, function(err, user) {
+                    if (user) {
+                        datas.push(UserTool.getUserBasicInfos(user));
+                        console.log("FOUND: ", datas);
+                    }
+                    if (--nb == 0) {
+                        console.log("END: " + datas);
+                        callback(datas);
+                    }
+                });
+            });
+        }
+    });
+}
