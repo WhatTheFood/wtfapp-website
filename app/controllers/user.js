@@ -82,7 +82,8 @@ exports.addUserDestination = function(req, res) {
  */
 exports.getFriendsAtRestaurant = function(req, res) {
     getCurrentUser(req, res, function(user) {
-        var restaurant_id = req.body.restaurantId;
+        var restaurant_id = req.body.restaurantId
+
         if (!restaurant_id) {
             return res.status(400).send("You must post a restaurant id");
         }
