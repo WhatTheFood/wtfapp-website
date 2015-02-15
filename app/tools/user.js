@@ -40,9 +40,9 @@ exports.getUserBasicInfosById = function(userId) {
     });
 }
 
-exports.updateUserInfosWithFacebook = function(user) {
+exports.updateUserInfosWithFacebook = function(user, callback) {
     if (user.facebook_token) {
-        Facebook.updateUserBasicInfos(user);
+        Facebook.updateUserBasicInfos(user, callback);
     }
     return UserTool.getUserBasicInfos(user);
 }

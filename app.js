@@ -45,6 +45,9 @@ app.use('/api/restaurants', restaurants);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+    if (err.name === 'UnauthorizedError') {
+        res.send(401, 'invalid token...');
+    }
     var err = new Error('Not Found');
     err.status = 404;
     next(err);

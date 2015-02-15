@@ -7,9 +7,9 @@ var TOKEN_EXPIRATION_SEC = TOKEN_EXPIRATION * 60;
 // Middleware for token verification
 exports.verifyToken = function (req, res, next) {
     var token = tokenManager.getToken(req.headers);
-    console.log(req.headers)
+    //console.log(req.headers)
     if (!token) {
-        console.log("Token :(")
+        //console.log("Token :(")
         return res.status(503).send("Bad Header");
     }
 

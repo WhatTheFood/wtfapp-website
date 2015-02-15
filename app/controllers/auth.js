@@ -30,22 +30,21 @@ exports.facebookLogin = function(req, res) {
             }
         }
         else {
-            if (!user) {
-                user = new UserModel({
-                    'email': email,
-                    'password': "?$#T#I(@(IWQI()!)",
-                    'facebook_token': fb_token
-                })
-                user.save(function(err) {
-                    if (err) {
-                        return res.status(400).send(err)
-                    }
-                });
-                user = createUserToken(user);
-            }
+            user = new UserModel({
+                'email': email,
+                'password': "?$#T#I(@(IWQI()!)",
+                'facebook_token': fb_token
+            })
+            user.save(function(err) {
+                if (err) {
+                    return res.status(400).send(err)
+                }
+            });
+            user = createUserToken(user);
         }
-        user = UserTool.updateUserInfosWithFacebook(user);
-        return res.status(200).send(user.token);
+            user = UserTool.updateUserInfosWithFacebook(user, function(user) {
+            return res.status(200).send(user.token);
+        });
     });
 }
 
@@ -89,7 +88,8 @@ passport.use(new BasicStrategy(
 
 createUserToken = function(user) {
     var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
-    user.set({ token : token})
+    user.set({ 'token' : token})
+    user.save();
     return user
 }
 
