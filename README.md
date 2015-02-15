@@ -75,12 +75,12 @@ Example :
 
 ##### Get user friend list (GET)
 
-Route: `/api/me/friends/`
+Route: `/api/users/me/friends/`
 
 
 ##### Set user today restaurant (POST)
 
-Route: `/api/me/restaurant`
+Route: `/api/users/me/restaurant`
 
 ```
 { "restaurantId": 705}
@@ -88,7 +88,7 @@ Route: `/api/me/restaurant`
 
 ##### Get friends at a restaurant (GET)
 
-Route: `/api/me/friends/restaurant`
+Route: `/api/users/me/friends/restaurant`
 
 ```
 { "restaurantId": 705}
