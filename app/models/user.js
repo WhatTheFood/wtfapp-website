@@ -62,6 +62,9 @@ var UserSchema = new Schema({
   avatar: {
       type: String,
       default: ""
+  },
+  booking: {
+
   }
 });
 

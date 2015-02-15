@@ -52,8 +52,6 @@ exports.getCurrentUserFriends = function(req, res) {
  * @Return user 200
  */
 exports.addUserDestination = function(req, res) {
-    console.log("---------------------");
-    console.log(req.body);
     if (req.body === 'undifined') {
         return res.status(400).send("Invalid request");
     }
@@ -74,6 +72,8 @@ exports.addUserDestination = function(req, res) {
                     if (err) {
                         return res.status(503).send(err);
                     }
+                    console.log("ADD DEST ==================");
+                    console.log(user._id);
                     if (!booking) {
                         // create booking
                         booking = new BookingModel({
@@ -85,6 +85,7 @@ exports.addUserDestination = function(req, res) {
                     }
                     else {
                         booking.set({
+                            user: user._id,
                             when: when,
                             restaurant: restaurant.id,
                         });
@@ -94,7 +95,10 @@ exports.addUserDestination = function(req, res) {
                             return res.status(400).send(err);
                         }
                         else {
-                            return res.status(200).send("OK");
+                            user.set({booking: booking});
+                            user.save(function(err) {
+                                return res.status(200).send("OK");
+                            });
                         }
                     });
                 });
@@ -113,31 +117,38 @@ exports.getFriendsAtRestaurant = function(req, res) {
         if (!restaurant_id) {
             return res.status(400).send("You must post a restaurant id");
         }
-        UserTool.getUserFriends(user, function(err, friends) {
+
+        UserTool.getUserFriends(user, function(err, res_friends) {
 
             if (err) {
                 return res.status(200).send(err);
             }
             var ret_datas = [];
             var date = Tools.getDayDate();
-            var num = friends.length;
+            var num = res_friends.length;
+            console.log(num);
 
             if (!num) {
+                console.log("Sans amis :(");
                 return res.status(200).send([]);
             }
 
-            friends.forEach(function(friend) {
-                BookingModel.findOne({'user': friend.id, 'date': date,
-                                     'restaurant': restaurant_id}, function(err, booking) {
+            res_friends.forEach(function(friend) {
+                console.log(friend.id, " // ", friend.first_name);
+                BookingModel.findOne({ user: friend.id, //date: date,  restaurant: restaurant_id
+                }, function(err, booking) {
                     if (err) {
                         return res.status(503).send(err);
                     }
+                    console.log("booking:", booking);
                     if (booking) {
                         if (booking.restaurant == restaurant_id) {
                             ret_datas.push(friend);
                         }
                     }
                     if (--num == 0) {
+                        console.log("RET");
+                        console.log(ret_datas);
                         return res.status(200).send(ret_datas);
                     }
                 });

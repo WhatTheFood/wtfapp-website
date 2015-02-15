@@ -7,6 +7,5 @@ exports.getDayDate = function() {
 
     newdate = day + "/" + month + "/" + year;
 
-    console.log(newdate);
     return newdate;
 }

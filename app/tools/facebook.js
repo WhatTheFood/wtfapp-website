@@ -12,7 +12,7 @@ exports.updateUserBasicInfos = function(user, callback) {
         },
         function (res) {
         if (res && res.error) {
-            if(res.error.code === 'ETIMEDOUT') {
+            if (res.error.code === 'ETIMEDOUT') {
                 console.log('request timeout');
             }
             else {
