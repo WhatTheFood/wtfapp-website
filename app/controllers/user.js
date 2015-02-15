@@ -47,11 +47,10 @@ exports.getCurrentUserFriends = function(req, res) {
 /*
  * /users/me/restaurant
  * POST restaurant: id
- * @Return OK 200
+ * @Return user 200
  */
 exports.addUserDestination = function(req, res) {
     getCurrentUser(req, res, function(user) {
-        var today = "";
         var restaurant_id = req.body.restaurantId
         if (!restaurant_id) {
             return res.status(400).send("You must post a restaurant id");
@@ -74,6 +73,30 @@ exports.addUserDestination = function(req, res) {
                 user.save();
                 return res.status(200).send(user);
             }
+        });
+    });
+}
+
+/*
+ * /me/friends/restaurant
+ */
+exports.getFriendsAtRestaurant = function(req, res) {
+    getCurrentUser(req, res, function(user) {
+        var restaurant_id = req.body.restaurantId;
+        if (!restaurant_id) {
+            return res.status(400).send("You must post a restaurant id");
+        }
+        UserTool.getUserFriends(user, function(friends) {
+            var datas = [];
+            friends.forEach(function(friend) {
+                if (friend.today_destination !== 'undifined') {
+                    if (friend.today_destination.restaurant.id == restaurant_id) {
+                        friend['today_destination'] = ''; // To debug
+                        datas.push(friend);
+                    }
+                }
+            });
+            return res.status(200).send(datas)
         });
     });
 }

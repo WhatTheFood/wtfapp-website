@@ -25,6 +25,9 @@ router.route('/me')
 router.route('/me/friends')
   .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getCurrentUserFriends);
 
+router.route('/me/friends/restaurant')
+    .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getFriendsAtRestaurant);
+
 router.route('/me/restaurant/')
   .post(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.addUserDestination);
 
