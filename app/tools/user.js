@@ -1,30 +1,31 @@
 var UserModel = require('../models/user');
 var Facebook = require('../tools/facebook.js');
 var UserTool = require('../tools/user.js');
+var Tools = require('../tools/tools.js');
+var BookingModel = require('../models/previsions.js');
 
 /*
  * Return the user public infos + facebook informations
  */
-exports.getUserBasicInfos = function(user) {
-    var infos = {
-        'email': user.email,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'avatar': user.avatar,
-        'facebook_id': user.facebook_id,
-        'today_destination': "",
-        'id': user._id
-    }
-    var actualDate = new Date();
-    if (user.today_destination && user.today_destination.date) {
-        var isNotToday = user.today_destination.date.getDay() !== actualDate.getDay()
-            || user.today_destination.date < actualDate - 24 * 60 * 60 * 1000;
-        if (!isNotToday) {
-            infos.today_destination = user.today_destination;
+exports.getUserBasicInfos = function(user, callback) {
+    var date = Tools.getDayDate();
+    BookingModel.findOne({'user': user._id, 'date': date}, function(err, booking) {
+        if (err) {
+            return res.status(503).send(err);
         }
-    }
-
-    return infos;
+        else {
+            var infos = {
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'avatar': user.avatar,
+                'facebook_id': user.facebook_id,
+                'booking': booking,
+                'id': user._id
+            }
+        }
+        callback(infos);
+    });
 }
 
 exports.getUserBasicInfosById = function(userId) {
@@ -53,19 +54,20 @@ exports.getUserFriends = function(user, callback) {
 
     Facebook.getUserFacebookFriends(user, function(err, friends) {
         var datas = [];
-        if (friends && friends !== false) {
+        if (friends && friends != false) {
             var nb = friends.data.length;
             friends.data.forEach(function(friend)  {
                 UserModel.findOne({ 'facebook_id': friend.id }, function(err, user) {
                     if (user) {
-                        datas.push(UserTool.getUserBasicInfos(user));
-                        console.log("FOUND: ", datas);
+                       UserTool.getUserBasicInfos(user, function(nuser) {
+                           console.log(nuser);
+                           datas.push(nuser);
+                            if (--nb == 0) {
+                                callback(null, datas);
+                            }
+                       });
                     }
-                    if (--nb == 0) {
-                        console.log("END: " + datas);
-                        callback(err, datas);
-                    }
-                });
+               });
             });
         }
         else {

@@ -28,9 +28,6 @@ exports.updateUserBasicInfos = function(user, callback) {
                 'avatar': "http://graph.facebook.com/" + res.id + "/picture",
             });
 
-            console.log("============================================")
-            console.log(user);
-
             user.save(function(err) {
                 if (err) {
                     console.log("ERROR:" + err);
@@ -47,7 +44,7 @@ exports.updateUserBasicInfos = function(user, callback) {
 
 exports.getUserFacebookFriends = function(user, callback) {
 
-    //token = "CAAIMhwO1ZCbsBAGyZBkDzux8PnuDVAQzOCDrwsa92Hp5bEZA2dtXcygYSqfQxrK0swXJfjhdtpbMOvFEXMncNliZCk95zXYbuxZAgb0vWq4f3cRMGvcuIJ8uWXb5JrzOZAKQB7mhXiTsg5gjZBZAZAVsyUk2tUDPfemZBFVXdERvgiQ9FrFmgrSjkMniRptGq9vFpU63SQPMCSn7EWk6KPVTZAgwT3YLekNcgQZD";
+    //token = "CAAIMhwO1ZCbsBACZCtZB40H4icCaobtWH24991dd7bT4z6CPvv4MRhNuMmvcux11WbQZC7CV5bC3OG4fcelk49ArJAZCONBZCNJ5OANZAB14wgAy0q7hGFBkdZBkJZCziZA6SfHBdWuMJJ8IuV5J3HVFtnSTMGzGEA1LGGz7ut00mtMva5D0qLmp0ZBUZBjyFsrD3uzG2YBgH1vNzcTx8EBf3ijkZCgfLwJMkZCnQZD";
     token = user.facebook_token;
 
     FB.api('/me/friends',

@@ -4,7 +4,9 @@ var router = express.Router();
 var tokenManager = require('../config/token_manager');
 var UserModel = require('../models/user');
 var RestaurantModel = require('../models/restaurant');
+var BookingModel = require('../models/previsions.js');
 var UserTool = require('../tools/user');
+var Tools = require('../tools/tools.js');
 
 /*
  * /users
@@ -50,27 +52,52 @@ exports.getCurrentUserFriends = function(req, res) {
  * @Return user 200
  */
 exports.addUserDestination = function(req, res) {
+    console.log("---------------------");
+    console.log(req.body);
+    if (req.body === 'undifined') {
+        return res.status(400).send("Invalid request");
+    }
+    var restaurant_id = req.body.restaurantId
+    var when = req.body.when
+    if (!restaurant_id || !when) {
+        return res.status(400).send("You must post a restaurant id");
+    }
+
     getCurrentUser(req, res, function(user) {
-        var restaurant_id = req.body.restaurantId
-        if (!restaurant_id) {
-            return res.status(400).send("You must post a restaurant id");
-        }
-        RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
-            if (err) {
-                return res.status(503).send(err);
-            }
-            else if (!restaurant) {
-                return res.status(400).send("Invalid id");
+       RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
+            if (!restaurant) {
+                return res.status(400).send("Invalid restaurant id");
             }
             else {
-                user.set({
-                    'today_destination': {
-                        'restaurant': restaurant.id,
-                        'date': Date.now(),
+                date = Tools.getDayDate()
+                BookingModel.findOne({'user': user._id, 'date': date}, function(err, booking) {
+                    if (err) {
+                        return res.status(503).send(err);
                     }
+                    if (!booking) {
+                        // create booking
+                        booking = new BookingModel({
+                            user: user._id,
+                            date: date,
+                            when: when,
+                            restaurant: restaurant.id,
+                        });
+                    }
+                    else {
+                        booking.set({
+                            when: when,
+                            restaurant: restaurant.id,
+                        });
+                    }
+                    booking.save(function(err){
+                        if (err) {
+                            return res.status(400).send(err);
+                        }
+                        else {
+                            return res.status(200).send("OK");
+                        }
+                    });
                 });
-                user.save();
-                return res.status(200).send(user);
             }
         });
     });
@@ -91,16 +118,30 @@ exports.getFriendsAtRestaurant = function(req, res) {
             if (err) {
                 return res.status(200).send(err);
             }
-            var datas = [];
+            var ret_datas = [];
+            var date = Tools.getDayDate();
+            var num = friends.length;
+
+            if (!num) {
+                return res.status(200).send([]);
+            }
+
             friends.forEach(function(friend) {
-                if (friend.today_destination !== 'undifined') {
-                    if (friend.today_destination.restaurant.id == restaurant_id) {
-                        friend['today_destination'] = ''; // To debug
-                        datas.push(friend);
+                BookingModel.findOne({'user': friend.id, 'date': date,
+                                     'restaurant': restaurant_id}, function(err, booking) {
+                    if (err) {
+                        return res.status(503).send(err);
                     }
-                }
+                    if (booking) {
+                        if (booking.restaurant == restaurant_id) {
+                            ret_datas.push(friend);
+                        }
+                    }
+                    if (--num == 0) {
+                        return res.status(200).send(ret_datas);
+                    }
+                });
             });
-            return res.status(200).send(datas)
         });
     });
 }
