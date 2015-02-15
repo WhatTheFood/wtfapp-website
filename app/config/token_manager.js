@@ -7,6 +7,9 @@ var TOKEN_EXPIRATION_SEC = TOKEN_EXPIRATION * 60;
 // Middleware for token verification
 exports.verifyToken = function (req, res, next) {
     var token = tokenManager.getToken(req.headers);
+    if (!token) {
+        return res.status(503).send("Bad Header");
+    }
 
     UserModel.findOne({token: token }, function (err, user) {
 
