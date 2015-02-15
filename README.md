@@ -86,6 +86,14 @@ Route: `/api/me/restaurant`
 { "restaurantId": 705}
 ```
 
+##### Get friends at a restaurant (GET)
+
+Route: `/api/me/friends/restaurant`
+
+```
+{ "restaurantId": 705}
+```
+
 ### Restaurant
 
 #### GET /restaurants/refresh
