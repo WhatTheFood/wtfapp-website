@@ -107,8 +107,10 @@ restaurantSchema.pre('save', function(next) {
         coordinates: [restaurant.lon, restaurant.lat]
     };
 
-    // set queue info upon first insertion
-    if (!restaurant.queue || restaurant.queue.timeSlots.length === 0) {
+    // set or reset queue info
+    if (!restaurant.queue
+        || restaurant.queue.timeSlots.length === 0
+        || Date.now() - restaurant.queue.updatedAt > 1800000) {
         restaurant.queue = {
             value: 0,
             votes: 0,
