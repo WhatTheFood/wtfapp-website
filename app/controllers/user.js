@@ -1,14 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-var tokenManager = require('../config/token_manager');
 var UserModel = require('../models/user');
 var RestaurantModel = require('../models/restaurant');
 var BookingModel = require('../models/previsions.js');
 var UserTool = require('../tools/user');
 var Tools = require('../tools/tools.js');
 
-var UserController = require('../controllers/user.js');
+var SecurityService = require('../services/security-service');
 
 /*
  * /users
@@ -31,7 +30,7 @@ exports.getUsers = function(req, res) {
 */
 exports.getCurrentUserInfos = function(req, res) {
 
-    UserController.getCurrentUser(req, res, function(user) {
+    SecurityService.getCurrentUser(req, res, function(user) {
         return res.status(200).send(UserTool.getUserBasicInfos(user));
     });
 }
@@ -41,7 +40,7 @@ exports.getCurrentUserInfos = function(req, res) {
  */
 exports.getCurrentUserFriends = function(req, res) {
 
-    UserController.getCurrentUser(req, res, function(user) {
+    SecurityService.getCurrentUser(req, res, function(user) {
         UserTool.getUserFriends(user, function(datas) {
             return res.status(200).send(datas)
         });
@@ -63,7 +62,7 @@ exports.addUserDestination = function(req, res) {
         return res.status(400).send("You must post a restaurant id");
     }
 
-    UserController.getCurrentUser(req, res, function(user) {
+    SecurityService.getCurrentUser(req, res, function(user) {
        RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
             if (!restaurant) {
                 return res.status(400).send("Invalid restaurant id");
@@ -111,7 +110,7 @@ exports.addUserDestination = function(req, res) {
  * /me/friends/restaurant
  */
 exports.getFriendsAtRestaurant = function(req, res) {
-    UserController.getCurrentUser(req, res, function(user) {
+    SecurityService.getCurrentUser(req, res, function(user) {
         var restaurant_id = req.body.restaurantId
 
         if (!restaurant_id) {
@@ -154,22 +153,6 @@ exports.getFriendsAtRestaurant = function(req, res) {
                 });
             });
         });
-    });
-}
-
-exports.getCurrentUser = function(req, res, callback) {
-    var token = tokenManager.getToken(req.headers);
-
-    UserModel.findOne({token: token }, function (err, user) {
-        if (err) {
-            return res.status(503).send(err)
-        }
-        else if (!user) {
-            return res.status(503).send({ 'message': 'Invalid token.' });
-        }
-        else {
-            callback(user);
-        }
     });
 }
 

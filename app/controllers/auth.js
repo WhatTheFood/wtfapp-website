@@ -20,11 +20,12 @@ exports.facebookLogin = function(req, res) {
     }
     UserModel.findOne({'email': email}, function(err, user) {
         if (user) {
-            user.update({ "facebook_token" : fb_token}, function(err) {
+            user.set({ "facebook_token" : fb_token}, function(err) {
                 if (err) {
                     return res.status(503).send(err);
                 }
             });
+            user.save();
             if (!user.token) {
                 user = createUserToken(user);
             }
@@ -42,7 +43,7 @@ exports.facebookLogin = function(req, res) {
             });
             user = createUserToken(user);
         }
-            user = UserTool.updateUserInfosWithFacebook(user, function(user) {
+        user = UserTool.updateUserInfosWithFacebook(user, function(user) {
             return res.status(200).send(user.token);
         });
     });

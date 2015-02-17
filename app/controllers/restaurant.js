@@ -1,7 +1,7 @@
 var express = require('express');
 var request = require('request');
 var router = express.Router();
-var UserController = require('../controllers/user.js');
+var SecurityService = require('../services/security-service');
 
 var RestaurantModel = require('../models/restaurant');
 
@@ -101,7 +101,7 @@ exports.refreshAll = function (req, res){
  */
 exports.updateRestaurantQueue = function(req, res) {
 
-    UserController.getCurrentUser(req, res, function(user) {
+    SecurityService.getCurrentUser(req, res, function(user) {
         RestaurantModel.findOne({'id': req.params.id}, function(err, restaurant) {
             if (!err) {
                 // compute new queue value
