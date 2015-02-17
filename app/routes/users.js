@@ -20,7 +20,7 @@ router.route('/')
   .post(userController.postUser);
 
 router.route('/me')
-  .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getCurrentUser);
+  .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getCurrentUserInfos);
 
 router.route('/me/friends')
   .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getCurrentUserFriends);

@@ -8,6 +8,8 @@ var BookingModel = require('../models/previsions.js');
 var UserTool = require('../tools/user');
 var Tools = require('../tools/tools.js');
 
+var UserController = require('../controllers/user.js');
+
 /*
  * /users
  * GET users listing
@@ -27,9 +29,9 @@ exports.getUsers = function(req, res) {
  * /users/me
  * Get current user infos
 */
-exports.getCurrentUser = function(req, res) {
+exports.getCurrentUserInfos = function(req, res) {
 
-    getCurrentUser(req, res, function(user) {
+    UserController.getCurrentUser(req, res, function(user) {
         return res.status(200).send(UserTool.getUserBasicInfos(user));
     });
 }
@@ -39,7 +41,7 @@ exports.getCurrentUser = function(req, res) {
  */
 exports.getCurrentUserFriends = function(req, res) {
 
-    getCurrentUser(req, res, function(user) {
+    UserController.getCurrentUser(req, res, function(user) {
         UserTool.getUserFriends(user, function(datas) {
             return res.status(200).send(datas)
         });
@@ -61,7 +63,7 @@ exports.addUserDestination = function(req, res) {
         return res.status(400).send("You must post a restaurant id");
     }
 
-    getCurrentUser(req, res, function(user) {
+    UserController.getCurrentUser(req, res, function(user) {
        RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
             if (!restaurant) {
                 return res.status(400).send("Invalid restaurant id");
@@ -72,8 +74,6 @@ exports.addUserDestination = function(req, res) {
                     if (err) {
                         return res.status(503).send(err);
                     }
-                    console.log("ADD DEST ==================");
-                    console.log(user._id);
                     if (!booking) {
                         // create booking
                         booking = new BookingModel({
@@ -111,7 +111,7 @@ exports.addUserDestination = function(req, res) {
  * /me/friends/restaurant
  */
 exports.getFriendsAtRestaurant = function(req, res) {
-    getCurrentUser(req, res, function(user) {
+    UserController.getCurrentUser(req, res, function(user) {
         var restaurant_id = req.body.restaurantId
 
         if (!restaurant_id) {
@@ -157,7 +157,7 @@ exports.getFriendsAtRestaurant = function(req, res) {
     });
 }
 
-getCurrentUser = function(req, res, callback) {
+exports.getCurrentUser = function(req, res, callback) {
     var token = tokenManager.getToken(req.headers);
 
     UserModel.findOne({token: token }, function (err, user) {
