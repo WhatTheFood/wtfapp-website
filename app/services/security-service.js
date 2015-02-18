@@ -19,7 +19,7 @@ exports.getCurrentUser = function(req, res, callback) {
     });
 }
 
-exports.isAuthenticate = function(req, res, callback) {
+exports.isAuthenticated = function(req, res, callback) {
     var token = TokenManager.getToken(req.headers);
 
     UserModel.findOne({token: token }, function (err, user) {
