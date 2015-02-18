@@ -18,15 +18,16 @@ exports.facebookLogin = function(req, res) {
     if (!fb_token || !email) {
         return res.status(400).send({"error": "Invalid request"})
     }
+    console.log(fb_token);
     UserModel.findOne({'email': email}, function(err, user) {
         if (user) {
-            user.set({ "facebook_token" : fb_token}, function(err) {
-                if (err) {
-                    return res.status(503).send(err);
-                }
+            console.log("set facebook token");
+            user.set({
+                facebook_token : fb_token
             });
             if (!user.token) {
                 user = createUserToken(user);
+                console.log("create user token");
             }
         }
         else {
@@ -37,8 +38,19 @@ exports.facebookLogin = function(req, res) {
             })
             user = createUserToken(user);
         }
-        user = UserTool.updateUserInfosWithFacebook(user, function(user) {
-            return res.status(200).send(user.token);
+        user.save(function(err) {
+            console.log("Go to update user infos")
+            console.log(user.facebook_token)
+            UserTool.updateUserInfosWithFacebook(user, function(result, data) {
+                if (result == true) {
+                    return res.status(200).send(data.token);
+                }
+                else {
+                    console.log(user.facebook_token)
+                    return res.status(400).send(data);
+                }
+            });
+
         });
     });
 }

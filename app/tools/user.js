@@ -38,7 +38,8 @@ exports.updateUserInfosWithFacebook = function(user, callback) {
         Facebook.updateUserBasicInfos(user, callback);
     }
     else {
-        return user;
+        console.log("User does not have facebook token.");
+        callback(false, "An error occured");
     }
 }
 

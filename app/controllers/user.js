@@ -142,9 +142,10 @@ exports.getFriendsAtRestaurant = function(req, res) {
                     console.log("booking:", booking);
                     if (booking) {
                         if (booking.restaurant == restaurant_id) {
-                            var dates = Tools.getDayDate();
+                            var date = Tools.getDayDate();
                             if (friend.booking && friend.booking.date != date) {
                                 friend.booking = "";
+                                console.log("remove Booking !!!");
                             }
                             ret_datas.push(friend);
                         }
