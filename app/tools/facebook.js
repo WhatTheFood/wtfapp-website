@@ -14,9 +14,11 @@ exports.updateUserBasicInfos = function(user, callback) {
         if (res && res.error) {
             if (res.error.code === 'ETIMEDOUT') {
                 console.log('request timeout');
+                callback(false, "Request timeout")
             }
             else {
                 console.log('error', res.error);
+                callback(false, res.error);
             }
             return false;
         }
@@ -32,9 +34,10 @@ exports.updateUserBasicInfos = function(user, callback) {
                 if (err) {
                     console.log("ERROR:" + err);
                     // TODO handle properly
+                    callback(true, err);
                 }
                 else {
-                    callback(user);
+                    callback(true, user);
                 }
             });
         }

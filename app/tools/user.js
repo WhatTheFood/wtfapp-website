@@ -38,7 +38,7 @@ exports.updateUserInfosWithFacebook = function(user, callback) {
         Facebook.updateUserBasicInfos(user, callback);
     }
     else {
-        return UserTool.getUserBasicInfos(user);
+        return user;
     }
 }
 

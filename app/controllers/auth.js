@@ -25,7 +25,6 @@ exports.facebookLogin = function(req, res) {
                     return res.status(503).send(err);
                 }
             });
-            user.save();
             if (!user.token) {
                 user = createUserToken(user);
             }
@@ -36,11 +35,6 @@ exports.facebookLogin = function(req, res) {
                 'password': "?$#T#I(@(IWQI()!)",
                 'facebook_token': fb_token
             })
-            user.save(function(err) {
-                if (err) {
-                    return res.status(400).send(err)
-                }
-            });
             user = createUserToken(user);
         }
         user = UserTool.updateUserInfosWithFacebook(user, function(user) {
