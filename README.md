@@ -112,7 +112,32 @@ An optional maxDistance parameter can be given to the API to reduce the radius o
 
 #### GET /restaurants/{id}
 
-Retrieve the restaurant with the given id
+Retrieve the restaurant with the given id.
+
+#### Queue feature
+
+Each restaurant has a queue object containing data relative to its current waiting queue. The properties clients might be interested in are the timeSlots, value and updatedAt properties.
+
+timeSlots : represents the different ranges against which the queue waiting time is estimated.<br/> 
+Example : ['-10', '10-20', '+20'], first slot represent a 0 to 10mn range, the second 10 to 20mn and the third 20mn and above.
+
+value : a positive floating point number ranging from 0 to 100 representing the current waiting time, in percentage.
+Example : given the above time slots :
+- a value ranging from ~0 to 33.333333... means the queue is short (0-10mn)
+- a value ranging from 33.333333... to 66.666666... means the queue is medium (10-20mn)
+- a value ranging from 66.666666... to 100 means the queue is long (+20mn)
+- NOTE : a value of 0 always means that the queue didn't had enough votes to estimate its waiting time (it does NOT mean that there is no waiting time)
+ 
+updatedAt : a date representing the last time the queue data were updated (gives the client an idea of how fresh the data are)
+
+#### How to vote ?
+
+Request : POST /restaurants/{id}/queue/votes<br/> 
+Content of the request : an integer named timeSlotIndex with the index of the chosen time slot<br/> 
+Example : given the same time slots (which are the default ones btw)
+- there is no queue at my restaurant, I'm voting '-10' => timeSlotIndex = 0
+- there is a huge ass queue at my restautant and I'll be waiting for half an hour, I'm voting '+20' => timeSlotIndex = 2
+
 
 #### PUT /users/{id}
 
