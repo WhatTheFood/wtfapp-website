@@ -143,11 +143,9 @@ exports.getFriendsAtRestaurant = function(req, res) {
                     if (booking) {
                         if (booking.restaurant == restaurant_id) {
                             var date = Tools.getDayDate();
-                            if (friend.booking && friend.booking.date != date) {
-                                friend.booking = "";
-                                console.log("remove Booking !!!");
+                            if (friend.booking && friend.booking.date == date) {
+                                ret_datas.push(friend);
                             }
-                            ret_datas.push(friend);
                         }
                     }
                     if (--num == 0) {
