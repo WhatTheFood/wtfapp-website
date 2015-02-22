@@ -3,7 +3,6 @@
  */
 
 var mongoose = require('mongoose');
-
 var Schema = mongoose.Schema;
 
 /**
@@ -87,12 +86,56 @@ var restaurantSchema = new Schema({
     }],
     menus: [menuSchema],
     queue: {
+        /**
+         * Queue Schema
+         */
         value: {type: Number},
-        votes: {type: Number},
+        votes: [{
+            /**
+             * Vote Schema
+             */
+            value: {type: Number},
+            userId: {type: String},
+            castAt: {type: Date}
+        }],
         updatedAt: {type: Date},
         timeSlots: {type: [String]}
     }
 });
+
+/**
+ * Restaurant methods
+ */
+
+restaurantSchema.methods = {
+
+    /**
+     * Cast the given user's vote (as a timeSlot index) about the current queue of this restaurant
+     *
+     * @param user - the voting user
+     * @param timeSlotIndex - the index of the chosen timeSlot (see restaurant.queue.timeSlots)
+     */
+    voteOnQueue: function(user, timeSlotIndex) {
+        // clean the voting history from :
+        // - any votes of more than 30mn of lifespan
+        // - any votes from the voting user (hopefully there should be 1 at most)
+        this.queue.votes = this.queue.votes.filter(function (vote) {
+            return vote.castAt >= Date.now() - 1800000 && vote.userId != user.email;
+        });
+        // cast user's vote
+        var vote = {
+            value: (50 / this.queue.timeSlots.length) * (2 * timeSlotIndex + 1),
+            userId: user.email,
+            castAt: Date.now()
+        };
+        this.queue.votes.push(vote);
+        // update the queue based on the current voting history
+        this.queue.value = this.queue.votes.reduce(function(previousValue, currentVote, index) {
+            return (previousValue * index + currentVote.value) / (index + 1);
+        }, 0);
+        this.queue.updatedAt = Date.now();
+    }
+};
 
 /**
  * Presave
@@ -113,7 +156,7 @@ restaurantSchema.pre('save', function(next) {
         || Date.now() - restaurant.queue.updatedAt > 1800000) {
         restaurant.queue = {
             value: 0,
-            votes: 0,
+            votes: [],
             updatedAt: Date.now(),
             timeSlots: ['-10', '10-20', '+20'] // default time slots
         }
