@@ -17,11 +17,13 @@ router.route('/refresh')
 router.route('/:id')
     .get(restaurantController.getRestaurant);
 
+/****************************** POST *******************************/
+
+router.route('/:id/queue/votes')
+    .post(restaurantController.voteOnRestaurantQueue);
 
 /****************************** PUT ********************************/
 
-router.route('/:id/queue')
-    .put(restaurantController.updateRestaurantQueue);
 router.route('/:id/menu')
     .put(restaurantController.updateRestaurantMenu);
 
