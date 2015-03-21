@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var UserModel = require('../models/user');
-var RestaurantModel = require('../models/restaurant');
+var UserModel = require('../models/user.js');
+var RestaurantModel = require('../models/restaurant.js');
 var BookingModel = require('../models/previsions.js');
 var UserTool = require('../tools/user');
 var Tools = require('../tools/tools.js');
@@ -168,8 +168,8 @@ exports.postUser = function (req, res){
     return res.status(400).send({"error": "Invalid request"});
   }
   user = new UserModel({
-    email:email,
-    password: password,
+    email: email,
+    password: pwd
   });
   user.save(function (err) {
     if (!err) {
