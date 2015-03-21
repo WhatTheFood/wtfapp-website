@@ -55,7 +55,7 @@ app.use(function(req, res, next) {
 
 // database connection
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/wtfapp');
+mongoose.connect(process.env.MONGOLAB_URI + '/wtfapp');
 
 //
 var db = mongoose.connection;
