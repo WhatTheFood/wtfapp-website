@@ -43,7 +43,7 @@ exports.facebookLogin = function(req, res) {
             console.log(user.facebook_token)
             UserTool.updateUserInfosWithFacebook(user, function(result, data) {
                 if (result == true) {
-                    return res.status(200).send(data.token);
+                    return res.status(200).send({'user_token': data.token, 'user_id': req.user.id});
                 }
                 else {
                     console.log(user.facebook_token)
