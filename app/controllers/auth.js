@@ -9,7 +9,7 @@ var UserTool = require('../tools/user.js');
 var UserModel = require('../models/user');
 
 exports.login = function(req, res) {
-    return res.send({'http_token': req.user.token, 'user_id': req.user.id})
+    return res.send({'user_token': req.user.token, 'user_id': req.user.id})
 }
 
 exports.facebookLogin = function(req, res) {
