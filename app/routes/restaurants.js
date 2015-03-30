@@ -15,7 +15,9 @@ router.route('/refresh')
 
 /* restaurant */
 router.route('/:id')
-    .get(restaurantController.getRestaurant);
+    .get(restaurantController.getRestaurantWOFeedback);
+router.route('/:id/feedback')
+    .get(restaurantController.getRestaurantWFeedback);
 
 /****************************** POST *******************************/
 

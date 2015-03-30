@@ -5,27 +5,19 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-/**
- * Menu Schema
+
+/*
+ * Dish feedback Schema
  */
+var dishFeedbackSchema = new Schema({
+    thrown: { type: Number },
+    user_id: { type: String },
+});
 
-var menuSchema = new Schema({
-    date: {type: Date},
-    meal: [{
-        name: {type: String},
-        foodcategory: [{
-            name: {type: String},
-            dishes: [{
-                name: {type: String},
-                feedback: [{
-                    thrown: { type: Number },
-                    user_id: { type: String },
-                }]
-            }]
-        }]
-    }],
-
-    feedback: [{
+/*
+ * Menu feedback Schema
+ */
+var menuFeedbackSchema = new Schema({
       ate_alone: { type: Boolean },
       convivial_restaurant: { type: Boolean },
       enough_time_to_eat: { type: Boolean },
@@ -36,7 +28,31 @@ var menuSchema = new Schema({
       usually_enjoyis_meal: { type: Number },
       bread_thrown: { type: Number },
       user_id: { type: Number }
+});
+
+/**
+ * Meal Schema
+ */
+
+var mealSchema = new Schema({
+    name: {type: String},
+    foodcategory: [{
+        name: {type: String},
+        dishes: [{
+            name: {type: String},
+            feedback: { type: [dishFeedbackSchema], select:false}
+        }]
     }]
+});
+
+/**
+ * Menu Schema
+ */
+
+var menuSchema = new Schema({
+    date: {type: Date},
+    meal: { type: [mealSchema] },
+    feedback: { type:[menuFeedbackSchema], select:false}
 });
 
 /**

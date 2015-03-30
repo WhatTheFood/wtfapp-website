@@ -2,7 +2,6 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var SecurityService = require('../services/security-service');
-
 var RestaurantModel = require('../models/restaurant');
 
 /****************************** GET ********************************/
@@ -14,16 +13,28 @@ var RestaurantModel = require('../models/restaurant');
  * @param res
  * @returns {*}
  */
-exports.getRestaurant = function (req, res) {
-    return RestaurantModel.findOne({"id": req.params.id}, function (err, restaurant) {
-        console.log(req.query);
-        if (!err) {
-            return res.send(restaurant);
-        } else {
-            console.log(err);
-            return res.status(400).send(err);
-        }
-    });
+exports.getRestaurantWFeedback = function (req, res) {
+    return exports.getRestaurant(req, res, true);
+}
+exports.getRestaurantWOFeedback = function (req, res) {
+    return exports.getRestaurant(req, res, false);
+}
+exports.getRestaurant = function (req, res, feedback) {
+
+    process_restaurant = function (err, restaurant) {
+            console.log(req.query);
+            if (!err) {
+                return res.send(restaurant);
+            } else {
+                console.log(err);
+                return res.status(400).send(err);
+            }
+        };
+
+    if (feedback)
+        return RestaurantModel.findOne({"id": req.params.id}).select("id").select("title").select("lat").select("lon").select("geolocation").select("distance").select("area").select("opening").select("closing").select("accessibility").select("wifi").select("shortdesc").select("description").select("access").select("operationalhours").select("contact").select("photo").select("payment").select("queue").select("menus").exec(process_restaurant);
+    else
+        return RestaurantModel.findOne({"id": req.params.id}, process_restaurant);
 };
 
 /**
@@ -33,13 +44,16 @@ exports.getRestaurant = function (req, res) {
  * @param res
  * @returns {*}
  */
+
 exports.getRestaurants = function (req, res) {
+
     if (req.query.lat && req.query.lng) { // geospatial querying
         var geoJsonTarget = {
             type: 'Point',
             coordinates: [Number(req.query.lng), Number(req.query.lat)]
         };
         var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
+
         RestaurantModel.geoNear(geoJsonTarget, {spherical : true, maxDistance : maxDistance}, function (err, geoResults, stats) {
             var restaurants = [];
             for (var i = 0, length = geoResults.length; i < length; i++) {
