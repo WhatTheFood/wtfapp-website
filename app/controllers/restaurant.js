@@ -85,7 +85,7 @@ exports.getRestaurants = function (req, res) {
 exports.refreshAll = function (req, res){
 
   /* get json file and parse it */
-  request('http://thepbm.ovh.org/static/json/crous-poitiers.json', function (error, response, body) {
+  request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n','g'), ' '));
 
