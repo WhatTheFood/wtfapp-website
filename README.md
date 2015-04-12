@@ -2,6 +2,11 @@
 
 ## Development environment
 
+### Requirements
+
+* NodeJS + NPM
+* Python 2.7 (Python 3 is **not** supported by one of the project dependencies)
+
 ### Installing dependencies
 
 To install all the dependencies, execute command :
