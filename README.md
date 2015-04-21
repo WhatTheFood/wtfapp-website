@@ -49,6 +49,8 @@ If you want Node.JS to watch for any changes and reload the server when a change
 $ DEBUG=wtf:* nodemon
 ```
 
+> **Note**: If you're running the server for the first time, you might want to seed the datebase with restaurants. To do so, after you've launch the server, go to `http://localhost:5000/api/restaurants/refresh`.
+
 ## REST API
 
 ### User
