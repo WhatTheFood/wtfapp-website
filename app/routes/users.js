@@ -3,17 +3,17 @@ var router = express.Router();
 var authController = require('../controllers/auth');
 var userController = require('../controllers/user');
 
-var secret = require('../config/secret')
+var secret = require('../config/secret');
 var tokenManager = require('../config/token_manager');
 
-var jwt = require('express-jwt')
+var jwt = require('express-jwt');
 
 /* users */
 router.route('/login')
-  .get(authController.isAuthenticated, authController.login)
+  .get(authController.isAuthenticated, authController.login);
 
 router.route('/login/facebook')
-  .put(authController.facebookLogin)
+  .put(authController.facebookLogin);
 
 router.route('/')
   .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getUsers)

@@ -1,7 +1,7 @@
 // Load required packages
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
-var secret = require('../config/secret')
+var secret = require('../config/secret');
 var BasicStrategy = require('passport-http').BasicStrategy;
 var TokenStrategy =  require('passport-token').Strategy;
 var UserTool = require('../tools/user.js');
@@ -9,14 +9,14 @@ var UserTool = require('../tools/user.js');
 var UserModel = require('../models/user');
 
 exports.login = function(req, res) {
-    return res.send({'user_token': req.user.token, 'user_id': req.user.id})
-}
+    return res.send({'user_token': req.user.token, 'user_id': req.user.id});
+};
 
 exports.facebookLogin = function(req, res) {
     fb_token = req.body.token;
-    email = req.body.email
+    email = req.body.email;
     if (!fb_token || !email) {
-        return res.status(400).send({"error": "Invalid request"})
+        return res.status(400).send({"error": "Invalid request"});
     }
     console.log(fb_token);
     UserModel.findOne({'email': email}, function(err, user) {
@@ -29,31 +29,30 @@ exports.facebookLogin = function(req, res) {
                 user = createUserToken(user);
                 console.log("create user token");
             }
-        }
-        else {
+        } else {
             user = new UserModel({
                 'email': email,
                 'password': "?$#T#I(@(IWQI()!)",
                 'facebook_token': fb_token
-            })
+            });
             user = createUserToken(user);
         }
+
         user.save(function(err) {
-            console.log("Go to update user infos")
-            console.log(user.facebook_token)
+            console.log("Go to update user infos");
+            console.log(user.facebook_token);
             UserTool.updateUserInfosWithFacebook(user, function(result, data) {
-                if (result == true) {
+                if (result === true) {
                     return res.status(200).send({'user_token': data.token, 'user_id': data.id});
-                }
-                else {
-                    console.log(user.facebook_token)
+                } else {
+                    console.log(user.facebook_token);
                     return res.status(400).send(data);
                 }
             });
 
         });
     });
-}
+};
 
 passport.use(new BasicStrategy(
   function(email, password, callback) {
@@ -81,23 +80,21 @@ passport.use(new BasicStrategy(
                   // the user *why* the login failed, only that it did
                   console.log("Mauvais identifiant.");
                   return callback(null, false);
-                  break;
               case reasons.MAX_ATTEMPTS:
                   // send email or otherwise notify user that account is
                   // temporarily locked
                   console.log("Trop de tentatives !");
                   return callback(null, false);
-                  break;
           }
       });
   }
 ));
 
-createUserToken = function(user) {
+createUserToken = function (user) {
     var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
-    user.set({ 'token' : token})
+    user.set({ 'token' : token});
     user.save();
-    return user
-}
+    return user;
+};
 
 exports.isAuthenticated = passport.authenticate('basic', { session : false });
