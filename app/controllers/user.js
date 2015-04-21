@@ -173,8 +173,7 @@ exports.postUser = function (req, res){
     password: pwd
   });
 
-  var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
-  user.set({'token': token});
+  user = createUserToken(user);
 
   user.save(function (err) {
     if (!err) {
@@ -241,4 +240,9 @@ exports.deleteUser = function (req, res){
       }
     });
   });
+};
+
+var createUserToken = function (user) {
+  var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
+  user.set({'token': token});
 };
