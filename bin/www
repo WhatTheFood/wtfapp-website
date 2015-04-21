@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('wtf:server');
 var http = require('http');
-http.globalAgent.maxSockets = Infinity
+http.globalAgent.maxSockets = Infinity;
 
 /**
  * Get port from environment and store in Express.
@@ -61,7 +61,7 @@ function onError(error) {
 
   var bind = typeof port === 'string'
     ? 'Pipe ' + port
-    : 'Port ' + port
+    : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
