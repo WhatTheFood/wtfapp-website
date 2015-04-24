@@ -25,5 +25,8 @@
     "request": "^2.53.0",
     "serve-favicon": "~2.2.0",
     "validator": "^3.30.0"
+  },
+  "devDependencies": {
+    "cli-table": "^0.3.1"
   }
 }

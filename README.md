@@ -35,6 +35,12 @@ export HOST='localhost'
 export PORT='5000'
 ```
 
+If you want to have specific logging when developping, you might consider setting the `NODE_ENV` environment variable.
+
+```
+export NODE_ENV='development'
+```
+
 ### Launching the server
 
 Standard server launching is :
