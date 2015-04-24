@@ -245,4 +245,5 @@ exports.deleteUser = function (req, res){
 var createUserToken = function (user) {
   var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
   user.set({'token': token});
+  return user;
 };
