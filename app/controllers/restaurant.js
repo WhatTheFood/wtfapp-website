@@ -71,7 +71,7 @@ exports.getRestaurants = function (req, res) {
     });
 
   } else { // regular query
-    return RestaurantModel.find({menus: {$ne: []}}, function (err, restaurants) {
+    return RestaurantModel.find({menus: {$exists: true, $ne: []}}, function (err, restaurants) {
       if (!err) {
         return res.send(restaurants);
       } else {
