@@ -54,7 +54,7 @@ exports.getRestaurants = function (req, res) {
     };
     var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
 
-    RestaurantModel.geoNear(geoJsonTarget, {spherical: true, maxDistance: maxDistance, query: {menus: {$ne: []}}}, function (err, geoResults, stats) {
+    RestaurantModel.geoNear(geoJsonTarget, {spherical: true, maxDistance: maxDistance, query: {menus: {$exists: true, $ne: []}}}, function (err, geoResults, stats) {
       var restaurants = [];
       for (var i = 0, length = geoResults.length; i < length; i++) {
         var geoResult = geoResults[i];
@@ -143,6 +143,7 @@ exports.voteOnRestaurantQueue = function (req, res) {
  */
 exports.updateRestaurantMenu = function(req, res) {
   RestaurantModel.findOne({'id': req.params.id}, function(err, restaurant) {
+
     if (!err) {
       // update restaurant queue
       restaurant.menus = req.body.menus;
