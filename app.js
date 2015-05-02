@@ -47,10 +47,12 @@ app.use('/api/restaurants', restaurants);
 app.use(function(err, req, res, next) {
   if (err && err.name === 'UnauthorizedError') {
     res.send(401, 'invalid token...');
+
+  } else {
+    err = new Error('Not Found');
+    err.status = 404;
+    next(err);
   }
-  err = new Error('Not Found');
-  err.status = 404;
-  next(err);
 });
 
 // database connection
