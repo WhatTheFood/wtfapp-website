@@ -28,8 +28,8 @@ exports.facebookLogin = function(req, res) {
       });
 
       if (!user.token) {
-        user = createUserToken(user);
         console.log("create user token");
+        user = createUserToken(user);
       }
     } else {
       user = new UserModel({
@@ -64,6 +64,7 @@ passport.use(new BasicStrategy(
       if (user) {
         // handle login success
         console.log('login success');
+        user.token = null;
         user = createUserToken(user);
         user.update({ token: user.token}, function(err) {
           if (err) {
@@ -81,12 +82,13 @@ passport.use(new BasicStrategy(
           // note: these cases are usually treated the same - don't tell
           // the user *why* the login failed, only that it did
           console.log("Mauvais identifiant.");
-        return callback(null, false);
+          return callback(null, false);
+
         case reasons.MAX_ATTEMPTS:
           // send email or otherwise notify user that account is
           // temporarily locked
           console.log("Trop de tentatives !");
-        return callback(null, false);
+          return callback(null, false);
       }
     });
   }
@@ -94,7 +96,7 @@ passport.use(new BasicStrategy(
 
 createUserToken = function (user) {
   var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
-  user.set({'token' : token});
+  user.set({'token': token});
   user.save();
   return user;
 };
