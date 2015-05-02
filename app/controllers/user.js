@@ -203,22 +203,38 @@ exports.getUser = function (req, res){
 exports.putUser = function (req, res){
   return UserModel.findById(req.params.id, function (err, user) {
 
-    if(req.body.email)
+    if (req.body.email)
       user.email = req.body.email;
 
-    if(req.body.password) {
+    if (req.body.password) {
       if (req.body.password.length > 30) {
-        return res.status(400).send({ 'password': 'must be at least 5 characters and at most 30.'});
+        return res.status(400).send({'password': 'must be at least 5 characters and at most 30.'});
+
       } else {
         user.password = req.body.password;
       }
     }
 
+    if (req.body.preference) {
+      if (user.preferences && user.preferences.length > 0) {
+        user.preferences.forEach(function (preference) {
+          if (preference.name === req.body.preference.name) {
+            preference.checked = req.body.preference.checked;
+
+          } else {
+            user.preferences.push(req.body.preference);
+          }
+        });
+
+      } else {
+        user.preferences = [req.body.preference];
+      }
+    }
 
     return user.save(function (err) {
       if (!err) {
-        console.log("updated");
         return res.send(user);
+
       } else {
         console.log(err);
         return res.status(400).send(err);

@@ -64,8 +64,9 @@ var UserSchema = new Schema({
     default: ""
   },
   booking: {
-
-  }
+  },
+  preferences: [
+  ]
 });
 
 UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
