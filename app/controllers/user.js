@@ -217,14 +217,22 @@ exports.putUser = function (req, res){
 
     if (req.body.preference) {
       if (user.preferences && user.preferences.length > 0) {
-        user.preferences.forEach(function (preference) {
-          if (preference.name === req.body.preference.name) {
-            preference.checked = req.body.preference.checked;
+        var preferences = user.preferences;
 
-          } else {
-            user.preferences.push(req.body.preference);
+        var found = false;
+        preferences.forEach(function (preference, index, preferences) {
+          if (preference.name === req.body.preference.name) {
+            preferences[index] = req.body.preference;
+            found = true;
           }
         });
+
+        if (!found) {
+          preferences.push(req.body.preference);
+        }
+
+        user.preferences = []; // Trick to force mongo to update array fields
+        user.preferences = preferences;
 
       } else {
         user.preferences = [req.body.preference];
