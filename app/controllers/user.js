@@ -215,7 +215,7 @@ exports.putUser = function (req, res){
     }
 
     if (req.body.points) {
-      user = updateUserPoints(user, req.body.points);
+      user = updateUserPoints(user);
     }
 
     return user.save(function (err) {
@@ -277,12 +277,12 @@ var updateUserPreferences = function (user, preferences) {
   return user;
 };
 
-var updateUserPoints = function (user, points) {
+var updateUserPoints = function (user) {
   if (user.points) {
-    user.points += points;
+    user.points += user.POINTS_PER_ACTION;
 
   } else {
-    user.points = points;
+    user.points = user.POINTS_PER_ACTION;
   }
 
   return user;

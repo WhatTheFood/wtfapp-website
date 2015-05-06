@@ -66,8 +66,11 @@ var UserSchema = new Schema({
   booking: {
   },
   preferences: [
-  ]
+  ],
+  points: 0
 });
+
+UserSchema.POINTS_PER_ACTION = 5;
 
 UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
 
