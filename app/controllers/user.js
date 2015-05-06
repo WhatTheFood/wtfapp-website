@@ -216,7 +216,7 @@ exports.putUser = function (req, res){
 
     if (req.body.actions) {
       switch (req.body.actions) {
-        case 'update_points':
+        case 'increase_points':
           user = updateUserPoints(user);
         break;
       }
