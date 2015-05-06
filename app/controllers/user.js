@@ -214,8 +214,12 @@ exports.putUser = function (req, res){
       user = updateUserPreferences(user, req.body.preferences);
     }
 
-    if (req.body.points) {
-      user = updateUserPoints(user);
+    if (req.body.actions) {
+      switch (req.body.actions) {
+        case 'update_points':
+          user = updateUserPoints(user);
+        break;
+      }
     }
 
     return user.save(function (err) {
