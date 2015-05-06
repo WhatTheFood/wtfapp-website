@@ -214,9 +214,8 @@ exports.putUser = function (req, res){
       user = updateUserPreferences(user, req.body.preferences);
     }
 
-      } else {
-        user.preferences = [req.body.preference];
-      }
+    if (req.body.points) {
+      user = updateUserPoints(user, req.body.points);
     }
 
     return user.save(function (err) {
@@ -273,6 +272,17 @@ var updateUserPreferences = function (user, preferences) {
 
   } else {
     user.preferences = [req.body.preference];
+  }
+
+  return user;
+};
+
+var updateUserPoints = function (user, points) {
+  if (user.points) {
+    user.points += 5;
+
+  } else {
+    user.points = 5;
   }
 
   return user;
