@@ -214,8 +214,8 @@ exports.putUser = function (req, res){
       user = updateUserPreferences(user, req.body.preferences);
     }
 
-    if (req.body.actions) {
-      switch (req.body.actions) {
+    if (req.body.action) {
+      switch (req.body.action) {
         case 'increase_points':
           user = updateUserPoints(user);
         break;
@@ -283,10 +283,10 @@ var updateUserPreferences = function (user, preferences) {
 
 var updateUserPoints = function (user) {
   if (user.points) {
-    user.points += user.POINTS_PER_ACTION;
+    user.points += UserModel.POINTS_PER_ACTION;
 
   } else {
-    user.points = user.POINTS_PER_ACTION;
+    user.points = UserModel.POINTS_PER_ACTION;
   }
 
   return user;

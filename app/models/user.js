@@ -70,7 +70,7 @@ var UserSchema = new Schema({
   points: 0
 });
 
-UserSchema.POINTS_PER_ACTION = 5;
+UserSchema.statics.POINTS_PER_ACTION = 5;
 
 UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
 
