@@ -207,32 +207,12 @@ exports.putUser = function (req, res){
       user.email = req.body.email;
 
     if (req.body.password) {
-      if (req.body.password.length > 30) {
-        return res.status(400).send({'password': 'must be at least 5 characters and at most 30.'});
-
-      } else {
-        user.password = req.body.password;
-      }
+      user = updateUserPassword(user, req.body.password);
     }
 
     if (req.body.preference) {
-      if (user.preferences && user.preferences.length > 0) {
-        var preferences = user.preferences;
-
-        var found = false;
-        preferences.forEach(function (preference, index, preferences) {
-          if (preference.name === req.body.preference.name) {
-            preferences[index] = req.body.preference;
-            found = true;
-          }
-        });
-
-        if (!found) {
-          preferences.push(req.body.preference);
-        }
-
-        user.preferences = []; // Trick to force mongo to update array fields
-        user.preferences = preferences;
+      user = updateUserPreferences(user, req.body.preferences);
+    }
 
       } else {
         user.preferences = [req.body.preference];
@@ -270,4 +250,39 @@ var createUserToken = function (user) {
   var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
   user.set({'token': token});
   return user;
+};
+
+var updateUserPreferences = function (user, preferences) {
+  if (user.preferences && user.preferences.length > 0) {
+    var preferences = user.preferences;
+
+    var found = false;
+    preferences.forEach(function (preference, index, preferences) {
+      if (preference.name === req.body.preference.name) {
+        preferences[index] = req.body.preference;
+        found = true;
+      }
+    });
+
+    if (!found) {
+      preferences.push(req.body.preference);
+    }
+
+    user.preferences = []; // Trick to force mongo to update array fields
+    user.preferences = preferences;
+
+  } else {
+    user.preferences = [req.body.preference];
+  }
+
+  return user;
+};
+
+var updateUserPassword = function (user, password) {
+  if (req.body.password.length > 30) {
+    return res.status(400).send({'password': 'must be at least 5 characters and at most 30.'});
+
+  } else {
+    user.password = req.body.password;
+  }
 };
