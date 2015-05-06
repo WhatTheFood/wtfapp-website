@@ -279,10 +279,10 @@ var updateUserPreferences = function (user, preferences) {
 
 var updateUserPoints = function (user, points) {
   if (user.points) {
-    user.points += 5;
+    user.points += points;
 
   } else {
-    user.points = 5;
+    user.points = points;
   }
 
   return user;
