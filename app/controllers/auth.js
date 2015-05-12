@@ -63,7 +63,6 @@ passport.use(new BasicStrategy(
       // login was successful if we have a user
       if (user) {
         // handle login success
-        console.log('login success');
         user.token = null;
         user = createUserToken(user);
         user.update({ token: user.token}, function(err) {

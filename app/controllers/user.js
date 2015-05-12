@@ -211,7 +211,7 @@ exports.putUser = function (req, res){
     }
 
     if (req.body.preference) {
-      user = updateUserPreferences(user, req.body.preferences);
+      user = updateUserPreferences(user, req.body.preference);
     }
 
     if (req.body.action) {
@@ -255,20 +255,20 @@ var createUserToken = function (user) {
   return user;
 };
 
-var updateUserPreferences = function (user, preferences) {
+var updateUserPreferences = function (user, preferenceInput) {
   if (user.preferences && user.preferences.length > 0) {
     var preferences = user.preferences;
 
     var found = false;
     preferences.forEach(function (preference, index, preferences) {
-      if (preference.name === req.body.preference.name) {
-        preferences[index] = req.body.preference;
+      if (preference.name === preferenceInput.name) {
+        preferences[index] = preferenceInput;
         found = true;
       }
     });
 
     if (!found) {
-      preferences.push(req.body.preference);
+      preferences.push(preferenceInput);
     }
 
     user.preferences = []; // Trick to force mongo to update array fields
