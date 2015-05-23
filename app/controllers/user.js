@@ -199,6 +199,17 @@ exports.getUser = function (req, res){
   });
 };
 
+exports.getToques = function (req, res) {
+  return UserModel.find().sort({points: -1}, function (err, users) {
+    if (!err) {
+      return res.send(users);
+    } else {
+      console.log(err);
+      return res.status(400).send(err);
+    }
+  });
+};
+
 /* PUT user. with id */
 exports.putUser = function (req, res){
   return UserModel.findById(req.params.id, function (err, user) {

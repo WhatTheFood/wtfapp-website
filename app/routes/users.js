@@ -19,6 +19,9 @@ router.route('/')
   .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getUsers)
   .post(userController.postUser);
 
+router.route('/toques')
+  .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getToques);
+
 router.route('/me')
   .get(jwt({secret: secret.secretToken}), tokenManager.verifyToken, userController.getCurrentUserInfos);
 
