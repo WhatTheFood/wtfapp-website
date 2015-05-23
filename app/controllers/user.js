@@ -125,21 +125,17 @@ exports.getFriendsAtRestaurant = function(req, res) {
       var ret_datas = [];
       var date = Tools.getDayDate();
       var num = res_friends.length;
-      console.log(num);
 
       if (!num) {
-        console.log("Sans amis :(");
         return res.status(200).send([]);
       }
 
       res_friends.forEach(function(friend) {
-        console.log(friend.id, " // ", friend.first_name);
         BookingModel.findOne({ user: friend.id, //date: date,  restaurant: restaurant_id
         }, function(err, booking) {
           if (err) {
             return res.status(503).send(err);
           }
-          console.log("booking:", booking);
           if (booking) {
             if (booking.restaurant == restaurant_id) {
               var date = Tools.getDayDate();
@@ -149,8 +145,6 @@ exports.getFriendsAtRestaurant = function(req, res) {
             }
           }
           if (--num === 0) {
-            console.log("RET");
-            console.log(ret_datas);
             return res.status(200).send(ret_datas);
           }
         });
@@ -177,7 +171,6 @@ exports.postUser = function (req, res){
 
   user.save(function (err) {
     if (!err) {
-      console.log("created");
       return res.send(user);
     } else {
       console.log(err);
@@ -200,14 +193,15 @@ exports.getUser = function (req, res){
 };
 
 exports.getToques = function (req, res) {
-  return UserModel.find().sort({points: -1}, function (err, users) {
+  return UserModel.find({}, function (err, users) {
     if (!err) {
       return res.send(users);
+
     } else {
       console.log(err);
       return res.status(400).send(err);
     }
-  });
+  }).sort({points: -1});
 };
 
 /* PUT user. with id */
@@ -250,7 +244,6 @@ exports.deleteUser = function (req, res){
   return UserModel.findById(req.params.id, function (err, user) {
     return user.remove(function (err) {
       if (!err) {
-        console.log("removed");
         return res.send('');
       } else {
         console.log(err);
