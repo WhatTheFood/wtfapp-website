@@ -156,13 +156,18 @@ exports.getFriendsAtRestaurant = function(req, res) {
 /* POST user listing. */
 exports.postUser = function (req, res){
   var user;
-  email = req.body.email;
-  pwd = req.body.password;
+  var firstname = req.body.firstname;
+  var lastname = req.body.lastname;
+  var email = req.body.email;
+  var pwd = req.body.password;
+
   if (!email || !pwd) {
     return res.status(400).send({"error": "Invalid request"});
   }
 
   user = new UserModel({
+    first_name: firstname,
+    last_name: lastname,
     email: email,
     password: pwd
   });
