@@ -294,15 +294,11 @@ var updateUserPreferences = function (user, preferenceInput) {
 var updateActionCount = function (user, reason) {
   switch (reason) {
     case 'lunch-quizz':
-      console.log('ok');
-      console.log(user);
       user.lunchFeedbacksCount = user.lunchFeedbacksCount || 0;
       user.lunchFeedbacksCount += 1;
-      console.log(user);
     break;
 
     case 'queue-status':
-      console.log('ko');
       user.queueFeedbacksCount = user.queueFeedbacksCount || 0;
       user.queueFeedbacksCount += 1;
     break;

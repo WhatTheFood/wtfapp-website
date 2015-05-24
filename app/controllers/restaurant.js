@@ -3,6 +3,7 @@ var request = require('request');
 var router = express.Router();
 var SecurityService = require('../services/security-service');
 var RestaurantModel = require('../models/restaurant');
+var UserModel = require('../models/user.js');
 
 /****************************** GET ********************************/
 
@@ -119,6 +120,8 @@ exports.voteOnRestaurantQueue = function (req, res) {
     RestaurantModel.findOne({'id': req.params.id}, function(err, restaurant) {
       if (!err) {
         restaurant.voteOnQueue(user, Number(req.body.timeSlotIndex));
+        updateUserActionCount(user);
+
         restaurant.save(function(err) {
           if (!err) {
             return res.send(restaurant);
@@ -160,4 +163,12 @@ exports.updateRestaurantMenu = function(req, res) {
       return res.status(400).send(err);
     }
   });
+};
+
+var updateUserActionCount = function (user) {
+  user.queueFeedbacksCount = user.queueFeedbacksCount || 0;
+  user.queueFeedbacksCount += 1;
+  user.points = user.points || 0;
+  user.points += UserModel.POINTS_PER_ACTION;
+  user.save();
 };
