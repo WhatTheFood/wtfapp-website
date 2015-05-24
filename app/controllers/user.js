@@ -228,6 +228,7 @@ exports.putUser = function (req, res){
       switch (req.body.action) {
         case 'increase_points':
           user = updateUserPoints(user);
+          user = updateActionCount(user, req.body.reason);
         break;
       }
     }
@@ -285,6 +286,26 @@ var updateUserPreferences = function (user, preferenceInput) {
 
   } else {
     user.preferences = [req.body.preference];
+  }
+
+  return user;
+};
+
+var updateActionCount = function (user, reason) {
+  switch (reason) {
+    case 'lunch-quizz':
+      console.log('ok');
+      console.log(user);
+      user.lunchFeedbacksCount = user.lunchFeedbacksCount || 0;
+      user.lunchFeedbacksCount += 1;
+      console.log(user);
+    break;
+
+    case 'queue-status':
+      console.log('ko');
+      user.queueFeedbacksCount = user.queueFeedbacksCount || 0;
+      user.queueFeedbacksCount += 1;
+    break;
   }
 
   return user;

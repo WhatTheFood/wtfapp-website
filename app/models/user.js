@@ -67,6 +67,8 @@ var UserSchema = new Schema({
   },
   preferences: [
   ],
+  queueFeedbacksCount: 0,
+  lunchFeedbacksCount: 0,
   points: 0
 });
 
