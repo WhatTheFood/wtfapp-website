@@ -96,11 +96,7 @@ var restaurantSchema = new Schema({
   payment: [{
     name: {type: String}
   }],
-  menu: {
-    date: {type: Date},
-    meal: { type: [mealSchema] },
-    feedback: { type:[menuFeedbackSchema], select:false}
-  },
+  menus: { type: [menuSchema] },
   queue: {
     /**
      * Queue Schema
@@ -150,9 +146,6 @@ restaurantSchema.methods = {
       return (previousValue * index + currentVote.value) / (index + 1);
     }, 0);
     this.queue.updatedAt = Date.now();
-    if(menu.length>0) {
-      this.menu = menus[0];
-    }
   }
 };
 
@@ -177,6 +170,9 @@ restaurantSchema.pre('save', function(next) {
       updatedAt: Date.now(),
       timeSlots: ['-10', '10-20', '+20'] // default time slots
     };
+    if(restaurant.menus.length>0) {
+      restaurant.menu = restaurant.menus[0]
+    }
   }
 
   next();
