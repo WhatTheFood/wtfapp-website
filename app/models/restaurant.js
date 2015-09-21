@@ -96,6 +96,11 @@ var restaurantSchema = new Schema({
   payment: [{
     name: {type: String}
   }],
+  menu: {
+  date: {type: Date},
+  meal: { type: [mealSchema] },
+  feedback: { type:[menuFeedbackSchema], select:false}
+  },
   menus: { type: [menuSchema] },
   queue: {
     /**
@@ -172,6 +177,8 @@ restaurantSchema.pre('save', function(next) {
     };
     if(restaurant.menus.length>0) {
       restaurant.menu = restaurant.menus[0]
+    } else {
+      restaurant.menu = {}
     }
   }
 
