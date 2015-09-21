@@ -150,6 +150,9 @@ restaurantSchema.methods = {
       return (previousValue * index + currentVote.value) / (index + 1);
     }, 0);
     this.queue.updatedAt = Date.now();
+    if(menu.length>0) {
+      this.menu = menus[0];
+    }
   }
 };
 
