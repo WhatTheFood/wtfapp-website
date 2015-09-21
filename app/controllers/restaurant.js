@@ -33,7 +33,7 @@ exports.getRestaurant = function (req, res, feedback) {
   };
 
   if (feedback)
-    return RestaurantModel.findOne({"id": req.params.id}).select("id").select("title").select("lat").select("lon").select("geolocation").select("distance").select("area").select("opening").select("closing").select("accessibility").select("wifi").select("shortdesc").select("description").select("access").select("operationalhours").select("contact").select("photo").select("payment").select("queue").select("menu").exec(process_restaurant);
+    return RestaurantModel.findOne({"id": req.params.id}).select("id").select("title").select("lat").select("lon").select("geolocation").select("distance").select("area").select("opening").select("closing").select("accessibility").select("wifi").select("shortdesc").select("description").select("access").select("operationalhours").select("contact").select("photo").select("payment").select("queue").select("menus").exec(process_restaurant);
   else
     return RestaurantModel.findOne({"id": req.params.id}, process_restaurant);
 };
@@ -55,7 +55,7 @@ exports.getRestaurants = function (req, res) {
     };
     var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
 
-    RestaurantModel.geoNear(geoJsonTarget, {spherical: true, maxDistance: maxDistance, query: {menu: {$exists: true, $ne: []}}}, function (err, geoResults, stats) {
+    RestaurantModel.geoNear(geoJsonTarget, {spherical: true, maxDistance: maxDistance, query: {menus: {$exists: true, $ne: []}}}, function (err, geoResults, stats) {
       var restaurants = [];
       for (var i = 0, length = geoResults.length; i < length; i++) {
         var geoResult = geoResults[i];
@@ -72,7 +72,7 @@ exports.getRestaurants = function (req, res) {
     });
 
   } else { // regular query
-    return RestaurantModel.find({menu: {$exists: true, $ne: []}}, function (err, restaurants) {
+    return RestaurantModel.find({menus: {$exists: true, $ne: []}}, function (err, restaurants) {
       if (!err) {
         return res.send(restaurants);
       } else {
@@ -151,7 +151,7 @@ exports.updateRestaurantMenu = function(req, res) {
 
     if (!err) {
       // update restaurant queue
-      restaurant.menu = req.body.menu;
+      restaurant.menus = req.body.menus;
       restaurant.save(function(err) {
         if (!err) {
           return res.send(restaurant);
