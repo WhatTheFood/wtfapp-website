@@ -87,7 +87,9 @@ exports.getRestaurants = function (req, res) {
 exports.refreshAll = function (req, res){
 
   /* get json file and parse it */
-  request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
+  // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
+  // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
+  request('https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js', function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n','g'), ' '));
 
