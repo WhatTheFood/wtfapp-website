@@ -90,7 +90,7 @@ exports.refreshAll = function (req, res){
   // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
   // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
   // old fake : http://thepbm.ovh.org/static/json/crous-poitiers.min.json
-  request('https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous2.min.js', function (error, response, body) {
+  request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n','g'), ' '));
 
