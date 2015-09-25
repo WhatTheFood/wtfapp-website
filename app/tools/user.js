@@ -7,7 +7,7 @@ var BookingModel = require('../models/previsions.js');
 /*
  * Return the user public infos + facebook informations
  */
-exports.getUserBasicInfos = function(user, callback) {
+exports.getUserBasicInfos = function(user) {
   var infos = {
     'email': user.email,
     'first_name': user.first_name,
@@ -17,18 +17,17 @@ exports.getUserBasicInfos = function(user, callback) {
     'booking': user.booking,
     'id': user._id
   };
-  callback(infos);
+  return infos;
 };
 
-exports.getUserBasicInfosById = function(userId) {
-
+exports.getUserBasicInfosById = function(userId, callback) {
   UserModel.findById(userId, function(err, user) {
 
     if (user) {
-      return UserTool.getUserBasicInfos(user);
+      callback(UserTool.getUserBasicInfos(user));
     }
     else {
-      return false;
+      callback(null);
     }
   });
 };
