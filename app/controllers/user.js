@@ -32,7 +32,7 @@ exports.getUsers = function(req, res) {
  */
 exports.getCurrentUserInfos = function(req, res) {
   SecurityService.getCurrentUser(req, res, function(user) {
-    return res.status(200).send(UserTool.getUserBasicInfos(user));
+    return res.status(200).send(user);
   });
 };
 
