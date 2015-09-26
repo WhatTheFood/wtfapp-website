@@ -45,7 +45,6 @@ exports.getToken = function(headers) {
         var part = authorization.split(' ');
 
         if (part.length == 2) {
-            var token = part[1];
             return part[1];
         }
         else {

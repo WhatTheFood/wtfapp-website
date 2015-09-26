@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 ;
-var validator = require('validator');
+
 
 var Schema = mongoose.Schema;
 
@@ -21,6 +21,6 @@ var BookingSchema = new Schema({
     type: String,
     required: true
   }
-})
+});
 
 module.exports = mongoose.model('Booking', BookingSchema);

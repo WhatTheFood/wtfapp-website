@@ -1,34 +1,5 @@
 var UserModel = require('../api/user/user.model');
 var Facebook = require('../tools/facebook.js');
-var UserTool = require('../tools/user.js');
-
-
-/*
- * Return the user public infos + facebook informations
- */
-exports.getUserBasicInfos = function (user) {
-  var infos = {
-    'email': user.email,
-    'first_name': user.first_name,
-    'last_name': user.last_name,
-    'avatar': user.avatar,
-    'facebook_id': user.facebook_id,
-    'booking': user.booking,
-    'id': user._id
-  };
-  return infos;
-};
-
-exports.getUserBasicInfosById = function (userId, callback) {
-  UserModel.findById(userId, function (err, user) {
-    if (user) {
-      callback(UserTool.getUserBasicInfos(user));
-    }
-    else {
-      callback(null);
-    }
-  });
-};
 
 exports.updateUserInfosWithFacebook = function (user, callback) {
   if (user.facebook_token) {

@@ -162,7 +162,7 @@ exports.addUserDestination = function (req, res) {
         }
         else {
           user.set({booking: booking});
-          user.save(function (err) {
+          user.save(function () {
             return Response.success(res, Response.HTTP_OK, booking);
           });
         }
@@ -251,7 +251,7 @@ exports.getToques = function (req, res) {
 
   var query = {};
 
-  if (!_.isUndefined(req.query.avatar) && req.query.avatar === true) { // return only users with an avatar
+  if (!_.isUndefined(req.query.avatar) && req.query.avatar == 'true') { // return only users with an avatar
     query = {
       avatar: {$ne: ""}
     }
@@ -334,7 +334,7 @@ exports.getUser = function (req, res) {
  *  }
  *
  */
-exports.postUser = function (req, res, next) {
+exports.postUser = function (req, res) {
 
   var newUser = new UserModel(req.body);
 

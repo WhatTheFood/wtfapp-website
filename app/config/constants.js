@@ -9,4 +9,4 @@ module.exports = {
    */
   EXPORT_SYSTEM_VERSION: 1.0
 
-}
+};

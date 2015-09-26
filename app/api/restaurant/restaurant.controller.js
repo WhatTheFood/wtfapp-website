@@ -144,7 +144,7 @@ exports.getRestaurants = function (req, res) {
       spherical: true,
       maxDistance: maxDistance,
       query: {menus: {$exists: true, $ne: []}}
-    }, function (err, geoResults, stats) {
+    }, function (err, geoResults) {
       var restaurants = [];
       for (var i = 0, length = geoResults.length; i < length; i++) {
         var geoResult = geoResults[i];

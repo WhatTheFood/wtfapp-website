@@ -12,7 +12,7 @@ module.exports = function(app) {
   app.use('/api/auth', require('./auth'));
 
   app.route('/privacy')
-    .get(function(req, res, next) {
+    .get(function(req, res) {
       res.render('privacy');
   });
 

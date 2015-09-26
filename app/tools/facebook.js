@@ -42,7 +42,7 @@ exports.updateUserBasicInfos = function (user, callback) {
       }
     })
 
-}
+};
 
 exports.getUserFacebookFriends = function (user, callback) {
 
@@ -66,4 +66,4 @@ exports.getUserFacebookFriends = function (user, callback) {
         return callback(null, res);
       }
     })
-}
+};

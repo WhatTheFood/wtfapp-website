@@ -4,14 +4,14 @@
 
 var mongoose = require('mongoose');
 var crypto = require('crypto');
-var validator = require('validator');
+
 var uniqueValidator = require('mongoose-unique-validator');
 
-var SALT_WORK_FACTOR = 10;
+
 
 // max of 10 attempts, resulting in a 30 minutes lock
-var MAX_LOGIN_ATTEMPTS = 10;
-var LOCK_TIME = 30 * 60 * 1000;
+
+
 
 var Schema = mongoose.Schema;
 
@@ -35,14 +35,6 @@ var UserSchema = new Schema({
   provider: String,
   salt: String,
   apikey: String,
-  loginAttempts: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  lockUntil: {
-    type: Number
-  },
   fb: {
     id: {
       type: String
@@ -103,7 +95,9 @@ UserSchema
       'first_name': this.first_name,
       'last_name': this.last_name,
       'role': this.role,
-      'avatar': this.avatar
+      'avatar': this.avatar,
+      'points': this.points,
+      'booking': this.booking
     };
   });
 
