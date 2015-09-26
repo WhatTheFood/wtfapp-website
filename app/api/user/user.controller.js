@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+var _ = require('lodash');
 
 var UserModel = require('./user.model');
 var RestaurantModel = require('../restaurant/restaurant.model');
@@ -30,7 +31,7 @@ exports.getUsers = function (req, res) {
  * Get current user infos
  */
 exports.getCurrentUserInfos = function (req, res) {
-  return Response.success(res, Response.HTTP_OK, user);
+  return Response.success(res, Response.HTTP_OK, req.user);
 };
 
 /*
@@ -38,7 +39,7 @@ exports.getCurrentUserInfos = function (req, res) {
  */
 exports.getCurrentUserFriends = function (req, res) {
 
-  UserTool.getUserFriends(user, function (datas) {
+  UserTool.getUserFriends(req.user, function (datas) {
     return Response.success(res, Response.HTTP_OK, datas);
   });
 
@@ -51,7 +52,7 @@ exports.getCurrentUserFriends = function (req, res) {
  */
 exports.addUserDestination = function (req, res) {
 
-  if (_.isUndefined(body)) {
+  if (_.isUndefined(req.body)) {
     return Response.error(res, Response.BAD_REQUEST, "no body");
   }
 
@@ -117,6 +118,7 @@ exports.addUserDestination = function (req, res) {
 exports.getFriendsAtRestaurant = function (req, res) {
 
   var restaurant_id = req.body.restaurantId;
+  var user = req.user;
 
   if (!restaurant_id) {
     return Response.error(res, Response.BAD_REQUEST, "You must post a restaurant id");
@@ -126,39 +128,37 @@ exports.getFriendsAtRestaurant = function (req, res) {
 
     if (err) {
       return Response.error(res, Response.UNKNOWN_ERROR, err);
+    }
 
+    var ret_datas = [];
+    var num = res_friends.length;
 
-      var ret_datas = [];
-      var num = res_friends.length;
+    if (!num) {
+      return Response.success(res, Response.HTTP_OK, []);
+    }
 
-      if (!num) {
-        return Response.success(res, Response.HTTP_OK, []);
-      }
-
-      res_friends.forEach(function (friend) {
-        BookingModel.findOne({
-          user: friend.id
-          //date: date,  restaurant: restaurant_id
-        }, function (err, booking) {
-          if (err) {
-            return Response.error(res, Response.MONGODB_ERROR, err);
-          }
-          if (booking) {
-            if (booking.restaurant == restaurant_id) {
-              var date = Tools.getDayDate();
-              if (friend.booking && friend.booking.date == date) {
-                ret_datas.push(friend);
-              }
+    res_friends.forEach(function (friend) {
+      BookingModel.findOne({
+        user: friend.id
+        //date: date,  restaurant: restaurant_id
+      }, function (err, booking) {
+        if (err) {
+          return Response.error(res, Response.MONGODB_ERROR, err);
+        }
+        if (booking) {
+          if (booking.restaurant == restaurant_id) {
+            var date = Tools.getDayDate();
+            if (friend.booking && friend.booking.date == date) {
+              ret_datas.push(friend);
             }
           }
+        }
 
-          if (--num === 0) {
-            return Response.success(res, Response.HTTP_OK, ret_datas);
-          }
-        });
+        if (--num === 0) {
+          return Response.success(res, Response.HTTP_OK, ret_datas);
+        }
       });
-
-    }
+    });
 
   });
 
@@ -212,7 +212,19 @@ exports.getToques = function (req, res) {
 /* PUT user. with id */
 exports.putUser = function (req, res) {
 
+  if (_.isUndefined(req.params.id)) {
+    return Response.error(req, Response.BAD_REQUEST, "id not provide");
+  }
+
   UserModel.findById(req.params.id, function (err, user) {
+
+    if (!user) {
+      return Response.error(res, Response.USER_NOT_FOUND);
+    }
+
+    if (err) {
+      return Response.error(res, Response.USER_NOT_FOUND, err);
+    }
 
     if (req.body.email)
       user.email = req.body.email;
