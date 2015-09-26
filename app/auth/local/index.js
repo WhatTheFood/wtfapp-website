@@ -9,12 +9,31 @@ var Response = require('../../services/response.js');
 var router = express.Router();
 
 /**
- * @api {post} /auth/local/ Authenticate the user via token
+ * @api {post} /auth/local/ Authenticate the user via email and password
  * @apiName NormalLogin
  * @apiGroup Authentication
  *
  * @apiParam {String} email The user email
  * @apiParam {String} password The user password
+ *
+ * @apiError 401 [401] Unauthorized
+ *
+ * @apiSuccess token The user token
+ *
+ * @apiErrorExample {json} Error-Response:
+ * {
+ *    "message":"Unauthorized",
+ *    "code":401,
+ *    "detail":{
+ *      "message":"This email is not registered."
+ *      }
+ *    }
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "token": "e239ue934289eu23hidu2ub",
+ *     }
  *
  */
 router.post('/', function(req, res, next) {
@@ -39,6 +58,16 @@ router.post('/', function(req, res, next) {
  * @apiGroup Authentication
  *
  * @apiParam {String} apikey The user apikey
+ *
+ * @apiError 401 [401] Unauthorized
+ *
+ * @apiSuccess token The user token
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "token": "e239ue934289eu23hidu2ub",
+ *     }
  */
 router.post('/apikey', function(req, res, next) {
 

@@ -1,4 +1,5 @@
 var request = require('request');
+var async = require('async');
 
 var RestaurantModel = require('./restaurant.model');
 var UserModel = require('../user/user.model');
@@ -26,7 +27,70 @@ exports.getRestaurantFeedback = function (req, res) {
  * @apiGroup Restaurant
  *
  * @apiParam {Number} id The restaurant id
- *
+ ** @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+         "_id":"5606afe2b5c1c4aea77058d3",
+         "id":695,
+         "title":"Cafétéria INALCO",
+         "lat":48.8274221,
+         "lon":2.3757955,
+         "area":"Paris 13",
+         "opening":"111,111,111,111,111,000,000",
+         "closing":"1",
+         "accessibility":false,
+         "wifi":false,
+         "shortdesc":"",
+         "description":"Toutes prestations de cafétéria ",
+         "access":"RER C - Métro 14 : Bibliothèque François Mitterrand",
+         "operationalhours":"Du lundi au vendredi de 8h00 à 20h00",
+         "__v":0,
+         "queue":{
+            "value":0,
+            "updatedAt":"2015-09-26T14:46:58.313Z",
+            "timeSlots":[
+               "-10",
+               "10-20",
+               "+20"
+            ],
+            "votes":[
+
+            ]
+         },
+         "menus":[
+
+         ],
+         "menu":{
+            "meal":[
+
+            ]
+         },
+         "payment":[
+            {
+               "name":"Monéo",
+               "_id":"5606afe2b5c1c4aea77058d5"
+            },
+            {
+               "name":"Espèce",
+               "_id":"5606afe2b5c1c4aea77058d4"
+            }
+         ],
+         "photo":{
+            "src":"",
+            "alt":"Cafétéria INALCO"
+         },
+         "contact":{
+            "tel":"",
+            "email":""
+         },
+         "geolocation":{
+            "coordinates":[
+               2.3757955,
+               48.8274221
+            ],
+            "type":"Point"
+         }
+      }
  */
 exports.getRestaurant = function (req, res, feedback) {
 
@@ -91,12 +155,12 @@ exports.getRestaurants = function (req, res) {
 };
 
 
-/*  */
 /**
  * @api {post} /restaurants/refresh Populate database
  * @apiName Refresh
  * @apiGroup Restaurant
  *
+ * @apiError 500 [5002] Async error
  */
 exports.refreshAll = function (req, res) {
 
@@ -109,17 +173,32 @@ exports.refreshAll = function (req, res) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
 
       /* update */
-      data.restaurants.forEach(function (element, index) {
+      async.each(data.restaurants, function (element, callback) {
         RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
           if (restaurant === null) {
             new RestaurantModel(element).save();
           }
           else {
             restaurant.set(element);
-            restaurant.save();
+            restaurant.save(function(err) {
+              if (err) {
+                callback(err);
+              }
+              else {
+                callback(null);
+              }
+            });
           }
         });
+      }, function (err) {
+
+        if (err)
+          return Response.error(res, Response.ASYNC_ERROR, err);
+
+        return Response.success(res, Response.HTTP_OK);
+
       });
+
     }
   });
 
@@ -135,6 +214,10 @@ exports.refreshAll = function (req, res) {
  *
  * @apiParam {Number} timeSlotIndex the index of time slot chosen
  *
+ * @apiError 404 [4002] Restaurant not found
+ * @apiError 401 [1001] Bad request
+ *
+ * @apiSuccess {Restaurant} The restaurant
  */
 exports.voteOnRestaurantQueue = function (req, res) {
 
@@ -168,6 +251,10 @@ exports.voteOnRestaurantQueue = function (req, res) {
  *
  * @apiParam {Number} id The restaurant id
  *
+ * @apiError 404 [4002] Restaurant not found
+ * @apiError 401 [1001] Bad request
+ *
+ * @apiSuccess {Restaurant} The restaurant
  */
 exports.updateRestaurantMenu = function (req, res) {
 

@@ -123,5 +123,5 @@ exports.UNKNOWN_ERROR                 = [ 500, exports.HTTP_INTERNAL_SERVER_ERRO
 
 //
 exports.UNAUTHORIZED                  = [ 401, exports.HTTP_UNAUTHORIZED, "Unauthorized" ];
-exports.INVALID_TOKEN                 = [ 401, exports.HTTP_UNAUTHORIZED, "Invalid token" ];
-exports.INVALID_API_KEY               = [ 401, exports.HTTP_UNAUTHORIZED, "Invalid api key" ];
+exports.INVALID_TOKEN                 = [ 402, exports.HTTP_UNAUTHORIZED, "Invalid token" ];
+exports.INVALID_API_KEY               = [ 403, exports.HTTP_UNAUTHORIZED, "Invalid api key" ];
