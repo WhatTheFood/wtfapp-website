@@ -175,11 +175,6 @@ restaurantSchema.pre('save', function(next) {
       updatedAt: Date.now(),
       timeSlots: ['-10', '10-20', '+20'] // default time slots
     };
-    if(restaurant.menus.length>0) {
-      restaurant.menu = restaurant.menus[0]
-    } else {
-      restaurant.menu = {}
-    }
   }
 
   next();
