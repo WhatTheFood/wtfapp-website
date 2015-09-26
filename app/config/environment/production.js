@@ -19,5 +19,12 @@ module.exports = {
             process.env.MONGOHQ_URL ||
             process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME ||
             'mongodb://localhost/wtfapp'
+  },
+  fb: {
+    // TODO: change. Tests
+    id: '443752652477113',
+    secret: 'b1a0ecaea0082605ff94fe181805b023',
+    callbackUrl: '/auth/facebook/callback',
+    scope: [ "profile", "email", "friends" ] // TODO: setup correct values
   }
 };
