@@ -1,6 +1,8 @@
 var request = require('request');
 var async = require('async');
 
+var _ = require('lodash');
+
 var RestaurantModel = require('./restaurant.model');
 var UserModel = require('../user/user.model');
 
