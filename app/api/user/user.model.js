@@ -3,7 +3,7 @@
  */
 
 var mongoose = require('mongoose');
-var bcrypt = require('bcrypt-nodejs');
+var crypto = require('crypto');
 var validator = require('validator');
 var uniqueValidator = require('mongoose-unique-validator');
 
@@ -35,11 +35,6 @@ var UserSchema = new Schema({
   provider: String,
   salt: String,
   apikey: String,
-  password: {
-    type : String,
-    trim : true,
-    required: true,
-  },
   loginAttempts: {
     type: Number,
     required: true,
@@ -47,10 +42,6 @@ var UserSchema = new Schema({
   },
   lockUntil: {
     type: Number
-  },
-  token: {
-    type: String,
-    trim: true
   },
   facebook_token: {
     type: String,
@@ -85,128 +76,135 @@ UserSchema.statics.POINTS_PER_ACTION = 5;
 
 UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
 
+/**
+ * Virtuals
+ */
+
 UserSchema.virtual('isLocked').get(function() {
   // check for a future lockUntil timestamp
   return !!(this.lockUntil && this.lockUntil > Date.now());
 });
 
+UserSchema
+  .virtual('password')
+    .set(function(password) {
+      this._password = password;
+      this.salt = this.makeSalt();
+      this.hashedPassword = this.encryptPassword(password);
+    })
+    .get(function() {
+      return this._password;
+    });
+
+// Public profile information
+UserSchema
+  .virtual('profile')
+    .get(function() {
+      return {
+        'name': this.name,
+        'role': this.role
+      };
+    });
+
+// Non-sensitive info we'll be putting in the token
+UserSchema
+  .virtual('token')
+  .get(function() {
+    return {
+      '_id': this._id,
+      'role': this.role
+    };
+  });
+
 /**
  * Validations
  */
 
-/*
-   UserSchema.path('email').required(true, 'User email cannot be blank')
-   .validate(validator.isEmail, 'Invalid email');
+// Validate empty email
+UserSchema
+  .path('email')
+  .validate(function(email) {
+    return email.length;
+  }, 'Email cannot be blank');
 
-   UserSchema.path('password').required(true, 'User password cannot be blank')
-   .validate(function(v) {
-   if (v == "" || v.length < 5)
-   this.invalidate('password', 'must be at least 5 characters and at most 30.');
-   }, null);
+// Validate empty password
+UserSchema
+  .path('hashedPassword')
+  .validate(function(hashedPassword) {
+    return hashedPassword.length;
+  }, 'Password cannot be blank');
 
-*/
-
-/**
- * Presave
- */
-
-UserSchema.pre('save', function(callback) {
-  var user = this;
-
-  // Break out if the password hasn't changed
-  if (!user.isModified('password')) return callback();
-
-  // Password changed so we need to hash it
-  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-    if (err) return callback(err);
-
-    bcrypt.hash(user.password, salt, null, function(err, hash) {
-      if (err) return callback(err);
-      user.password = hash;
-      callback();
-    });
-  });
-});
-
-/**
- * Password checking
- */
-
-// expose enum on the model, and provide an internal convenience reference
-var reasons = UserSchema.statics.failedLogin = {
-  NOT_FOUND: 0,
-  PASSWORD_INCORRECT: 1,
-  MAX_ATTEMPTS: 2
-};
-
-UserSchema.methods.verifyPassword = function(password, cb) {
-  bcrypt.compare(password, this.password, function(err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
-};
-
-UserSchema.methods.incLoginAttempts = function(cb) {
-  // if we have a previous lock that has expired, restart at 1
-  if (this.lockUntil && this.lockUntil < Date.now()) {
-    return this.update({
-      $set: { loginAttempts: 1 },
-      $unset: { lockUntil: 1 }
-    }, cb);
-  }
-  // otherwise we're incrementing
-  var updates = { $inc: { loginAttempts: 1 } };
-  // lock the account if we've reached max attempts and it's not locked already
-  if (this.loginAttempts + 1 >= MAX_LOGIN_ATTEMPTS && !this.isLocked) {
-    updates.$set = { lockUntil: Date.now() + LOCK_TIME };
-  }
-  return this.update(updates, cb);
-};
-
-UserSchema.statics.getAuthenticated = function(email, password, cb) {
-  this.findOne({ email: email }, function(err, user) {
-    if (err) return cb(err);
-
-    // make sure the user exists
-    if (!user) {
-      return cb(null, null, reasons.NOT_FOUND);
-    }
-
-    // check if the account is currently locked
-    if (user.isLocked) {
-      // just increment login attempts if account is already locked
-      return user.incLoginAttempts(function(err) {
-        if (err) return cb(err);
-        return cb(null, null, reasons.MAX_ATTEMPTS);
-      });
-    }
-
-    // test for a matching password
-    user.verifyPassword(password, function(err, isMatch) {
-      if (err) return cb(err);
-
-      // check if the password was a match
-      if (isMatch) {
-        // if there's no lock or failed attempts, just return the user
-        if (!user.loginAttempts && !user.lockUntil) return cb(null, user);
-        // reset attempts and lock info
-        var updates = {
-          $set: { loginAttempts: 0 },
-          $unset: { lockUntil: 1 }
-        };
-        return user.update(updates, function(err) {
-          if (err) return cb(err);
-          return cb(null, user);
-        });
+// Validate email is not taken
+UserSchema
+  .path('email')
+  .validate(function(value, respond) {
+    var self = this;
+    this.constructor.findOne({email: value}, function(err, user) {
+      if(err) throw err;
+      if(user) {
+        if(self.id === user.id) return respond(true);
+        return respond(false);
       }
-
-      // password is incorrect, so increment login attempts before responding
-      user.incLoginAttempts(function(err) {
-        if (err) return cb(err);
-        return cb(null, null, reasons.PASSWORD_INCORRECT);
-      });
+      respond(true);
     });
+  }, 'The specified email address is already in use.');
+
+var validatePresenceOf = function(value) {
+  return value && value.length;
+};
+
+/**
+ * Pre-save hook
+ */
+UserSchema
+  .pre('save', function(next) {
+    if (!this.isNew) return next();
+
+    if (!validatePresenceOf(this.hashedPassword))
+      next(new Error('Invalid password'));
+    else
+      next();
   });
+
+
+/**
+ * Methods
+ */
+UserSchema.methods = {
+  /**
+   * Authenticate - check if the passwords are the same
+   *
+   * @param {String} plainText
+   * @return {Boolean}
+   * @api public
+   */
+  authenticate: function (plainText) {
+    return this.encryptPassword(plainText) === this.hashedPassword;
+  },
+
+  /**
+   * Make salt
+   *
+   * @return {String}
+   * @api public
+   */
+  makeSalt: function () {
+    return crypto.randomBytes(16).toString('base64');
+  },
+
+  /**
+   * Encrypt password
+   *
+   * @param {String} password
+   * @return {String}
+   * @api public
+   */
+  encryptPassword: function (password) {
+    if (!password || !this.salt) return '';
+    var salt = new Buffer(this.salt, 'base64');
+    return crypto.pbkdf2Sync(password, salt, 10000, 64).toString('base64');
+  }
+
 };
 
 module.exports = mongoose.model('User', UserSchema);

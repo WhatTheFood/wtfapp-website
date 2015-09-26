@@ -65,7 +65,7 @@ function validateApiKey(req, res, next, apikey) {
     }
 
     if (!user) {
-      return Response.error(res, Response.UNAUTHORIZED_INVALID_API_KEY);
+      return Response.error(res, Response.INVALID_API_KEY);
     }
 
     req.user = user;

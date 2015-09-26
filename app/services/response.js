@@ -88,12 +88,12 @@ exports.error = function(res, apiError, errorDetail, httpCode) {
   log(httpCode, data);
 
   return res.send(httpCode, data);
-}
+};
 
 exports.success = function(res, httpCode, data) {
   log(httpCode, data);
   return res.send(httpCode, data);
-}
+};
 
 function log(httpCode, data) {
   console.log('------------------------------------------------------------------------');
@@ -110,6 +110,7 @@ function log(httpCode, data) {
 
 // HTTP BAD REQUEST
 exports.BAD_REQUEST                   = [ 1001, exports.HTTP_BAD_REQUEST, "Bad request"];
+exports.USER_VALIDATION_ERROR         = [ 1002, exports.HTTP_BAD_REQUEST, "Invalid user" ];
 
 // HTTP_INTERNAL_SERVER_ERROR
 exports.MONGODB_ERROR                 = [ 5001, exports.HTTP_INTERNAL_SERVER_ERROR, "Mongodb error" ];
@@ -121,3 +122,4 @@ exports.UNKNOWN_ERROR                 = [ 500, exports.HTTP_INTERNAL_SERVER_ERRO
 //
 exports.UNAUTHORIZED                  = [ 401, exports.HTTP_UNAUTHORIZED, "Unauthorized" ];
 exports.INVALID_TOKEN                 = [ 401, exports.HTTP_UNAUTHORIZED, "Invalid token" ];
+exports.INVALID_API_KEY               = [ 401, exports.HTTP_UNAUTHORIZED, "Invalid api key" ];

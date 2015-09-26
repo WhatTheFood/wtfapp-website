@@ -6,6 +6,8 @@ var BookingModel = require('./booking.model');
 var UserTool = require('../../tools/user');
 var Tools = require('../../tools/tools');
 
+var config = require('../../config/environment');
+
 var Response = require('../../services/response.js');
 /*
  * /users
@@ -151,16 +153,19 @@ exports.getFriendsAtRestaurant = function(req, res) {
 
 /* POST user listing. */
 exports.postUser = function (req, res, next){
-    var newUser = new User(req.body);
+
+    var newUser = new UserModel(req.body);
+
     newUser.provider = 'local';
     newUser.role = 'user';
+
     newUser.save(function(err, user) {
 
       if (err) {
-        Response.error(res, Response.USER_VALIDATION_ERROR, err);
+        return Response.error(res, Response.USER_VALIDATION_ERROR, err);
       }
       var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-      Response.success(res, Response.HTTP_CREATED, { token: token });
+      return Response.success(res, Response.HTTP_CREATED, { token: token });
 
     });
 };
