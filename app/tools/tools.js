@@ -8,4 +8,4 @@ exports.getDayDate = function() {
     newdate = day + "/" + month + "/" + year;
 
     return newdate;
-}
+};

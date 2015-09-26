@@ -1,13 +1,12 @@
-var UserModel = require('../models/user');
+var UserModel = require('../api/user/user.model');
 var Facebook = require('../tools/facebook.js');
 var UserTool = require('../tools/user.js');
-var Tools = require('../tools/tools.js');
-var BookingModel = require('../models/previsions.js');
+
 
 /*
  * Return the user public infos + facebook informations
  */
-exports.getUserBasicInfos = function(user) {
+exports.getUserBasicInfos = function (user) {
   var infos = {
     'email': user.email,
     'first_name': user.first_name,
@@ -20,8 +19,8 @@ exports.getUserBasicInfos = function(user) {
   return infos;
 };
 
-exports.getUserBasicInfosById = function(userId, callback) {
-  UserModel.findById(userId, function(err, user) {
+exports.getUserBasicInfosById = function (userId, callback) {
+  UserModel.findById(userId, function (err, user) {
     if (user) {
       callback(UserTool.getUserBasicInfos(user));
     }
@@ -31,7 +30,7 @@ exports.getUserBasicInfosById = function(userId, callback) {
   });
 };
 
-exports.updateUserInfosWithFacebook = function(user, callback) {
+exports.updateUserInfosWithFacebook = function (user, callback) {
   if (user.facebook_token) {
     Facebook.updateUserBasicInfos(user, callback);
   }
@@ -41,25 +40,31 @@ exports.updateUserInfosWithFacebook = function(user, callback) {
   }
 };
 
-exports.getUserFriends = function(user, callback) {
+exports.getUserFriends = function (user, callback) {
 
-  Facebook.getUserFacebookFriends(user, function(err, friends) {
+  Facebook.getUserFacebookFriends(user, function (err, friends) {
     var datas = [];
+
+    if (err) {
+      return callback(err, null);
+    }
+
     if (friends && friends !== false) {
+
       var nb2 = friends.data.length;
-      friends.data.forEach(function(friend)  {
-        UserModel.findOne({ 'facebook_id': friend.id }, function(err, user) {
+
+      friends.data.forEach(function (friend) {
+        UserModel.findOne({'facebook_id': friend.id}, function (err, user) {
+
           if (user) {
             datas.push(user);
           }
           if (--nb2 === 0) {
-            callback(null, datas);
+            return callback(null, datas);
           }
         });
       });
     }
-    else {
-      callback([], null);
-    }
+
   });
 };
