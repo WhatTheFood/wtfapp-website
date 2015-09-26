@@ -107,6 +107,7 @@ function log(httpCode, data) {
 
 // HTTP_NOT_FOUND
 exports.USER_NOT_FOUND                = [ 4001, exports.HTTP_NOT_FOUND, "User not found" ];
+exports.RESTAURANT_NOT_FOUND          = [ 4002, exports.HTTP_NOT_FOUND, "Restaurant not found" ];
 
 // HTTP BAD REQUEST
 exports.BAD_REQUEST                   = [ 1001, exports.HTTP_BAD_REQUEST, "Bad request"];

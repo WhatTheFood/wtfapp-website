@@ -21,9 +21,9 @@ var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
   email: {
-    type : String,
+    type: String,
     unique: true,
-    trim : true,
+    trim: true,
     required: true,
     lowercase: true
   },
@@ -63,10 +63,8 @@ var UserSchema = new Schema({
     type: String,
     default: ""
   },
-  booking: {
-  },
-  preferences: [
-  ],
+  booking: {},
+  preferences: [],
   queueFeedbacksCount: 0,
   lunchFeedbacksCount: 0,
   points: 0
@@ -74,42 +72,42 @@ var UserSchema = new Schema({
 
 UserSchema.statics.POINTS_PER_ACTION = 5;
 
-UserSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
+UserSchema.plugin(uniqueValidator, {message: 'Error, expected {PATH} to be unique.'});
 
 /**
  * Virtuals
  */
 
-UserSchema.virtual('isLocked').get(function() {
+UserSchema.virtual('isLocked').get(function () {
   // check for a future lockUntil timestamp
   return !!(this.lockUntil && this.lockUntil > Date.now());
 });
 
 UserSchema
   .virtual('password')
-    .set(function(password) {
-      this._password = password;
-      this.salt = this.makeSalt();
-      this.hashedPassword = this.encryptPassword(password);
-    })
-    .get(function() {
-      return this._password;
-    });
+  .set(function (password) {
+    this._password = password;
+    this.salt = this.makeSalt();
+    this.hashedPassword = this.encryptPassword(password);
+  })
+  .get(function () {
+    return this._password;
+  });
 
 // Public profile information
 UserSchema
   .virtual('profile')
-    .get(function() {
-      return {
-        'name': this.name,
-        'role': this.role
-      };
-    });
+  .get(function () {
+    return {
+      'name': this.name,
+      'role': this.role
+    };
+  });
 
 // Non-sensitive info we'll be putting in the token
 UserSchema
   .virtual('token')
-  .get(function() {
+  .get(function () {
     return {
       '_id': this._id,
       'role': this.role
@@ -123,33 +121,33 @@ UserSchema
 // Validate empty email
 UserSchema
   .path('email')
-  .validate(function(email) {
+  .validate(function (email) {
     return email.length;
   }, 'Email cannot be blank');
 
 // Validate empty password
 UserSchema
   .path('hashedPassword')
-  .validate(function(hashedPassword) {
+  .validate(function (hashedPassword) {
     return hashedPassword.length;
   }, 'Password cannot be blank');
 
 // Validate email is not taken
 UserSchema
   .path('email')
-  .validate(function(value, respond) {
+  .validate(function (value, respond) {
     var self = this;
-    this.constructor.findOne({email: value}, function(err, user) {
-      if(err) throw err;
-      if(user) {
-        if(self.id === user.id) return respond(true);
+    this.constructor.findOne({email: value}, function (err, user) {
+      if (err) throw err;
+      if (user) {
+        if (self.id === user.id) return respond(true);
         return respond(false);
       }
       respond(true);
     });
   }, 'The specified email address is already in use.');
 
-var validatePresenceOf = function(value) {
+var validatePresenceOf = function (value) {
   return value && value.length;
 };
 
@@ -157,7 +155,7 @@ var validatePresenceOf = function(value) {
  * Pre-save hook
  */
 UserSchema
-  .pre('save', function(next) {
+  .pre('save', function (next) {
     if (!this.isNew) return next();
 
     if (!validatePresenceOf(this.hashedPassword))

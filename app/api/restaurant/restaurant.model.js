@@ -9,24 +9,24 @@ var Schema = mongoose.Schema;
  * Dish feedback Schema
  */
 var dishFeedbackSchema = new Schema({
-  thrown: { type: Number },
-  user_id: { type: String },
+  thrown: {type: Number},
+  user_id: {type: String},
 });
 
 /*
  * Menu feedback Schema
  */
 var menuFeedbackSchema = new Schema({
-  ate_alone: { type: Boolean },
-  convivial_restaurant: { type: Boolean },
-  enough_time_to_eat: { type: Boolean },
-  seasoning: { type: Number },
-  cooking: { type: Number },
-  took_twice: { type: Boolean },
-  enjoyed_my_meal: { type: Number },
-  usually_enjoyis_meal: { type: Number },
-  bread_thrown: { type: Number },
-  user_id: { type: Number }
+  ate_alone: {type: Boolean},
+  convivial_restaurant: {type: Boolean},
+  enough_time_to_eat: {type: Boolean},
+  seasoning: {type: Number},
+  cooking: {type: Number},
+  took_twice: {type: Boolean},
+  enjoyed_my_meal: {type: Number},
+  usually_enjoyis_meal: {type: Number},
+  bread_thrown: {type: Number},
+  user_id: {type: Number}
 });
 
 /**
@@ -39,7 +39,7 @@ var mealSchema = new Schema({
     name: {type: String},
     dishes: [{
       name: {type: String},
-      feedback: { type: [dishFeedbackSchema], select:false}
+      feedback: {type: [dishFeedbackSchema], select: false}
     }]
   }]
 });
@@ -50,8 +50,8 @@ var mealSchema = new Schema({
 
 var menuSchema = new Schema({
   date: {type: Date},
-  meal: { type: [mealSchema] },
-  feedback: { type:[menuFeedbackSchema], select:false}
+  meal: {type: [mealSchema]},
+  feedback: {type: [menuFeedbackSchema], select: false}
 });
 
 /**
@@ -60,7 +60,7 @@ var menuSchema = new Schema({
 
 var restaurantSchema = new Schema({
   id: {type: Number},
-  title: {type : String},
+  title: {type: String},
   lat: {type: Number},
   lon: {type: Number},
   geolocation: {
@@ -77,8 +77,8 @@ var restaurantSchema = new Schema({
   closing: {type: String},
   //type: {type: String, default: ''}, OR
   /*type: {
-    type: { type: String }
-    },*/
+   type: { type: String }
+   },*/
   accessibility: {type: Boolean},
   wifi: {type: Boolean},
   shortdesc: {type: String},
@@ -97,26 +97,26 @@ var restaurantSchema = new Schema({
     name: {type: String}
   }],
   menu: {
-  date: {type: Date},
-  meal: { type: [mealSchema] },
-  feedback: { type:[menuFeedbackSchema], select:false}
+    date: {type: Date},
+    meal: {type: [mealSchema]},
+    feedback: {type: [menuFeedbackSchema], select: false}
   },
-  menus: { type: [menuSchema] },
+  menus: {type: [menuSchema]},
   queue: {
     /**
      * Queue Schema
      */
-value: {type: Number},
-       votes: [{
-         /**
-          * Vote Schema
-          */
-value: {type: Number},
-       userId: {type: String},
-       castAt: {type: Date}
-       }],
-updatedAt: {type: Date},
-           timeSlots: {type: [String]}
+    value: {type: Number},
+    votes: [{
+      /**
+       * Vote Schema
+       */
+      value: {type: Number},
+      userId: {type: String},
+      castAt: {type: Date}
+    }],
+    updatedAt: {type: Date},
+    timeSlots: {type: [String]}
   }
 });
 
@@ -132,7 +132,7 @@ restaurantSchema.methods = {
    * @param user - the voting user
    * @param timeSlotIndex - the index of the chosen timeSlot (see restaurant.queue.timeSlots)
    */
-  voteOnQueue: function(user, timeSlotIndex) {
+  voteOnQueue: function (user, timeSlotIndex) {
     // clean the voting history from :
     // - any votes of more than 30mn of lifespan
     // - any votes from the voting user (hopefully there should be 1 at most)
@@ -147,7 +147,7 @@ restaurantSchema.methods = {
     };
     this.queue.votes.push(vote);
     // update the queue based on the current voting history
-    this.queue.value = this.queue.votes.reduce(function(previousValue, currentVote, index) {
+    this.queue.value = this.queue.votes.reduce(function (previousValue, currentVote, index) {
       return (previousValue * index + currentVote.value) / (index + 1);
     }, 0);
     this.queue.updatedAt = Date.now();
@@ -158,7 +158,7 @@ restaurantSchema.methods = {
  * Presave
  */
 
-restaurantSchema.pre('save', function(next) {
+restaurantSchema.pre('save', function (next) {
   var restaurant = this;
 
   // set 2dsphere index for geospatial querying

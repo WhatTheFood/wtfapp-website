@@ -3,6 +3,8 @@ var request = require('request');
 var RestaurantModel = require('./restaurant.model');
 var UserModel = require('../user/user.model');
 
+var Response = require('../../services/response.js');
+
 /****************************** GET ********************************/
 
 /**
@@ -15,18 +17,20 @@ var UserModel = require('../user/user.model');
 exports.getRestaurantWFeedback = function (req, res) {
   return exports.getRestaurant(req, res, true);
 };
+
 exports.getRestaurantWOFeedback = function (req, res) {
   return exports.getRestaurant(req, res, false);
 };
+
 exports.getRestaurant = function (req, res, feedback) {
 
   process_restaurant = function (err, restaurant) {
     console.log(req.query);
     if (!err) {
-      return res.send(restaurant);
-    } else {
-      console.log(err);
-      return res.status(400).send(err);
+      return Response.success(res, Response.HTTP_OK, restaurant);
+    }
+    else {
+      return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
   };
 
@@ -53,7 +57,11 @@ exports.getRestaurants = function (req, res) {
     };
     var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
 
-    RestaurantModel.geoNear(geoJsonTarget, {spherical: true, maxDistance: maxDistance, query: {menus: {$exists: true, $ne: []}}}, function (err, geoResults, stats) {
+    RestaurantModel.geoNear(geoJsonTarget, {
+      spherical: true,
+      maxDistance: maxDistance,
+      query: {menus: {$exists: true, $ne: []}}
+    }, function (err, geoResults, stats) {
       var restaurants = [];
       for (var i = 0, length = geoResults.length; i < length; i++) {
         var geoResult = geoResults[i];
@@ -61,27 +69,24 @@ exports.getRestaurants = function (req, res) {
         restaurant.distance = geoResult.dis;
         restaurants.push(restaurant);
       }
-      if (!err) {
-        return res.send(restaurants);
-      } else {
-        console.log(err);
-        return res.status(400).send(err);
+      if (err) {
+        return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
       }
+      return Response.success(res, Response.HTTP_OK, restaurants);
     });
-  } else { // regular query
+  }
+  else { // regular query
     return RestaurantModel.find({menus: {$exists: true}}, function (err, restaurants) {
-      if (!err) {
-        return res.send(restaurants);
-      } else {
-        console.log(err);
-        return res.status(400).send(err);
+      if (err) {
+        return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
       }
+      return Response.success(res, Response.HTTP_OK, restaurants);
     });
   }
 };
 
 /* update db with remote business data */
-exports.refreshAll = function (req, res){
+exports.refreshAll = function (req, res) {
 
   /* get json file and parse it */
   // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
@@ -89,24 +94,24 @@ exports.refreshAll = function (req, res){
   // old fake : http://thepbm.ovh.org/static/json/crous-poitiers.min.json
   request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      var data = JSON.parse(body.replace(new RegExp('\r?\n','g'), ' '));
+      var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
 
       /* update */
-      data.restaurants.forEach(function(element, index) {
-        RestaurantModel.findOne({"id": element.id}, function (err, restaurant){
-          if(restaurant === null)
-            {
-              new RestaurantModel(element).save();
-            } else {
-              restaurant.set(element);
-              restaurant.save();
-            }
+      data.restaurants.forEach(function (element, index) {
+        RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
+          if (restaurant === null) {
+            new RestaurantModel(element).save();
+          }
+          else {
+            restaurant.set(element);
+            restaurant.save();
+          }
         });
       });
     }
   });
 
-  return res.send({});
+  return Response.success(res, Response.HTTP_OK, {});
 };
 
 /**
@@ -116,24 +121,21 @@ exports.refreshAll = function (req, res){
  * @param res
  */
 exports.voteOnRestaurantQueue = function (req, res) {
-  SecurityService.getCurrentUser(req, res, function(user) {
-    RestaurantModel.findOne({'id': req.params.id}, function(err, restaurant) {
-      if (!err) {
-        restaurant.voteOnQueue(user, Number(req.body.timeSlotIndex));
-        updateUserActionCount(user);
 
-        restaurant.save(function(err) {
-          if (!err) {
-            return res.send(restaurant);
-          } else {
-            console.log(err);
-            return res.status(500).send(err);
-          }
-        });
-      } else {
-        console.log(err);
-        return res.status(400).send(err);
+  var user = req.user;
+  RestaurantModel.findOne({'id': req.params.id}, function (err, restaurant) {
+
+    if (err) {
+      return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
+    }
+    restaurant.voteOnQueue(user, Number(req.body.timeSlotIndex));
+    updateUserActionCount(user);
+
+    restaurant.save(function (err) {
+      if (err) {
+        return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
       }
+      return Response.success(res, Response.HTTP_OK, restaurant);
     });
   });
 };
@@ -144,24 +146,25 @@ exports.voteOnRestaurantQueue = function (req, res) {
  * @param req
  * @param res
  */
-exports.updateRestaurantMenu = function(req, res) {
-  RestaurantModel.findOne({'id': req.params.id}, function(err, restaurant) {
+exports.updateRestaurantMenu = function (req, res) {
 
-    if (!err) {
-      // update restaurant queue
-      restaurant.menus = req.body.menus;
-      restaurant.save(function(err) {
-        if (!err) {
-          return res.send(restaurant);
-        } else {
-          console.log(err);
-          return res.status(400).send(err);
-        }
-      });
-    } else {
-      console.log(err);
-      return res.status(400).send(err);
+  RestaurantModel.findOne({'id': req.params.id}, function (err, restaurant) {
+
+    if (err) {
+      return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
+    // update restaurant queue
+    restaurant.menus = req.body.menus;
+    restaurant.save(function (err) {
+
+      if (err) {
+        return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
+      }
+
+      return Response.success(res, Response.HTTP_OK, restaurant);
+
+    });
+
   });
 };
 

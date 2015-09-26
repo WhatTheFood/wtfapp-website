@@ -9,11 +9,12 @@ var Tools = require('../../tools/tools');
 var config = require('../../config/environment');
 
 var Response = require('../../services/response.js');
+
 /*
  * /users
  * GET users listing
  */
-exports.getUsers = function(req, res) {
+exports.getUsers = function (req, res) {
   return UserModel.find(function (err, users) {
     if (!err) {
       return Response.success(res, Response.HTTP_OK, users);
@@ -28,16 +29,16 @@ exports.getUsers = function(req, res) {
  * /users/me
  * Get current user infos
  */
-exports.getCurrentUserInfos = function(req, res) {
+exports.getCurrentUserInfos = function (req, res) {
   return Response.success(res, Response.HTTP_OK, user);
 };
 
 /*
  * /users/me/friends
  */
-exports.getCurrentUserFriends = function(req, res) {
+exports.getCurrentUserFriends = function (req, res) {
 
-  UserTool.getUserFriends(user, function(datas) {
+  UserTool.getUserFriends(user, function (datas) {
     return Response.success(res, Response.HTTP_OK, datas);
   });
 
@@ -48,7 +49,7 @@ exports.getCurrentUserFriends = function(req, res) {
  * POST restaurant: id
  * @Return user 200
  */
-exports.addUserDestination = function(req, res) {
+exports.addUserDestination = function (req, res) {
 
   if (_.isUndefined(body)) {
     return Response.error(res, Response.BAD_REQUEST, "no body");
@@ -61,7 +62,7 @@ exports.addUserDestination = function(req, res) {
     return Response.error(res, Response.BAD_REQUEST, "restaurant id or when invalid");
   }
 
-  RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
+  RestaurantModel.findOne({'id': restaurant_id}, function (err, restaurant) {
 
     if (!restaurant) {
       return Response.error(res, Response.BAD_REQUEST, "Invalid restaurant id");
@@ -70,7 +71,7 @@ exports.addUserDestination = function(req, res) {
     var user = req.user;
     var currentDate = Tools.getDayDate();
 
-    BookingModel.findOne({'user': user._id, 'date': currentDate}, function(err, booking) {
+    BookingModel.findOne({'user': user._id, 'date': currentDate}, function (err, booking) {
 
       if (err) {
         return Response.error(res, Response.MONGODB_ERROR, err);
@@ -93,13 +94,13 @@ exports.addUserDestination = function(req, res) {
         });
       }
 
-      booking.save(function(err){
+      booking.save(function (err) {
         if (err) {
           return Response.error(res, Response.MONGODB_ERROR, err);
         }
         else {
           user.set({booking: booking});
-          user.save(function(err) {
+          user.save(function (err) {
             return Response.success(res, Response.HTTP_OK, booking);
           });
         }
@@ -113,7 +114,7 @@ exports.addUserDestination = function(req, res) {
 /*
  * /me/friends/restaurant
  */
-exports.getFriendsAtRestaurant = function(req, res) {
+exports.getFriendsAtRestaurant = function (req, res) {
 
   var restaurant_id = req.body.restaurantId;
 
@@ -121,7 +122,7 @@ exports.getFriendsAtRestaurant = function(req, res) {
     return Response.error(res, Response.BAD_REQUEST, "You must post a restaurant id");
   }
 
-  UserTool.getUserFriends(user, function(err, res_friends) {
+  UserTool.getUserFriends(user, function (err, res_friends) {
 
     if (err) {
       return Response.error(res, Response.UNKNOWN_ERROR, err);
@@ -164,20 +165,20 @@ exports.getFriendsAtRestaurant = function(req, res) {
 };
 
 /* POST user listing. */
-exports.postUser = function (req, res, next){
+exports.postUser = function (req, res, next) {
 
   var newUser = new UserModel(req.body);
 
   newUser.provider = 'local';
   newUser.role = 'user';
 
-  newUser.save(function(err, user) {
+  newUser.save(function (err, user) {
 
     if (err) {
       return Response.error(res, Response.USER_VALIDATION_ERROR, err);
     }
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-    return Response.success(res, Response.HTTP_CREATED, { token: token });
+    var token = jwt.sign({_id: user._id}, config.secrets.session, {expiresInMinutes: 60 * 5});
+    return Response.success(res, Response.HTTP_CREATED, {token: token});
   });
 };
 
