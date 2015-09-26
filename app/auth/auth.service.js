@@ -78,16 +78,19 @@ function validateApiKey(req, res, next, apikey) {
  * Checks if the user role meets the minimum requirements of the route
  */
 function hasRole(roleRequired) {
+
   if (!roleRequired) throw new Error('Required role needs to be set');
 
   return compose()
     .use(isAuthenticated())
     .use(function meetsRequirements(req, res, next) {
+      console.log('Role required: ', roleRequired);
+      console.log('User have roles : ', req.user.role);
       if (config.userRoles.indexOf(req.user.role) >= config.userRoles.indexOf(roleRequired)) {
         next();
       }
       else {
-        Response.error(res, Response.UNAUTHORIZED);
+        return Response.error(res, Response.UNAUTHORIZED);
       }
     });
 }

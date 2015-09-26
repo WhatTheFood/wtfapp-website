@@ -6,7 +6,7 @@ var auth = require('../../auth/auth.service');
 
 /* users */
 router.route('/')
-  .get(auth.isAuthenticated(), userController.getUsers)
+  .get(auth.hasRole('admin'), userController.getUsers)
   .post(userController.postUser);
 
 router.route('/toques')

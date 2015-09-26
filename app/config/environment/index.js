@@ -24,13 +24,16 @@ var all = {
   // Should we populate the DB with sample data?
   //seedDB: false,
 
-  // Secret for session, you will want to change this and make it an environment variable
+  // TODO: Secret for session, you will want to change this and make it an environment variable
   secrets: {
     session: '188sqw9098w109()@$3842$@@(#":{P}'
   },
 
   // List of user roles
-  userRoles: ['guest', 'user', 'admin'],
+  userRoles: ['guest', 'user', 'crous', 'admin'],
+
+  // Number of points give to a user at an action
+  POINTS_PER_ACTION: 5,
 
   // MongoDB connection options
   mongo: {

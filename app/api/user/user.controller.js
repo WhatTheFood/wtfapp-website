@@ -16,10 +16,10 @@ var Response = require('../../services/response.js');
 exports.getUsers = function(req, res) {
   return UserModel.find(function (err, users) {
     if (!err) {
-      return res.send(users);
-    } else {
-      console.log(err);
-      return res.status(400).send(err);
+      return Response.success(res, Response.HTTP_OK, users);
+    }
+    else {
+      return Response.error(res, Response.UNKNOWN_ERROR, err);
     }
   });
 };
@@ -29,20 +29,18 @@ exports.getUsers = function(req, res) {
  * Get current user infos
  */
 exports.getCurrentUserInfos = function(req, res) {
-  SecurityService.getCurrentUser(req, res, function(user) {
-    return res.status(200).send(user);
-  });
+  return Response.success(res, Response.HTTP_OK, user);
 };
 
 /*
  * /users/me/friends
  */
 exports.getCurrentUserFriends = function(req, res) {
-  SecurityService.getCurrentUser(req, res, function(user) {
-    UserTool.getUserFriends(user, function(datas) {
-      return res.status(200).send(datas);
-    });
+
+  UserTool.getUserFriends(user, function(datas) {
+    return Response.success(res, Response.HTTP_OK, datas);
   });
+
 };
 
 /*
@@ -51,88 +49,98 @@ exports.getCurrentUserFriends = function(req, res) {
  * @Return user 200
  */
 exports.addUserDestination = function(req, res) {
-  if (req.body === 'undifined') {
-    return res.status(400).send("Invalid request");
+
+  if (_.isUndefined(body)) {
+    return Response.error(res, Response.BAD_REQUEST, "no body");
   }
+
   var restaurant_id = req.body.restaurantId;
   var when = req.body.when;
+
   if (!restaurant_id || !when) {
-    return res.status(400).send("You must post a restaurant id");
+    return Response.error(res, Response.BAD_REQUEST, "restaurant id or when invalid");
   }
 
-  SecurityService.getCurrentUser(req, res, function(user) {
-    RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
-      if (!restaurant) {
-        return res.status(400).send("Invalid restaurant id");
+  RestaurantModel.findOne({'id': restaurant_id}, function(err, restaurant) {
+
+    if (!restaurant) {
+      return Response.error(res, Response.BAD_REQUEST, "Invalid restaurant id");
+    }
+
+    var user = req.user;
+    var currentDate = Tools.getDayDate();
+
+    BookingModel.findOne({'user': user._id, 'date': currentDate}, function(err, booking) {
+
+      if (err) {
+        return Response.error(res, Response.MONGODB_ERROR, err);
+      }
+
+      if (!booking) {
+        // create booking
+        booking = new BookingModel({
+          user: user._id,
+          date: currentDate,
+          when: when,
+          restaurant: restaurant.id
+        });
 
       } else {
-        date = Tools.getDayDate();
-        BookingModel.findOne({'user': user._id, 'date': date}, function(err, booking) {
-          if (err) {
-            return res.status(503).send(err);
-          }
-
-          if (!booking) {
-            // create booking
-            booking = new BookingModel({
-              user: user._id,
-              date: date,
-              when: when,
-              restaurant: restaurant.id,
-            });
-          } else {
-            booking.set({
-              user: user._id,
-              when: when,
-              restaurant: restaurant.id,
-            });
-          }
-
-          booking.save(function(err){
-            if (err) {
-              return res.status(400).send(err);
-            } else {
-              user.set({booking: booking});
-              user.save(function(err) {
-                return res.status(200).send("OK");
-              });
-            }
-          });
+        booking.set({
+          user: user._id,
+          when: when,
+          restaurant: restaurant.id
         });
       }
+
+      booking.save(function(err){
+        if (err) {
+          return Response.error(res, Response.MONGODB_ERROR, err);
+        }
+        else {
+          user.set({booking: booking});
+          user.save(function(err) {
+            return Response.success(res, Response.HTTP_OK, booking);
+          });
+        }
+      });
     });
+
   });
+
 };
 
 /*
  * /me/friends/restaurant
  */
 exports.getFriendsAtRestaurant = function(req, res) {
-  SecurityService.getCurrentUser(req, res, function(user) {
-    var restaurant_id = req.body.restaurantId;
 
-    if (!restaurant_id) {
-      return res.status(400).send("You must post a restaurant id");
-    }
+  var restaurant_id = req.body.restaurantId;
 
-    UserTool.getUserFriends(user, function(err, res_friends) {
+  if (!restaurant_id) {
+    return Response.error(res, Response.BAD_REQUEST, "You must post a restaurant id");
+  }
 
-      if (err) {
-        return res.status(200).send(err);
-      }
+  UserTool.getUserFriends(user, function(err, res_friends) {
+
+    if (err) {
+      return Response.error(res, Response.UNKNOWN_ERROR, err);
+
+
       var ret_datas = [];
-      var date = Tools.getDayDate();
       var num = res_friends.length;
 
       if (!num) {
-        return res.status(200).send([]);
+        return Response.success(res, Response.HTTP_OK, []);
       }
 
-      res_friends.forEach(function(friend) {
-        BookingModel.findOne({ user: friend.id, //date: date,  restaurant: restaurant_id
-        }, function(err, booking) {
+      res_friends.forEach(function (friend) {
+        BookingModel.findOne({
+          user: friend.id
+          //date: date,  restaurant: restaurant_id
+        }, function (err, booking) {
           if (err) {
-            return res.status(503).send(err);
+            return Response.error(res, Response.MONGODB_ERROR, err);
           }
           if (booking) {
             if (booking.restaurant == restaurant_id) {
@@ -142,62 +150,68 @@ exports.getFriendsAtRestaurant = function(req, res) {
               }
             }
           }
+
           if (--num === 0) {
-            return res.status(200).send(ret_datas);
+            return Response.success(res, Response.HTTP_OK, ret_datas);
           }
         });
       });
-    });
+
+    }
+
   });
+
 };
 
 /* POST user listing. */
 exports.postUser = function (req, res, next){
 
-    var newUser = new UserModel(req.body);
+  var newUser = new UserModel(req.body);
 
-    newUser.provider = 'local';
-    newUser.role = 'user';
+  newUser.provider = 'local';
+  newUser.role = 'user';
 
-    newUser.save(function(err, user) {
+  newUser.save(function(err, user) {
 
-      if (err) {
-        return Response.error(res, Response.USER_VALIDATION_ERROR, err);
-      }
-      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-      return Response.success(res, Response.HTTP_CREATED, { token: token });
-
-    });
-};
-
-/* GET user. with id */
-exports.getUser = function (req, res){
-  return UserModel.findById(req.params.id, function (err, user) {
-    if (!err) {
-      return res.send(user);
-
-    } else {
-      console.log(err);
-      return res.status(400).send(err);
+    if (err) {
+      return Response.error(res, Response.USER_VALIDATION_ERROR, err);
     }
+    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+    return Response.success(res, Response.HTTP_CREATED, { token: token });
   });
 };
 
-exports.getToques = function (req, res) {
-  return UserModel.find({}, function (err, users) {
+/* GET user. with id */
+exports.getUser = function (req, res) {
+
+  return UserModel.findById(req.params.id, function (err, user) {
     if (!err) {
-      return res.send(users);
+      return Response.success(res, Response.HTTP_OK, user);
 
     } else {
-      console.log(err);
-      return res.status(400).send(err);
+      return Response.error(res, Response.USER_NOT_FOUND, err);
+    }
+  });
+
+};
+
+exports.getToques = function (req, res) {
+
+  return UserModel.find({}, function (err, users) {
+    if (!err) {
+      return Response.success(res, Response.HTTP_OK, users);
+    }
+    else {
+      return Response.error(res, Response.MONGODB_ERROR, err);
     }
   }).sort({points: -1});
+
 };
 
 /* PUT user. with id */
-exports.putUser = function (req, res){
-  return UserModel.findById(req.params.id, function (err, user) {
+exports.putUser = function (req, res) {
+
+  UserModel.findById(req.params.id, function (err, user) {
 
     if (req.body.email)
       user.email = req.body.email;
@@ -215,39 +229,34 @@ exports.putUser = function (req, res){
         case 'increase_points':
           user = updateUserPoints(user);
           user = updateActionCount(user, req.body.reason);
-        break;
+          break;
       }
     }
 
     return user.save(function (err) {
       if (!err) {
-        return res.send(user);
-
-      } else {
-        console.log(err);
-        return res.status(400).send(err);
+        return Response.success(res, Response.HTTP_OK, user);
+      }
+      else {
+        return Response.error(res, Response.USER_NOT_FOUND, err);
       }
     });
   });
+
 };
 
 /* DEL user.with id */
-exports.deleteUser = function (req, res){
+exports.deleteUser = function (req, res) {
   return UserModel.findById(req.params.id, function (err, user) {
     return user.remove(function (err) {
       if (!err) {
-        return res.send('');
-      } else {
-        console.log(err);
-        return res.status(400).send(err);
+        return Response.success(res, Response.HTTP_NO_CONTENT);
+      }
+      else {
+        return Response.error(res, Response.USER_NOT_FOUND, err);
       }
     });
   });
-};
-
-var createUserToken = function (user) {
-  user.set({'token': token});
-  return user;
 };
 
 var updateUserPreferences = function (user, preferenceInput) {
@@ -281,12 +290,12 @@ var updateActionCount = function (user, reason) {
     case 'lunch-quizz':
       user.lunchFeedbacksCount = user.lunchFeedbacksCount || 0;
       user.lunchFeedbacksCount += 1;
-    break;
+      break;
 
     case 'queue-status':
       user.queueFeedbacksCount = user.queueFeedbacksCount || 0;
       user.queueFeedbacksCount += 1;
-    break;
+      break;
   }
 
   return user;
@@ -294,20 +303,20 @@ var updateActionCount = function (user, reason) {
 
 var updateUserPoints = function (user) {
   if (user.points) {
-    user.points += UserModel.POINTS_PER_ACTION;
+    user.points += config.all.POINTS_PER_ACTION;
 
   } else {
-    user.points = UserModel.POINTS_PER_ACTION;
+    user.points = config.all.POINTS_PER_ACTION;
   }
 
   return user;
 };
 
-var updateUserPassword = function (user, password) {
+var updateUserPassword = function (user) {
   if (req.body.password.length > 30) {
-    return res.status(400).send({'password': 'must be at least 5 characters and at most 30.'});
-
-  } else {
+    return Response.error(res, Response.INVALID_PASSWORD_CONSTRAINT, err);
+  }
+  else {
     user.password = req.body.password;
   }
 };
