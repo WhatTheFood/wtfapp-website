@@ -29,6 +29,6 @@ router.route('/me/restaurant/')
 router.route('/:id')
   .get(auth.isAuthenticated(), userController.getUser)
   .put(auth.isAuthenticated(), userController.putUser)
-  .delete(auth.isAuthenticated(), userController.deleteUser);
+  .delete(auth.hasRole('admin'), userController.deleteUser);
 
 module.exports = router;

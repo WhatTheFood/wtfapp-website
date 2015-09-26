@@ -10,7 +10,7 @@ var auth = require('../../auth/auth.service');
 router.get('/refresh', auth.hasRole('admin'), restaurantController.refreshAll);
 
 router.get('/', restaurantController.getRestaurants);
-router.get('/:id', restaurantController.getRestaurantWOFeedback);
+router.get('/:id', restaurantController.getRestaurantFeedback);
 
 //router.get('/:id/feedback', auth.isAuthenticated(), restaurantController.getRestaurantFeedback);
 

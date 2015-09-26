@@ -11,9 +11,13 @@ var config = require('../../config/environment');
 
 var Response = require('../../services/response.js');
 
-/*
- * /users
- * GET users listing
+/**
+ * @api {get} /users Get all users
+ * @apiName GetAllUsers
+ * @apiGroup User
+ *
+ * @apiPermission admin
+ *
  */
 exports.getUsers = function (req, res) {
   return UserModel.find(function (err, users) {
@@ -26,16 +30,21 @@ exports.getUsers = function (req, res) {
   });
 };
 
-/*
- * /users/me
- * Get current user infos
+/**
+ * @api {get} /users/me Get the current user
+ * @apiName GetCurrentUser
+ * @apiGroup User
+ *
  */
 exports.getCurrentUserInfos = function (req, res) {
   return Response.success(res, Response.HTTP_OK, req.user);
 };
 
-/*
- * /users/me/friends
+/**
+ * @api {get} /users/friends Get the current user friends
+ * @apiName GetCurrentUserFriends
+ * @apiGroup User
+ *
  */
 exports.getCurrentUserFriends = function (req, res) {
 
@@ -45,10 +54,13 @@ exports.getCurrentUserFriends = function (req, res) {
 
 };
 
-/*
- * /users/me/restaurant
- * POST restaurant: id
- * @Return user 200
+/**
+ * @api {post} /users/me Post a checkin for the user
+ * @apiName AddCurrentUserDestination
+ * @apiGroup User
+ *
+ * @apiParam restaurantId the id of the restaurant
+ *
  */
 exports.addUserDestination = function (req, res) {
 
@@ -112,8 +124,13 @@ exports.addUserDestination = function (req, res) {
 
 };
 
-/*
- * /me/friends/restaurant
+/**
+ * @api {get} /users/me/friends/restaurant Get friends who checkin in the restaurant
+ * @apiName GetFriendsAtRestaurant
+ * @apiGroup User
+ *
+ * @apiParam restaurantId The restaurant id where check the friends checkin
+ *
  */
 exports.getFriendsAtRestaurant = function (req, res) {
 
@@ -164,7 +181,55 @@ exports.getFriendsAtRestaurant = function (req, res) {
 
 };
 
-/* POST user listing. */
+/**
+ * @api {get} /users/toques Get users sort by points
+ * @apiName GetToques
+ * @apiGroup User
+ *
+ */
+exports.getToques = function (req, res) {
+
+  return UserModel.find({}, function (err, users) {
+    if (!err) {
+      return Response.success(res, Response.HTTP_OK, users);
+    }
+    else {
+      return Response.error(res, Response.MONGODB_ERROR, err);
+    }
+  }).sort({points: -1});
+
+};
+
+/**
+ * @api {get} /users/:id Get a user
+ * @apiName GetUser
+ * @apiGroup User
+ *
+ * @apiParam id The user id
+ */
+exports.getUser = function (req, res) {
+
+  if (!req.params.id) {
+    return Response.error(res, Response.BAD_REQUEST, "no id given");
+  }
+
+  return UserModel.findById(req.params.id, function (err, user) {
+    if (!err) {
+      return Response.success(res, Response.HTTP_OK, user);
+
+    } else {
+      return Response.error(res, Response.USER_NOT_FOUND, err);
+    }
+  });
+
+};
+
+/**
+ * @api {post} /users Create a new user
+ * @apiName PostUser
+ * @apiGroup User
+ *
+ */
 exports.postUser = function (req, res, next) {
 
   var newUser = new UserModel(req.body);
@@ -182,34 +247,14 @@ exports.postUser = function (req, res, next) {
   });
 };
 
-/* GET user. with id */
-exports.getUser = function (req, res) {
-
-  return UserModel.findById(req.params.id, function (err, user) {
-    if (!err) {
-      return Response.success(res, Response.HTTP_OK, user);
-
-    } else {
-      return Response.error(res, Response.USER_NOT_FOUND, err);
-    }
-  });
-
-};
-
-exports.getToques = function (req, res) {
-
-  return UserModel.find({}, function (err, users) {
-    if (!err) {
-      return Response.success(res, Response.HTTP_OK, users);
-    }
-    else {
-      return Response.error(res, Response.MONGODB_ERROR, err);
-    }
-  }).sort({points: -1});
-
-};
-
-/* PUT user. with id */
+/**
+ * @api {put} /users/:id Update a user
+ * @apiName PutUser
+ * @apiGroup User
+ *
+ * @apiParam id The user id
+ *
+ */
 exports.putUser = function (req, res) {
 
   if (_.isUndefined(req.params.id)) {
@@ -258,7 +303,14 @@ exports.putUser = function (req, res) {
 
 };
 
-/* DEL user.with id */
+/**
+ * @api {delete} /users/:id Delete a user
+ * @apiName DeleteUser
+ * @apiGroup User
+ *
+ * @apiParam id The user id
+ *
+ */
 exports.deleteUser = function (req, res) {
   return UserModel.findById(req.params.id, function (err, user) {
     return user.remove(function (err) {
@@ -271,6 +323,7 @@ exports.deleteUser = function (req, res) {
     });
   });
 };
+
 
 var updateUserPreferences = function (user, preferenceInput) {
   if (user.preferences && user.preferences.length > 0) {

@@ -7,22 +7,27 @@ var Response = require('../../services/response.js');
 
 /****************************** GET ********************************/
 
+
 /**
- * Get restaurant
+ * @api {get} /restaurants/:id Get the feedbacks for the restaurants (TO IMPLEMENT)
+ * @apiName GetRestaurantFeedback
+ * @apiGroup Restaurant
  *
- * @param req
- * @param res
- * @returns {*}
+ * @apiParam {Number} id The restaurant id
+ *
  */
 exports.getRestaurantFeedback = function (req, res) {
-  // TODO
-  return exports.getRestaurant(req, res, true);
-};
-
-exports.getRestaurantWOFeedback = function (req, res) {
   return exports.getRestaurant(req, res, false);
 };
 
+/**
+ * @api {get} /restaurants/:id Get the restaurant
+ * @apiName GetRestaurant
+ * @apiGroup Restaurant
+ *
+ * @apiParam {Number} id The restaurant id
+ *
+ */
 exports.getRestaurant = function (req, res, feedback) {
 
   process_restaurant = function (err, restaurant) {
@@ -43,13 +48,11 @@ exports.getRestaurant = function (req, res, feedback) {
 };
 
 /**
- * Get restaurants
+ * @api {get} /restaurants/ Get all restaurants
+ * @apiName GetRestaurants
+ * @apiGroup Restaurant
  *
- * @param req
- * @param res
- * @returns {*}
  */
-
 exports.getRestaurants = function (req, res) {
 
   if (req.query.lat && req.query.lng) { // geospatial querying
@@ -87,7 +90,14 @@ exports.getRestaurants = function (req, res) {
   }
 };
 
-/* update db with remote business data */
+
+/*  */
+/**
+ * @api {post} /restaurants/refresh Populate database
+ * @apiName Refresh
+ * @apiGroup Restaurant
+ *
+ */
 exports.refreshAll = function (req, res) {
 
   /* get json file and parse it */
@@ -117,7 +127,13 @@ exports.refreshAll = function (req, res) {
 };
 
 /**
- * Vote on restaurant queue
+ * @api {post} /restaurants/:id/queue/votes Vote on restaurant queue
+ * @apiName VoteOnRestaurantQueue
+ * @apiGroup Restaurant
+ *
+ * @apiParam {Number} id The restaurant id
+ *
+ * @apiParam {Number} timeSlotIndex the index of time slot chosen
  *
  */
 exports.voteOnRestaurantQueue = function (req, res) {
@@ -144,10 +160,14 @@ exports.voteOnRestaurantQueue = function (req, res) {
 };
 
 /**
- * Update restaurant menu
+ * @api {post} /restaurants/:id/menu Update restaurant menu
+ * @apiName UpdateMenu
+ * @apiGroup Restaurant
+
+ * @apiPermission admin
  *
- * @param req
- * @param res
+ * @apiParam {Number} id The restaurant id
+ *
  */
 exports.updateRestaurantMenu = function (req, res) {
 
