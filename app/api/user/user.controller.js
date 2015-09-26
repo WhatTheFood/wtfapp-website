@@ -252,7 +252,7 @@ exports.getToques = function (req, res) {
   var query = {};
   if (req.query.avatar) { // return only users with an avatar
     query = {
-      avatar: { $ne: null }
+      avatar: { $ne: "" }
     }
   }
 
