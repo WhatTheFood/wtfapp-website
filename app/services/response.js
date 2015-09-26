@@ -113,6 +113,7 @@ exports.RESTAURANT_NOT_FOUND          = [ 4002, exports.HTTP_NOT_FOUND, "Restaur
 exports.BAD_REQUEST                   = [ 1001, exports.HTTP_BAD_REQUEST, "Bad request"];
 exports.USER_VALIDATION_ERROR         = [ 1002, exports.HTTP_BAD_REQUEST, "Invalid user" ];
 exports.INVALID_PASSWORD_CONSTRAINT   = [ 1003, exports.HTTP_BAD_REQUEST, 'must be at least 5 characters and at most 30.' ];
+exports.USER_ALREADY_EXISTS           = [ 1004, exports.HTTP_BAD_REQUEST, 'Email already used' ];
 
 // HTTP_INTERNAL_SERVER_ERROR
 exports.MONGODB_ERROR                 = [ 5001, exports.HTTP_INTERNAL_SERVER_ERROR, "Mongodb error" ];

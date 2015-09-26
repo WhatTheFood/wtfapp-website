@@ -26,7 +26,7 @@ var menuFeedbackSchema = new Schema({
   enjoyed_my_meal: {type: Number},
   usually_enjoyis_meal: {type: Number},
   bread_thrown: {type: Number},
-  user_id: {type: Number}
+  user_id: {type: Number, required: false }
 });
 
 /**

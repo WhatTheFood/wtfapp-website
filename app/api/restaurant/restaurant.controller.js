@@ -255,9 +255,10 @@ exports.voteOnRestaurantQueue = function (req, res) {
   });
 };
 
+/// TODO: refactor
 /**
- * @api {post} /restaurants/:id/menu Update restaurant menu
- * @apiName UpdateMenu
+ * @api {post} /restaurants/:id/menu Add feedback
+ * @apiName AddFeedback
  * @apiGroup Restaurant
 
  * @apiPermission admin
@@ -269,7 +270,7 @@ exports.voteOnRestaurantQueue = function (req, res) {
  *
  * @apiSuccess {Restaurant} The restaurant
  */
-exports.updateRestaurantMenu = function (req, res) {
+exports.addFeedback = function (req, res) {
 
   RestaurantModel.findOne({'id': req.params.id}, function (err, restaurant) {
 
@@ -283,6 +284,10 @@ exports.updateRestaurantMenu = function (req, res) {
 
     // update restaurant queue
     restaurant.menus = req.body.menus;
+
+    // cf https://github.com/WhatTheFood/wtfapp-mobileapp/blob/master/www/WhatTheFood/components/Lunch/lunchquizzctrl.js
+    // TODO: set userid here
+
     restaurant.save(function (err) {
 
       if (err) {

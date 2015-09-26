@@ -16,6 +16,6 @@ router.get('/:id', restaurantController.getRestaurantFeedback);
 
 router.post('/:id/queue/votes', auth.isAuthenticated(), restaurantController.voteOnRestaurantQueue);
 
-router.put('/:id/menu', auth.hasRole('admin'), restaurantController.updateRestaurantMenu);
+router.put('/:id/menu', auth.hasRole('admin'), restaurantController.addFeedback);
 
 module.exports = router;

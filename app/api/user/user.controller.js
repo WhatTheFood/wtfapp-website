@@ -323,6 +323,7 @@ exports.getUser = function (req, res) {
  * @apiGroup User
  *
  * @apiError 401 [1002] Invalid user
+ * @apiError 401 [1004] User already exists
  *
  * @apiSuccess token The user token
  *
@@ -339,14 +340,27 @@ exports.postUser = function (req, res, next) {
   newUser.provider = 'local';
   newUser.role = 'user';
 
-  newUser.save(function (err, user) {
+  UserModel.findOne({'email': req.body.email }, function(err, user) { // search if account already exists
+
+    if (user) {
+      return Response.error(res, Response.USER_ALREADY_EXISTS);
+    }
 
     if (err) {
-      return Response.error(res, Response.USER_VALIDATION_ERROR, err);
+      return Response.error(res, Response.MONGODB_ERROR, err);
     }
-    var token = jwt.sign({_id: user._id}, config.secrets.session, {expiresInMinutes: 60 * 5});
-    return Response.success(res, Response.HTTP_CREATED, {token: token});
+
+    newUser.save(function (err, user) {
+
+      if (err) {
+        return Response.error(res, Response.USER_VALIDATION_ERROR, err);
+      }
+      var token = jwt.sign({_id: user._id}, config.secrets.session, {expiresInMinutes: 60 * 5});
+      return Response.success(res, Response.HTTP_CREATED, {token: token});
+    });
+
   });
+
 };
 
 /**
