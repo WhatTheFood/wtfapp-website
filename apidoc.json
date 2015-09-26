@@ -1,0 +1,19 @@
+{
+    "name": "What The Food",
+    "version": "0.0.1",
+    "description": "The WTF API specifications",
+    "title": "API - What The Food",
+    "url" : "",
+    "header": {
+        "title": "",
+        "filename": ""
+    },
+    "footer": {
+        "title": "",
+        "filename": ""
+    },
+    "template": {
+        "withCompare": true,
+        "withGenerator": true
+    }
+}
