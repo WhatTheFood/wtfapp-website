@@ -82,7 +82,7 @@ exports.getCurrentUserFriends = function (req, res) {
     if (err) {
       return Response.error(res, Response.UNKNOWN_ERROR, err);
     }
-    return Response.success(res, Response.HTTP_OK, datas);
+    return Response.success(res, Response.HTTP_OK, transformToPublic(datas));
   });
 
 };
@@ -226,7 +226,7 @@ exports.getFriendsAtRestaurant = function (req, res) {
         }
 
         if (--num === 0) {
-          return Response.success(res, Response.HTTP_OK, ret_datas);
+          return Response.success(res, Response.HTTP_OK, transformToPublic(ret_datas));
         }
       });
     });
@@ -250,15 +250,16 @@ exports.getFriendsAtRestaurant = function (req, res) {
 exports.getToques = function (req, res) {
 
   var query = {};
-  if (req.query.avatar) { // return only users with an avatar
+
+  if (!_.isUndefined(req.query.avatar) && req.query.avatar === true) { // return only users with an avatar
     query = {
-      avatar: { $ne: "" }
+      avatar: {$ne: ""}
     }
   }
 
   return UserModel.find(query, function (err, users) {
     if (!err) {
-      return Response.success(res, Response.HTTP_OK, users);
+      return Response.success(res, Response.HTTP_OK, transformToPublic(users));
     }
     else {
       return Response.error(res, Response.MONGODB_ERROR, err);
@@ -308,9 +309,9 @@ exports.getUser = function (req, res) {
 
   return UserModel.findById(req.params.id, function (err, user) {
     if (!err) {
-      return Response.success(res, Response.HTTP_OK, user);
-
-    } else {
+      return Response.success(res, Response.HTTP_OK, user.public_profile);
+    }
+    else {
       return Response.error(res, Response.USER_NOT_FOUND, err);
     }
   });
@@ -340,7 +341,7 @@ exports.postUser = function (req, res, next) {
   newUser.provider = 'local';
   newUser.role = 'user';
 
-  UserModel.findOne({'email': req.body.email }, function(err, user) { // search if account already exists
+  UserModel.findOne({'email': req.body.email}, function (err, user) { // search if account already exists
 
     if (user) {
       return Response.error(res, Response.USER_ALREADY_EXISTS);
@@ -511,4 +512,19 @@ var updateUserPassword = function (user) {
   else {
     user.password = req.body.password;
   }
+};
+
+/**
+ * Transform a user array to an array of public profiles
+ * @param users
+ * @returns {Array}
+ */
+var transformToPublic = function (users) {
+
+  var final = [];
+  _.each(users, function (user) {
+    final.push(user.public_profile);
+  });
+
+  return final;
 };

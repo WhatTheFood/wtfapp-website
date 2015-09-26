@@ -96,11 +96,14 @@ UserSchema
 
 // Public profile information
 UserSchema
-  .virtual('profile')
+  .virtual('public_profile')
   .get(function () {
     return {
-      'name': this.name,
-      'role': this.role
+      '_id': this._id,
+      'first_name': this.first_name,
+      'last_name': this.last_name,
+      'role': this.role,
+      'avatar': this.avatar
     };
   });
 
