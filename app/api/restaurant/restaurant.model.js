@@ -96,11 +96,6 @@ var restaurantSchema = new Schema({
   payment: [{
     name: {type: String}
   }],
-  menu: {
-    date: {type: Date},
-    meal: {type: [mealSchema]},
-    feedback: {type: [menuFeedbackSchema], select: false}
-  },
   menus: {type: [menuSchema]},
   queue: {
     /**
