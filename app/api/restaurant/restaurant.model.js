@@ -89,6 +89,11 @@ var restaurantSchema = new Schema({
     tel: {type: String},
     email: {type: String}
   },
+  is_enable: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
   photo: {
     src: {type: String},
     alt: {type: String}

@@ -122,7 +122,7 @@ exports.getRestaurant = function (req, res, feedback) {
 };
 
 /**
- * @api {get} /restaurants/ Get all restaurants
+ * @api {get} /restaurants/ Get all restaurants for the user
  * @apiName GetRestaurants
  * @apiGroup Restaurant
  *
@@ -141,6 +141,7 @@ exports.getRestaurants = function (req, res) {
     var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
 
     RestaurantModel.geoNear(geoJsonTarget, {
+      is_enable: true,
       spherical: true,
       maxDistance: maxDistance,
       query: {menus: {$exists: true, $ne: []}}
@@ -159,7 +160,7 @@ exports.getRestaurants = function (req, res) {
     });
   }
   else { // regular query
-    return RestaurantModel.find({menus: {$exists: true}}, function (err, restaurants) {
+    return RestaurantModel.find({menus: {$exists: true}, is_enable: true}, function (err, restaurants) {
       if (err || _.isUndefined(restaurants)) {
         return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
       }
