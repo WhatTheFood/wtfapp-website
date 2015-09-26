@@ -70,9 +70,8 @@ exports.getRestaurants = function (req, res) {
         return res.status(400).send(err);
       }
     });
-
   } else { // regular query
-    return RestaurantModel.find({menus: {$exists: true, $ne: []}}, function (err, restaurants) {
+    return RestaurantModel.find({menus: {$exists: true}}, function (err, restaurants) {
       if (!err) {
         return res.send(restaurants);
       } else {

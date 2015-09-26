@@ -22,7 +22,6 @@ exports.getUserBasicInfos = function(user) {
 
 exports.getUserBasicInfosById = function(userId, callback) {
   UserModel.findById(userId, function(err, user) {
-
     if (user) {
       callback(UserTool.getUserBasicInfos(user));
     }
