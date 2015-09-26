@@ -43,13 +43,13 @@ var UserSchema = new Schema({
   lockUntil: {
     type: Number
   },
-  facebook_token: {
-    type: String,
-    trim: true
-  },
-  facebook_id: {
-    type: Number,
-    default: 0
+  fb: {
+    id: {
+      type: String
+    },
+    access_token: {
+      type: String
+    }
   },
   first_name: {
     type: String,

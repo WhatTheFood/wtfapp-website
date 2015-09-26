@@ -240,6 +240,8 @@ exports.getFriendsAtRestaurant = function (req, res) {
  * @apiName GetToques
  * @apiGroup User
  *
+ * @apiParam avatar Boolean. Only the user with an avatar will be returns
+ *
  * @apiError 500 [5001] Mongodb error
  *
  * @apiSuccess [User] A list of users
@@ -247,7 +249,14 @@ exports.getFriendsAtRestaurant = function (req, res) {
  */
 exports.getToques = function (req, res) {
 
-  return UserModel.find({}, function (err, users) {
+  var query = {};
+  if (req.query.avatar) { // return only users with an avatar
+    query = {
+      avatar: { $ne: null }
+    }
+  }
+
+  return UserModel.find(query, function (err, users) {
     if (!err) {
       return Response.success(res, Response.HTTP_OK, users);
     }
@@ -471,10 +480,11 @@ var updateActionCount = function (user, reason) {
 
 var updateUserPoints = function (user) {
   if (user.points) {
-    user.points += config.all.POINTS_PER_ACTION;
+    user.points += config.POINTS_PER_ACTION;
 
-  } else {
-    user.points = config.all.POINTS_PER_ACTION;
+  }
+  else {
+    user.points = config.POINTS_PER_ACTION;
   }
 
   return user;
