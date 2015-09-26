@@ -14,7 +14,11 @@ var Response = require('../../services/response.js');
  * @apiName GetRestaurantFeedback
  * @apiGroup Restaurant
  *
+ * @apiDescription Return the feedback of the restaurant. For the moment, just return the restaurant.
+ *
  * @apiParam {Number} id The restaurant id
+ *
+ * @apiSuccess Restaurant the restaurant
  *
  */
 exports.getRestaurantFeedback = function (req, res) {
@@ -26,8 +30,12 @@ exports.getRestaurantFeedback = function (req, res) {
  * @apiName GetRestaurant
  * @apiGroup Restaurant
  *
+ * @apiError 404 [4002] Restaurant not found
+ *
+ * @apiSuccess Restaurant the restaurant
+ *
  * @apiParam {Number} id The restaurant id
- ** @apiSuccessExample Success-Response:
+ * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
          "_id":"5606afe2b5c1c4aea77058d3",
@@ -116,6 +124,10 @@ exports.getRestaurant = function (req, res, feedback) {
  * @apiName GetRestaurants
  * @apiGroup Restaurant
  *
+ * @apiError 404 [4002] Restaurant not found
+ *
+ * @apiSuccess [Restaurant] The list of the restaurants
+ *
  */
 exports.getRestaurants = function (req, res) {
 
@@ -139,21 +151,20 @@ exports.getRestaurants = function (req, res) {
         restaurants.push(restaurant);
       }
       if (err) {
-        return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
+        return Response.error(res, Response.MONGODB_ERROR, err);
       }
       return Response.success(res, Response.HTTP_OK, restaurants);
     });
   }
   else { // regular query
     return RestaurantModel.find({menus: {$exists: true}}, function (err, restaurants) {
-      if (err) {
+      if (err || _.isUndefined(restaurants)) {
         return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
       }
       return Response.success(res, Response.HTTP_OK, restaurants);
     });
   }
 };
-
 
 /**
  * @api {post} /restaurants/refresh Populate database
@@ -180,7 +191,7 @@ exports.refreshAll = function (req, res) {
           }
           else {
             restaurant.set(element);
-            restaurant.save(function(err) {
+            restaurant.save(function (err) {
               if (err) {
                 callback(err);
               }

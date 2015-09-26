@@ -6,7 +6,7 @@ var UserTool = require('../tools/user.js');
 /*
  * Return the user public infos + facebook informations
  */
-exports.getUserBasicInfos = function(user) {
+exports.getUserBasicInfos = function (user) {
   var infos = {
     'email': user.email,
     'first_name': user.first_name,
@@ -19,8 +19,8 @@ exports.getUserBasicInfos = function(user) {
   return infos;
 };
 
-exports.getUserBasicInfosById = function(userId, callback) {
-  UserModel.findById(userId, function(err, user) {
+exports.getUserBasicInfosById = function (userId, callback) {
+  UserModel.findById(userId, function (err, user) {
     if (user) {
       callback(UserTool.getUserBasicInfos(user));
     }
@@ -30,7 +30,7 @@ exports.getUserBasicInfosById = function(userId, callback) {
   });
 };
 
-exports.updateUserInfosWithFacebook = function(user, callback) {
+exports.updateUserInfosWithFacebook = function (user, callback) {
   if (user.facebook_token) {
     Facebook.updateUserBasicInfos(user, callback);
   }
@@ -40,19 +40,21 @@ exports.updateUserInfosWithFacebook = function(user, callback) {
   }
 };
 
-exports.getUserFriends = function(user, callback) {
+exports.getUserFriends = function (user, callback) {
 
-  Facebook.getUserFacebookFriends(user, function(err, friends) {
+  Facebook.getUserFacebookFriends(user, function (err, friends) {
     var datas = [];
 
-    return callback(err, null);
+    if (err) {
+      return callback(err, null);
+    }
 
     if (friends && friends !== false) {
 
       var nb2 = friends.data.length;
 
-      friends.data.forEach(function(friend)  {
-        UserModel.findOne({ 'facebook_id': friend.id }, function(err, user) {
+      friends.data.forEach(function (friend) {
+        UserModel.findOne({'facebook_id': friend.id}, function (err, user) {
 
           if (user) {
             datas.push(user);

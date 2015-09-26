@@ -18,15 +18,17 @@ var Response = require('../../services/response.js');
  *
  * @apiPermission admin
  *
+ * @apiError 500 [500] Unknwon error
+ *
+ * @apiSuccess [User] A list of the users
+ *
  */
 exports.getUsers = function (req, res) {
   return UserModel.find(function (err, users) {
-    if (!err) {
-      return Response.success(res, Response.HTTP_OK, users);
-    }
-    else {
+    if (err) {
       return Response.error(res, Response.UNKNOWN_ERROR, err);
     }
+    return Response.success(res, Response.HTTP_OK, users);
   });
 };
 
@@ -34,6 +36,30 @@ exports.getUsers = function (req, res) {
  * @api {get} /users/me Get the current user
  * @apiName GetCurrentUser
  * @apiGroup User
+ *
+ * @apiDescription Can't fail because we check if the user is authenticate before call this function
+ *
+ * @apiSuccess User The current user.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+         "_id":"5606ae7432b3eee25ec062ac",
+         "provider":"local",
+         "email":"test@test.fr",
+         "hashedPassword":"0n9z8uRd/R3z64wqxoVPz4psEa6dAfXnOBV6JjnQDf8NUF0Zh0fgh6SpYI1CPg9819WGvY6KXOrmXFqsY64Y0g==",
+         "salt":"xdM3xXsrdTpH0me/as3uaw==",
+         "__v":0,
+         "preferences":[
+
+         ],
+         "avatar":"",
+         "last_name":"",
+         "first_name":"",
+         "facebook_id":0,
+         "loginAttempts":0,
+         "role":"user"
+      }
  *
  */
 exports.getCurrentUserInfos = function (req, res) {
@@ -45,22 +71,45 @@ exports.getCurrentUserInfos = function (req, res) {
  * @apiName GetCurrentUserFriends
  * @apiGroup User
  *
+ * @apiError 500 [500] Facebook failed.
+ *
+ * @apiSuccess [User] A list of friends
+ *
  */
 exports.getCurrentUserFriends = function (req, res) {
 
-  UserTool.getUserFriends(req.user, function (datas) {
+  UserTool.getUserFriends(req.user, function (err, datas) {
+    if (err) {
+      return Response.error(res, Response.UNKNOWN_ERROR, err);
+    }
     return Response.success(res, Response.HTTP_OK, datas);
   });
 
 };
 
 /**
- * @api {post} /users/me Post a checkin for the user
+ * @api {post} /users/me/restaurant Post a check-in for the user
  * @apiName AddCurrentUserDestination
  * @apiGroup User
  *
  * @apiParam restaurantId the id of the restaurant
+ * @apiParam when         when the user will come to the restaurant
  *
+ * @apiSuccess Booking The created booking
+ *
+ * @apiSuccessExample Success-Response:
+ * HTTP/1.1 200 OK
+ {
+    "_id":"5606c1ae358f01edf3c8424d",
+    "user":"5606ae7432b3eee25ec062ac",
+    "date":"26/9/2015",
+    "when":"12:00",
+    "restaurant":"695",
+    "__v":0
+ }
+ *
+ * @apiError 401 [1001] Restaurant id or when invalid
+ * @apiError 500 [5001] Mongodb error
  */
 exports.addUserDestination = function (req, res) {
 
@@ -131,6 +180,11 @@ exports.addUserDestination = function (req, res) {
  *
  * @apiParam restaurantId The restaurant id where check the friends checkin
  *
+ * @apiError 401 [1001] Bad request
+ * @apiError 500 [500] Unknown. TODO
+ *
+ * @apiSuccess [User] A list of friends users
+ *
  */
 exports.getFriendsAtRestaurant = function (req, res) {
 
@@ -186,6 +240,10 @@ exports.getFriendsAtRestaurant = function (req, res) {
  * @apiName GetToques
  * @apiGroup User
  *
+ * @apiError 500 [5001] Mongodb error
+ *
+ * @apiSuccess [User] A list of users
+ *
  */
 exports.getToques = function (req, res) {
 
@@ -206,12 +264,38 @@ exports.getToques = function (req, res) {
  * @apiGroup User
  *
  * @apiParam id The user id
+ *
+ * @apiError 404 [4001] User not found
+ *
+ * @apiSuccess User The user
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+         "_id":"5606ae7432b3eee25ec062ac",
+         "provider":"local",
+         "email":"test@test.fr",
+         "hashedPassword":"0n9z8uRd/R3z64wqxoVPz4psEa6dAfXnOBV6JjnQDf8NUF0Zh0fgh6SpYI1CPg9819WGvY6KXOrmXFqsY64Y0g==",
+         "salt":"xdM3xXsrdTpH0me/as3uaw==",
+         "__v":0,
+         "preferences":[
+
+         ],
+         "avatar":"",
+         "last_name":"",
+         "first_name":"",
+         "facebook_id":0,
+         "loginAttempts":0,
+         "role":"user"
+      }
+ *
  */
 exports.getUser = function (req, res) {
 
   if (!req.params.id) {
     return Response.error(res, Response.BAD_REQUEST, "no id given");
   }
+
+  // TODO: send different informations according to the current user roles
 
   return UserModel.findById(req.params.id, function (err, user) {
     if (!err) {
@@ -228,6 +312,15 @@ exports.getUser = function (req, res) {
  * @api {post} /users Create a new user
  * @apiName PostUser
  * @apiGroup User
+ *
+ * @apiError 401 [1002] Invalid user
+ *
+ * @apiSuccess token The user token
+ *
+ * @apiSuccessExample
+ * {
+ *  'token': '2392394i329493';
+ *  }
  *
  */
 exports.postUser = function (req, res, next) {
@@ -253,6 +346,11 @@ exports.postUser = function (req, res, next) {
  * @apiGroup User
  *
  * @apiParam id The user id
+ *
+ * @apiError 401 [1001] Bad request
+ * @apiError 404 [4001] User not found
+ *
+ * @apiSuccess User the updated user
  *
  */
 exports.putUser = function (req, res) {
@@ -309,6 +407,10 @@ exports.putUser = function (req, res) {
  * @apiGroup User
  *
  * @apiParam id The user id
+ *
+ * @apiError 404 [4001] User not found
+ *
+ * @apiSuccess 204
  *
  */
 exports.deleteUser = function (req, res) {
