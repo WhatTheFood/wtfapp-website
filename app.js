@@ -1,3 +1,9 @@
+/**
+ * Main application file
+ */
+
+'use strict';
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -5,12 +11,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
+var mongoose = require('mongoose');
 
-var routes = require('./app/routes/index');
-var users = require('./app/routes/users');
-var restaurants = require('./app/routes/restaurants');
+var config = require('./app/config/environment');
 
 var app = express();
+
+// Set default node environment to development
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -39,57 +47,24 @@ app.use(allowCrossDomain);
 app.use(passport.initialize());
 
 // routes
-app.use('/', routes);
-app.use('/api/users', users);
-app.use('/api/restaurants', restaurants);
+require('./app/routes')(app);
 
-// catch 404 and forward to error handler
-app.use(function(err, req, res, next) {
-  if (err && err.name === 'UnauthorizedError') {
-    res.status(401).send('invalid token...');
 
-  } else {
-    err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-  }
-});
-
-// database connection
-var mongoose = require('mongoose');
-mongoose.connect(process.env.MONGOLAB_URI + '/wtfapp');
+// Connect to database
+mongoose.connect(config.mongo.uri, config.mongo.options);
 
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function (callback) {
-  var restaurants = db.collection('restaurants');
-  restaurants.ensureIndex({geolocation: '2dsphere'}, {}, function(err, result) {
-    if(err) {
-      return console.dir(err);
-    }
-  });
-});
-
-// development error handler
-// will print stacktrace
-if (process.env.NODE_ENV === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
+if (process.env.NODE_ENV !== 'development') {
+  app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: {}
+    });
   });
-});
+}
 
 module.exports = app;

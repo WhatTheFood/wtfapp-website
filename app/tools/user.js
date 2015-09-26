@@ -1,8 +1,7 @@
-var UserModel = require('../models/user');
+var UserModel = require('../api/user/user.model');
 var Facebook = require('../tools/facebook.js');
 var UserTool = require('../tools/user.js');
-var Tools = require('../tools/tools.js');
-var BookingModel = require('../models/previsions.js');
+
 
 /*
  * Return the user public infos + facebook informations

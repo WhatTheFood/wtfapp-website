@@ -1,7 +1,10 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
-var authController = require('../controllers/auth');
-var restaurantController = require('../controllers/restaurant');
+
+var restaurantController = require('./restaurant.controller');
+var auth = require('../../auth/auth.service');
 
 /****************************** GET ********************************/
 
@@ -11,22 +14,23 @@ router.route('/')
 
 /* refresh admin command */
 router.route('/refresh')
-  .get(restaurantController.refreshAll);
+  .get(auth.isAuthenticated(), restaurantController.refreshAll);
 
 /* restaurant */
 router.route('/:id')
     .get(restaurantController.getRestaurantWOFeedback);
+
 router.route('/:id/feedback')
-    .get(restaurantController.getRestaurantWFeedback);
+    .get(auth.isAuthenticated(), restaurantController.getRestaurantWFeedback);
 
 /****************************** POST *******************************/
 
 router.route('/:id/queue/votes')
-    .post(restaurantController.voteOnRestaurantQueue);
+    .post(auth.isAuthenticated(), restaurantController.voteOnRestaurantQueue);
 
 /****************************** PUT ********************************/
 
 router.route('/:id/menu')
-    .put(restaurantController.updateRestaurantMenu);
+    .put(auth.isAuthenticated(), restaurantController.updateRestaurantMenu);
 
 module.exports = router;

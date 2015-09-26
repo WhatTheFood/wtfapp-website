@@ -1,9 +1,7 @@
-var express = require('express');
 var request = require('request');
-var router = express.Router();
-var SecurityService = require('../services/security-service');
-var RestaurantModel = require('../models/restaurant');
-var UserModel = require('../models/user.js');
+
+var RestaurantModel = require('./restaurant.model');
+var UserModel = require('../user/user.model');
 
 /****************************** GET ********************************/
 

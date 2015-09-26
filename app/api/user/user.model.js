@@ -24,8 +24,17 @@ var UserSchema = new Schema({
     type : String,
     unique: true,
     trim : true,
-    required: true
+    required: true,
+    lowercase: true
   },
+  role: {
+    type: String,
+    default: 'user'
+  },
+  hashedPassword: String,
+  provider: String,
+  salt: String,
+  apikey: String,
   password: {
     type : String,
     trim : true,

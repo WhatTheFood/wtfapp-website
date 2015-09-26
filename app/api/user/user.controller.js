@@ -1,16 +1,12 @@
-var express = require('express');
-var router = express.Router();
 var jwt = require('jsonwebtoken');
-var secret = require('../config/secret');
 
-var UserModel = require('../models/user.js');
-var RestaurantModel = require('../models/restaurant.js');
-var BookingModel = require('../models/previsions.js');
-var UserTool = require('../tools/user');
-var Tools = require('../tools/tools.js');
+var UserModel = require('./user.model');
+var RestaurantModel = require('../restaurant/restaurant.model');
+var BookingModel = require('./booking.model');
+var UserTool = require('../../tools/user');
+var Tools = require('../../tools/tools');
 
-var SecurityService = require('../services/security-service');
-
+var Response = require('../../services/response.js');
 /*
  * /users
  * GET users listing
@@ -154,34 +150,19 @@ exports.getFriendsAtRestaurant = function(req, res) {
 };
 
 /* POST user listing. */
-exports.postUser = function (req, res){
-  var user;
-  var firstname = req.body.firstname;
-  var lastname = req.body.lastname;
-  var email = req.body.email;
-  var pwd = req.body.password;
+exports.postUser = function (req, res, next){
+    var newUser = new User(req.body);
+    newUser.provider = 'local';
+    newUser.role = 'user';
+    newUser.save(function(err, user) {
 
-  if (!email || !pwd) {
-    return res.status(400).send({"error": "Invalid request"});
-  }
+      if (err) {
+        Response.error(res, Response.USER_VALIDATION_ERROR, err);
+      }
+      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+      Response.success(res, Response.HTTP_CREATED, { token: token });
 
-  user = new UserModel({
-    first_name: firstname,
-    last_name: lastname,
-    email: email,
-    password: pwd
-  });
-
-  user = createUserToken(user);
-
-  user.save(function (err) {
-    if (!err) {
-      return res.send(user);
-    } else {
-      console.log(err);
-      return res.status(400).send(err);
-    }
-  });
+    });
 };
 
 /* GET user. with id */
@@ -260,7 +241,6 @@ exports.deleteUser = function (req, res){
 };
 
 var createUserToken = function (user) {
-  var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
   user.set({'token': token});
   return user;
 };
