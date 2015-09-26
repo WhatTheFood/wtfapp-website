@@ -32,7 +32,7 @@ exports.getRestaurantFeedback = function (req, res) {
  * @apiName GetRestaurant
  * @apiGroup Restaurant
  *
- * @apiError 404 [4002] Restaurant not found
+ * @apiError 4002 Restaurant not found
  *
  * @apiSuccess Restaurant the restaurant
  *
@@ -126,7 +126,7 @@ exports.getRestaurant = function (req, res, feedback) {
  * @apiName GetRestaurants
  * @apiGroup Restaurant
  *
- * @apiError 404 [4002] Restaurant not found
+ * @apiError 4002 Restaurant not found
  *
  * @apiSuccess [Restaurant] The list of the restaurants
  *
@@ -173,7 +173,7 @@ exports.getRestaurants = function (req, res) {
  * @apiName Refresh
  * @apiGroup Restaurant
  *
- * @apiError 500 [5002] Async error
+ * @apiError 5002 Async error
  */
 exports.refreshAll = function (req, res) {
 
@@ -227,8 +227,8 @@ exports.refreshAll = function (req, res) {
  *
  * @apiParam {Number} timeSlotIndex the index of time slot chosen
  *
- * @apiError 404 [4002] Restaurant not found
- * @apiError 401 [1001] Bad request
+ * @apiError 4002 Restaurant not found
+ * @apiError 1001 Bad request
  *
  * @apiSuccess {Restaurant} The restaurant
  */
@@ -265,8 +265,8 @@ exports.voteOnRestaurantQueue = function (req, res) {
  *
  * @apiParam {Number} id The restaurant id
  *
- * @apiError 404 [4002] Restaurant not found
- * @apiError 401 [1001] Bad request
+ * @apiError 4002 Restaurant not found
+ * @apiError 1001 Bad request
  *
  * @apiSuccess {Restaurant} The restaurant
  */

@@ -18,7 +18,7 @@ var Response = require('../../services/response.js');
  *
  * @apiPermission admin
  *
- * @apiError 500 [500] Unknwon error
+ * @apiError 500 Unknwon error
  *
  * @apiSuccess [User] A list of the users
  *
@@ -71,7 +71,7 @@ exports.getCurrentUserInfos = function (req, res) {
  * @apiName GetCurrentUserFriends
  * @apiGroup User
  *
- * @apiError 500 [500] Facebook failed.
+ * @apiError 500 Facebook failed.
  *
  * @apiSuccess [User] A list of friends
  *
@@ -108,8 +108,8 @@ exports.getCurrentUserFriends = function (req, res) {
     "__v":0
  }
  *
- * @apiError 401 [1001] Restaurant id or when invalid
- * @apiError 500 [5001] Mongodb error
+ * @apiError 1001 Restaurant id or when invalid
+ * @apiError 5001 Mongodb error
  */
 exports.addUserDestination = function (req, res) {
 
@@ -180,8 +180,8 @@ exports.addUserDestination = function (req, res) {
  *
  * @apiParam restaurantId The restaurant id where check the friends checkin
  *
- * @apiError 401 [1001] Bad request
- * @apiError 500 [500] Unknown. TODO
+ * @apiError 1001 Bad request
+ * @apiError 500 Unknown. TODO
  *
  * @apiSuccess [User] A list of friends users
  *
@@ -242,7 +242,7 @@ exports.getFriendsAtRestaurant = function (req, res) {
  *
  * @apiParam avatar Boolean. Only the user with an avatar will be returns
  *
- * @apiError 500 [5001] Mongodb error
+ * @apiError 50001 Mongodb error
  *
  * @apiSuccess [User] A list of users
  *
@@ -274,7 +274,7 @@ exports.getToques = function (req, res) {
  *
  * @apiParam id The user id
  *
- * @apiError 404 [4001] User not found
+ * @apiError 4001 User not found
  *
  * @apiSuccess User The user
  * @apiSuccessExample Success-Response:
@@ -322,8 +322,8 @@ exports.getUser = function (req, res) {
  * @apiName PostUser
  * @apiGroup User
  *
- * @apiError 401 [1002] Invalid user
- * @apiError 401 [1004] User already exists
+ * @apiError 1002 Invalid user
+ * @apiError 1004 User already exists
  *
  * @apiSuccess token The user token
  *
@@ -370,8 +370,8 @@ exports.postUser = function (req, res, next) {
  *
  * @apiParam id The user id
  *
- * @apiError 401 [1001] Bad request
- * @apiError 404 [4001] User not found
+ * @apiError 1001 Bad request
+ * @apiError 4001 User not found
  *
  * @apiSuccess User the updated user
  *
@@ -431,7 +431,7 @@ exports.putUser = function (req, res) {
  *
  * @apiParam id The user id
  *
- * @apiError 404 [4001] User not found
+ * @apiError 4001 User not found
  *
  * @apiSuccess 204
  *
