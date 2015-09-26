@@ -7,12 +7,15 @@ var restaurantController = require('./restaurant.controller');
 var auth = require('../../auth/auth.service');
 
 /* refresh admin command */
-router.get('/refresh', auth.isAuthenticated(), restaurantController.refreshAll);
+router.get('/refresh', auth.hasRole('admin'), restaurantController.refreshAll);
 
 router.get('/', restaurantController.getRestaurants);
 router.get('/:id', restaurantController.getRestaurantWOFeedback);
-router.get('/:id/feedback', auth.isAuthenticated(), restaurantController.getRestaurantWFeedback);
+
+//router.get('/:id/feedback', auth.isAuthenticated(), restaurantController.getRestaurantFeedback);
+
 router.post('/:id/queue/votes', auth.isAuthenticated(), restaurantController.voteOnRestaurantQueue);
-router.put('/:id/menu', auth.isAuthenticated(), restaurantController.updateRestaurantMenu);
+
+router.put('/:id/menu', auth.hasRole('admin'), restaurantController.updateRestaurantMenu);
 
 module.exports = router;

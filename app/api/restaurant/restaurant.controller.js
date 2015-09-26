@@ -14,7 +14,8 @@ var Response = require('../../services/response.js');
  * @param res
  * @returns {*}
  */
-exports.getRestaurantWFeedback = function (req, res) {
+exports.getRestaurantFeedback = function (req, res) {
+  // TODO
   return exports.getRestaurant(req, res, true);
 };
 
@@ -25,13 +26,14 @@ exports.getRestaurantWOFeedback = function (req, res) {
 exports.getRestaurant = function (req, res, feedback) {
 
   process_restaurant = function (err, restaurant) {
-    console.log(req.query);
-    if (!err) {
-      return Response.success(res, Response.HTTP_OK, restaurant);
-    }
-    else {
+
+    if (err) {
       return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
+    if (!restaurant) {
+      return Response.error(res, Response.RESTAURANT_NOT_FOUND);
+    }
+    return Response.success(res, Response.HTTP_OK, restaurant);
   };
 
   if (feedback)
@@ -117,8 +119,6 @@ exports.refreshAll = function (req, res) {
 /**
  * Vote on restaurant queue
  *
- * @param req
- * @param res
  */
 exports.voteOnRestaurantQueue = function (req, res) {
 
@@ -128,12 +128,15 @@ exports.voteOnRestaurantQueue = function (req, res) {
     if (err) {
       return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
+    if (!restaurant) {
+      return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
+    }
     restaurant.voteOnQueue(user, Number(req.body.timeSlotIndex));
     updateUserActionCount(user);
 
     restaurant.save(function (err) {
       if (err) {
-        return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
+        return Response.error(res, Response.BAD_REQUEST, err);
       }
       return Response.success(res, Response.HTTP_OK, restaurant);
     });
@@ -151,8 +154,13 @@ exports.updateRestaurantMenu = function (req, res) {
   RestaurantModel.findOne({'id': req.params.id}, function (err, restaurant) {
 
     if (err) {
-      return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
+      return Response.error(res, Response.BAD_REQUEST, err);
     }
+
+    if (!restaurant) {
+      return Response.error(res, Response.RESTAURANT_NOT_FOUND);
+    }
+
     // update restaurant queue
     restaurant.menus = req.body.menus;
     restaurant.save(function (err) {
@@ -162,7 +170,6 @@ exports.updateRestaurantMenu = function (req, res) {
       }
 
       return Response.success(res, Response.HTTP_OK, restaurant);
-
     });
 
   });
