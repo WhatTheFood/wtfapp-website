@@ -12,27 +12,6 @@ var config = require('../../config/environment');
 var Response = require('../../services/response.js');
 
 /**
- * @api {get} /users Get all users
- * @apiName GetAllUsers
- * @apiGroup User
- *
- * @apiPermission admin
- *
- * @apiError 500 Unknwon error
- *
- * @apiSuccess [User] A list of the users
- *
- */
-exports.getUsers = function (req, res) {
-  return UserModel.find(function (err, users) {
-    if (err) {
-      return Response.error(res, Response.UNKNOWN_ERROR, err);
-    }
-    return Response.success(res, Response.HTTP_OK, users);
-  });
-};
-
-/**
  * @api {get} /users/me Get the current user
  * @apiName GetCurrentUser
  * @apiGroup User
@@ -424,32 +403,6 @@ exports.putUser = function (req, res) {
   });
 
 };
-
-/**
- * @api {delete} /users/:id Delete a user
- * @apiName DeleteUser
- * @apiGroup User
- *
- * @apiParam id The user id
- *
- * @apiError 4001 User not found
- *
- * @apiSuccess 204
- *
- */
-exports.deleteUser = function (req, res) {
-  return UserModel.findById(req.params.id, function (err, user) {
-    return user.remove(function (err) {
-      if (!err) {
-        return Response.success(res, Response.HTTP_NO_CONTENT);
-      }
-      else {
-        return Response.error(res, Response.USER_NOT_FOUND, err);
-      }
-    });
-  });
-};
-
 
 var updateUserPreferences = function (user, preferenceInput) {
   if (user.preferences && user.preferences.length > 0) {

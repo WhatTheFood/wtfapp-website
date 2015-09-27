@@ -12,11 +12,9 @@ var auth = require('../../auth/auth.service');
 router.get('/admin/', auth.hasRole('admin'), restaurantAdminController.getRestaurantsForAdmin);
 router.post('/admin/enable', auth.hasRole('admin'), restaurantAdminController.postEnableRestaurant);
 router.post('/admin/disable', auth.hasRole('admin'), restaurantAdminController.postDisableRestaurant);
+router.get('/refresh', auth.hasRole('admin'), restaurantAdminController.refreshAll);
 
 // -- normal routes
-
-/* refresh admin command */
-router.get('/refresh', auth.hasRole('admin'), restaurantController.refreshAll);
 
 router.get('/', restaurantController.getRestaurants);
 
