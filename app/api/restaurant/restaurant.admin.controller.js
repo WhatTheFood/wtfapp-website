@@ -159,3 +159,86 @@ exports.refreshAll = function (req, res) {
 
   return Response.success(res, Response.HTTP_OK, {});
 };
+
+/**
+ * @api {put} /users/:id Update a user
+ * @apiName PutUser
+ * @apiGroup User
+ *
+ * @apiParam id The user id
+ *
+ * @apiE
+ *
+ * @apiError 1001 Bad request
+ * @apiError 4001 User not found
+ *
+ * @apiSuccess User the updated user
+ *
+ * The put of the user can :
+ *
+ * - Update user information
+ * - Update a preference
+ * - Run an action
+ *
+ */
+exports.putUser = function (req, res) {
+
+  if (_.isUndefined(req.params.id)) {
+    return Response.error(req, Response.BAD_REQUEST, "id not provide");
+  }
+
+  UserModel.findById(req.params.id, function (err, user) {
+
+    if (!user) {
+      return Response.error(res, Response.USER_NOT_FOUND);
+    }
+
+    if (err) {
+      return Response.error(res, Response.USER_NOT_FOUND, err);
+    }
+
+    if (req.body.email)
+      user.email = req.body.email;
+
+    if (req.body.password) {
+      user = updateUserPassword(user, req.body.password);
+    }
+
+    if (req.body.first_name) {
+      user.first_name = req.body.first_name;
+    }
+
+    if (req.body.last_name) {
+      user.last_name = req.body.last_name;
+    }
+
+    if (req.body.password) {
+      user = updateUserPassword(user, req.body.password);
+    }
+
+    // -- We want to update a preference
+    if (req.body.preference) {
+      user = updateUserPreferences(user, req.body.preference);
+    }
+
+    // -- We want to run an action
+    if (req.body.action) {
+      switch (req.body.action) {
+        case 'increase_points':
+          user = updateUserPoints(user);
+          user = updateActionCount(user, req.body.reason);
+          break;
+      }
+    }
+
+    return user.save(function (err) {
+      if (!err) {
+        return Response.success(res, Response.HTTP_OK, user);
+      }
+      else {
+        return Response.error(res, Response.USER_NOT_FOUND, err);
+      }
+    });
+  });
+
+};

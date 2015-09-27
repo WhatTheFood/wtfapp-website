@@ -91,7 +91,7 @@ var restaurantSchema = new Schema({
   },
   is_enable: {
     type: Boolean,
-    default: false,
+    default: true,
     required: true
   },
   photo: {

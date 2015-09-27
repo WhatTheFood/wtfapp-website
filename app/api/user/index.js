@@ -13,7 +13,14 @@ router.route('/toques')
   .get(auth.isAuthenticated(), userController.getToques);
 
 router.route('/me')
-  .get(auth.isAuthenticated(), userController.getCurrentUserInfos);
+  .get(auth.isAuthenticated(), userController.getCurrentUser)
+  .put(auth.isAuthenticated(), userController.putCurrentUser);
+
+router.route('/me/preferences')
+  .put(auth.isAuthenticated(), userController.putCurrentUser);
+
+router.route('/me/action')
+  .post(auth.isAuthenticated(), userController.putCurrentUserPreferences);
 
 router.route('/me/friends')
   .get(auth.isAuthenticated(), userController.getCurrentUserFriends);
@@ -28,7 +35,6 @@ router.route('/me/restaurant/')
 /* user */
 router.route('/:id')
   .get(auth.isAuthenticated(), userController.getUser)
-  .put(auth.isAuthenticated(), userController.putUser);
 
 // -- admin
 
@@ -40,5 +46,8 @@ router.route('/')
 
 router.route('/:id/role')
   .post(auth.hasRole('admin'), userAdminController.postRole);
+
+router.route('/:id')
+  .put(auth.isAuthenticated(), userAdminController.putUser);
 
 module.exports = router;

@@ -56,7 +56,7 @@ var UserSchema = new Schema({
     default: ""
   },
   booking: {},
-  preferences: [],
+  preferences: {},
   queueFeedbacksCount: 0,
   lunchFeedbacksCount: 0,
   points: 0

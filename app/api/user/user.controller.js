@@ -4,8 +4,8 @@ var _ = require('lodash');
 var UserModel = require('./user.model');
 var RestaurantModel = require('../restaurant/restaurant.model');
 var BookingModel = require('./booking.model');
-var UserTool = require('../../tools/user');
-var Tools = require('../../tools/tools');
+var UserTool = require('./user.tools');
+var Tools = require('../../tools/');
 
 var config = require('../../config/environment');
 
@@ -15,8 +15,6 @@ var Response = require('../../services/response.js');
  * @api {get} /users/me Get the current user
  * @apiName GetCurrentUser
  * @apiGroup User
- *
- * @apiDescription Can't fail because we check if the user is authenticate before call this function
  *
  * @apiSuccess User The current user.
  *
@@ -40,9 +38,72 @@ var Response = require('../../services/response.js');
          "role":"user"
       }
  *
+ *
+ * Can't fail with a 404 because we check if the user is authenticate before call this function
  */
-exports.getCurrentUserInfos = function (req, res) {
+exports.getCurrentUser = function (req, res) {
   return Response.success(res, Response.HTTP_OK, req.user);
+};
+
+/**
+ * @api {put} /users/me Put the current user
+ * @apiName GetCurrentUser
+ * @apiGroup User
+ *
+ * @apiParam {post} User the user
+ *
+ * @apiSuccess User The current user.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+         "_id":"5606ae7432b3eee25ec062ac",
+         "provider":"local",
+         "email":"test@test.fr",
+         "hashedPassword":"0n9z8uRd/R3z64wqxoVPz4psEa6dAfXnOBV6JjnQDf8NUF0Zh0fgh6SpYI1CPg9819WGvY6KXOrmXFqsY64Y0g==",
+         "salt":"xdM3xXsrdTpH0me/as3uaw==",
+         "__v":0,
+         "preferences":[
+
+         ],
+         "avatar":"",
+         "last_name":"",
+         "first_name":"",
+         "facebook_id":0,
+         "loginAttempts":0,
+         "role":"user"
+      }
+ *
+ *
+ * Can't fail with a 404 because we check if the user is authenticate before call this function
+ */
+exports.putCurrentUser = function (req, res) {
+
+};
+
+/**
+ * @api {put} /users/me/preferences Put the current user
+ * @apiName GetCurrentUser
+ * @apiGroup User
+ *
+ * @apiParam {post} preference A preference (key / value)
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *    preferences: {
+ *      'menu': false,
+ *      'test': true
+ *    }
+ * }
+ *
+ * @apiSuccess User The current user.
+ *
+ */
+exports.putCurrentUserPreferences = function (req, res) {
+
+  var user = req.user;
+
+  user = UserTool.updadeUserPreferences(user, preference);
 };
 
 /**
@@ -61,7 +122,7 @@ exports.getCurrentUserFriends = function (req, res) {
     if (err) {
       return Response.error(res, Response.UNKNOWN_ERROR, err);
     }
-    return Response.success(res, Response.HTTP_OK, transformToPublic(datas));
+    return Response.success(res, Response.HTTP_OK, UserTool.transformToPublic(datas));
   });
 
 };
@@ -205,7 +266,7 @@ exports.getFriendsAtRestaurant = function (req, res) {
         }
 
         if (--num === 0) {
-          return Response.success(res, Response.HTTP_OK, transformToPublic(ret_datas));
+          return Response.success(res, Response.HTTP_OK, UserTool.transformToPublic(ret_datas));
         }
       });
     });
@@ -238,7 +299,7 @@ exports.getToques = function (req, res) {
 
   return UserModel.find(query, function (err, users) {
     if (!err) {
-      return Response.success(res, Response.HTTP_OK, transformToPublic(users));
+      return Response.success(res, Response.HTTP_OK, UserTool.transformToPublic(users));
     }
     else {
       return Response.error(res, Response.MONGODB_ERROR, err);
@@ -341,143 +402,4 @@ exports.postUser = function (req, res) {
 
   });
 
-};
-
-/**
- * @api {put} /users/:id Update a user
- * @apiName PutUser
- * @apiGroup User
- *
- * @apiParam id The user id
- *
- * @apiError 1001 Bad request
- * @apiError 4001 User not found
- *
- * @apiSuccess User the updated user
- *
- */
-exports.putUser = function (req, res) {
-
-  if (_.isUndefined(req.params.id)) {
-    return Response.error(req, Response.BAD_REQUEST, "id not provide");
-  }
-
-  UserModel.findById(req.params.id, function (err, user) {
-
-    if (!user) {
-      return Response.error(res, Response.USER_NOT_FOUND);
-    }
-
-    if (err) {
-      return Response.error(res, Response.USER_NOT_FOUND, err);
-    }
-
-    if (req.body.email)
-      user.email = req.body.email;
-
-    if (req.body.password) {
-      user = updateUserPassword(user, req.body.password);
-    }
-
-    if (req.body.preference) {
-      user = updateUserPreferences(user, req.body.preference);
-    }
-
-    if (req.body.action) {
-      switch (req.body.action) {
-        case 'increase_points':
-          user = updateUserPoints(user);
-          user = updateActionCount(user, req.body.reason);
-          break;
-      }
-    }
-
-    return user.save(function (err) {
-      if (!err) {
-        return Response.success(res, Response.HTTP_OK, user);
-      }
-      else {
-        return Response.error(res, Response.USER_NOT_FOUND, err);
-      }
-    });
-  });
-
-};
-
-var updateUserPreferences = function (user, preferenceInput) {
-  if (user.preferences && user.preferences.length > 0) {
-    var preferences = user.preferences;
-
-    var found = false;
-    preferences.forEach(function (preference, index, preferences) {
-      if (preference.name === preferenceInput.name) {
-        preferences[index] = preferenceInput;
-        found = true;
-      }
-    });
-
-    if (!found) {
-      preferences.push(preferenceInput);
-    }
-
-    user.preferences = []; // Trick to force mongo to update array fields
-    user.preferences = preferences;
-
-  } else {
-    user.preferences = [req.body.preference];
-  }
-
-  return user;
-};
-
-var updateActionCount = function (user, reason) {
-  switch (reason) {
-    case 'lunch-quizz':
-      user.lunchFeedbacksCount = user.lunchFeedbacksCount || 0;
-      user.lunchFeedbacksCount += 1;
-      break;
-
-    case 'queue-status':
-      user.queueFeedbacksCount = user.queueFeedbacksCount || 0;
-      user.queueFeedbacksCount += 1;
-      break;
-  }
-
-  return user;
-};
-
-var updateUserPoints = function (user) {
-  if (user.points) {
-    user.points += config.POINTS_PER_ACTION;
-
-  }
-  else {
-    user.points = config.POINTS_PER_ACTION;
-  }
-
-  return user;
-};
-
-var updateUserPassword = function (user) {
-  if (req.body.password.length > 30) {
-    return Response.error(res, Response.INVALID_PASSWORD_CONSTRAINT, err);
-  }
-  else {
-    user.password = req.body.password;
-  }
-};
-
-/**
- * Transform a user array to an array of public profiles
- * @param users
- * @returns {Array}
- */
-var transformToPublic = function (users) {
-
-  var final = [];
-  _.each(users, function (user) {
-    final.push(user.public_profile);
-  });
-
-  return final;
 };
