@@ -25,6 +25,24 @@ var all = {
   // List of user roles
   userRoles: ['guest', 'user', 'crous', 'admin'],
 
+  user: {
+    preferences_keys: [ // The keys that can be used for the user preferences
+      'vegetarian',
+      'vegan',
+      'nopork',
+      'noveal',
+      'nogluten',
+      'nocrustacean',
+      'noeggs',
+      'nofish',
+      'nosoya'
+    ],
+
+    actions_keys: [
+      'increase_points'
+    ]
+  },
+
   // Number of points give to a user at an action
   POINTS_PER_ACTION: 5,
 

@@ -12,20 +12,19 @@ var auth = require('../../auth/auth.service');
 router.get('/admin/', auth.hasRole('admin'), restaurantAdminController.getRestaurantsForAdmin);
 router.post('/admin/enable', auth.hasRole('admin'), restaurantAdminController.postEnableRestaurant);
 router.post('/admin/disable', auth.hasRole('admin'), restaurantAdminController.postDisableRestaurant);
+router.get('/refresh', auth.hasRole('admin'), restaurantAdminController.refreshAll);
 
 // -- normal routes
-
-/* refresh admin command */
-router.get('/refresh', auth.hasRole('admin'), restaurantController.refreshAll);
 
 router.get('/', restaurantController.getRestaurants);
 
 router.get('/:id', restaurantController.getRestaurantFeedback);
 
+// TODO:
 //router.get('/:id/feedback', auth.isAuthenticated(), restaurantController.getRestaurantFeedback);
 
 router.post('/:id/queue/votes', auth.isAuthenticated(), restaurantController.voteOnRestaurantQueue);
 
-router.put('/:id/menu', auth.hasRole('admin'), restaurantController.addFeedback);
+router.put('/:id/feedback', auth.isAuthenticated(), restaurantController.addFeedback);
 
 module.exports = router;

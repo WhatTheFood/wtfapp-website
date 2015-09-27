@@ -11,7 +11,7 @@ var Response = require('../../services/response.js');
 /**
  * @api {get} /restaurants/admin/ Get all restaurants for the administrator
  * @apiName GetRestaurantsForAdmin
- * @apiGroup Restaurant
+ * @apiGroup Restaurant Admin
  *
  * @apiPermission admin
  *
@@ -34,7 +34,7 @@ exports.getRestaurantsForAdmin = function(req, res) {
 /**
  * @api {post} /restaurants/admin/enable Enable the restaurant
  * @apiName EnableRestaurant
- * @apiGroup Restaurant
+ * @apiGroup Restaurant Admin
  *
  * @apiParam restaurantId the restaurant id
  *
@@ -72,7 +72,7 @@ exports.postEnableRestaurant = function(req, res) {
 /**
  * @api {post} /restaurants/admin/disable Disable the restaurant
  * @apiName DisableRestaurant
- * @apiGroup Restaurant
+ * @apiGroup Restaurant Admin
  *
  * @apiParam restaurantId the restaurant id
  *
@@ -107,4 +107,138 @@ exports.postDisableRestaurant = function(req, res) {
 
 };
 
+/**
+ * @api {post} /restaurants/refresh Populate database
+ * @apiName Refresh
+ * @apiGroup Restaurant Admin
+ *
+ * @apiError 5002 Async error
+ */
+exports.refreshAll = function (req, res) {
 
+  /* get json file and parse it */
+  // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
+  // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
+  // old fake : http://thepbm.ovh.org/static/json/crous-poitiers.min.json
+  request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
+
+      /* update */
+      async.each(data.restaurants, function (element, callback) {
+
+        RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
+          if (restaurant === null) {
+            new RestaurantModel(element).save(function() {
+              callback(null);
+            });
+          }
+          else {
+            restaurant.set(element);
+            restaurant.save(function (err) {
+              if (err) {
+                callback(err);
+              }
+              else {
+                callback(null);
+              }
+            });
+          }
+        });
+      }, function (err) {
+
+        if (err)
+          return Response.error(res, Response.ASYNC_ERROR, err);
+
+        return Response.success(res, Response.HTTP_OK);
+
+      });
+
+    }
+  });
+
+  return Response.success(res, Response.HTTP_OK, {});
+};
+
+/**
+ * @api {put} /users/:id Update a user
+ * @apiName PutUser
+ * @apiGroup User
+ *
+ * @apiParam id The user id
+ *
+ * @apiE
+ *
+ * @apiError 1001 Bad request
+ * @apiError 4001 User not found
+ *
+ * @apiSuccess User the updated user
+ *
+ * The put of the user can :
+ *
+ * - Update user information
+ * - Update a preference
+ * - Run an action
+ *
+ */
+exports.putUser = function (req, res) {
+
+  if (_.isUndefined(req.params.id)) {
+    return Response.error(req, Response.BAD_REQUEST, "id not provide");
+  }
+
+  UserModel.findById(req.params.id, function (err, user) {
+
+    if (!user) {
+      return Response.error(res, Response.USER_NOT_FOUND);
+    }
+
+    if (err) {
+      return Response.error(res, Response.USER_NOT_FOUND, err);
+    }
+
+    if (req.body.email)
+      user.email = req.body.email;
+
+    if (req.body.password) {
+      user = updateUserPassword(user, req.body.password);
+    }
+
+    if (req.body.first_name) {
+      user.first_name = req.body.first_name;
+    }
+
+    if (req.body.last_name) {
+      user.last_name = req.body.last_name;
+    }
+
+    if (req.body.password) {
+      user = updateUserPassword(user, req.body.password);
+    }
+
+    // -- We want to update a preference
+    if (req.body.preference) {
+      user = updateUserPreferences(user, req.body.preference);
+    }
+
+    // -- We want to run an action
+    if (req.body.action) {
+      switch (req.body.action) {
+        case 'increase_points':
+          user = updateUserPoints(user);
+          user = updateActionCount(user, req.body.reason);
+          break;
+      }
+    }
+
+    return user.save(function (err) {
+      if (!err) {
+        return Response.success(res, Response.HTTP_OK, user);
+      }
+      else {
+        return Response.error(res, Response.USER_NOT_FOUND, err);
+      }
+    });
+  });
+
+};
