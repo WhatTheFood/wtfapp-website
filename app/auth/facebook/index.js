@@ -38,7 +38,6 @@ router
         user = UserTool.createUserToken(user);
       }
     } else {
-      console.log("ther")
       user = new User({
         'email': email,
         'password': "?$#T#I(@(IWQI()!)",
