@@ -24,9 +24,7 @@ router
   }
 
   User.findOne({'email': email}, function(err, user) {
-    req.body.forEach(function(item, index) {
-    console.log("" + item + " : " + index)
-});
+    console.log(req.rawBody);
 
     if (user) {
       console.log("TOK::" + fb_token + "  EMAIL::" + email);
