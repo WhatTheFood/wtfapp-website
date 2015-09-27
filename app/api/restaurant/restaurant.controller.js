@@ -237,7 +237,7 @@ exports.refreshAll = function (req, res) {
  * @apiError 4002 Restaurant not found
  * @apiError 1001 Bad request
  *
- * @apiSuccess {Restaurant} The restaurant
+ * @apiSuccess Restaurant The restaurant
  */
 exports.voteOnRestaurantQueue = function (req, res) {
 
@@ -263,7 +263,7 @@ exports.voteOnRestaurantQueue = function (req, res) {
 };
 
 /**
- * @api {post} /restaurants/:id/Feedback Add Feedback
+ * @api {post} /restaurants/:id/feedback Add Feedback
  * @apiName AddFeedback
  * @apiGroup Restaurant
 
@@ -277,7 +277,7 @@ exports.voteOnRestaurantQueue = function (req, res) {
     "menu_feedback": {
       "feedbacks": [
         {
-          "_id": "54dfeea1699af25e14e4802a",
+          "_id": "54dfeea1699af25e14e4802a", // the dishes id
           "thrown": "3"
         }
       ]
