@@ -55,8 +55,12 @@ var UserSchema = new Schema({
     type: String,
     default: ""
   },
-  booking: {},
-  preferences: {},
+  booking: {
+    type : Schema.Types.Mixed, default : {}
+  },
+  preferences: {
+    type : Schema.Types.Mixed, default : {}
+  },
   queueFeedbacksCount: 0,
   lunchFeedbacksCount: 0,
   points: 0

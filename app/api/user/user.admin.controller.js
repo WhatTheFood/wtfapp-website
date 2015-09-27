@@ -170,10 +170,6 @@ exports.putUser = function (req, res) {
       user.last_name = req.body.last_name;
     }
 
-    if (req.body.password) {
-      user = UserTool.updateUserPassword(user, req.body.password);
-    }
-
     // -- We want to update a preference
     if (req.body.preference) {
       user = UserTool.updateUserPreferences(user, req.body.preference);

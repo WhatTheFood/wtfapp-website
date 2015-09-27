@@ -27,9 +27,9 @@ var Response = require('../../services/response.js');
          "hashedPassword":"0n9z8uRd/R3z64wqxoVPz4psEa6dAfXnOBV6JjnQDf8NUF0Zh0fgh6SpYI1CPg9819WGvY6KXOrmXFqsY64Y0g==",
          "salt":"xdM3xXsrdTpH0me/as3uaw==",
          "__v":0,
-         "preferences":[
-
-         ],
+         "preferences": {
+          "vegetarian": true
+         },
          "avatar":"",
          "last_name":"",
          "first_name":"",
@@ -91,8 +91,15 @@ exports.putCurrentUser = function (req, res) {
  * @apiParamExample {json} Request-Example:
  * {
  *    preferences: {
- *      'menu': false,
- *      'test': true
+ *      'vegetarian': false,
+        'vegan': false,
+        'nopork': false,
+        'noveal': false,
+        'nogluten': false,
+        'nocrustacean': false,
+        'noeggs': false,
+        'nofish': false,
+        'nosoya': false
  *    }
  * }
  *
@@ -100,10 +107,11 @@ exports.putCurrentUser = function (req, res) {
  *
  */
 exports.putCurrentUserPreferences = function (req, res) {
+  return UserTool.updateUserPreferences(req, res, req.user);
+};
 
-  var user = req.user;
-
-  user = UserTool.updadeUserPreferences(user, preference);
+exports.putCurrentUserAction = function (req, res) {
+  UserTool.updateUserAction(req, res, req.user);
 };
 
 /**

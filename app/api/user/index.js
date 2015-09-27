@@ -17,10 +17,10 @@ router.route('/me')
   .put(auth.isAuthenticated(), userController.putCurrentUser);
 
 router.route('/me/preferences')
-  .put(auth.isAuthenticated(), userController.putCurrentUser);
+  .put(auth.isAuthenticated(), userController.putCurrentUserPreferences);
 
 router.route('/me/action')
-  .post(auth.isAuthenticated(), userController.putCurrentUserPreferences);
+  .post(auth.isAuthenticated(), userController.putCurrentUserAction);
 
 router.route('/me/friends')
   .get(auth.isAuthenticated(), userController.getCurrentUserFriends);
@@ -34,7 +34,7 @@ router.route('/me/restaurant/')
 
 /* user */
 router.route('/:id')
-  .get(auth.isAuthenticated(), userController.getUser)
+  .get(auth.isAuthenticated(), userController.getUser);
 
 // -- admin
 
