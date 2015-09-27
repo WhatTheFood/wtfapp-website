@@ -20,7 +20,7 @@ router.route('/me/preferences')
   .put(auth.isAuthenticated(), userController.putCurrentUserPreferences);
 
 router.route('/me/action')
-  .post(auth.isAuthenticated(), userController.putCurrentUserAction);
+  .post(auth.isAuthenticated(), userController.postUserAction);
 
 router.route('/me/friends')
   .get(auth.isAuthenticated(), userController.getCurrentUserFriends);

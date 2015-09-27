@@ -141,6 +141,8 @@ exports.postRole = function (req, res) {
  */
 exports.putUser = function (req, res) {
 
+  return Response.error(req, Response.BAD_REQUEST, "Not implemented yet");
+   // TODO
   if (_.isUndefined(req.params.id)) {
     return Response.error(req, Response.BAD_REQUEST, "id not provide");
   }
@@ -170,20 +172,6 @@ exports.putUser = function (req, res) {
       user.last_name = req.body.last_name;
     }
 
-    // -- We want to update a preference
-    if (req.body.preference) {
-      user = UserTool.updateUserPreferences(user, req.body.preference);
-    }
-
-    // -- We want to run an action
-    if (req.body.action) {
-      switch (req.body.action) {
-        case 'increase_points':
-          user = UserTool.updateUserPoints(user);
-          user = UserTool.updateActionCount(user, req.body.reason);
-          break;
-      }
-    }
 
     return user.save(function (err) {
       if (!err) {

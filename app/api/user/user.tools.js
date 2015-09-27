@@ -78,7 +78,7 @@ exports.updateUser = function (req, res, user, type) {
 exports.updateUserPreferences = function (req, res, user) {
 
   if (_.isUndefined(req.body.preferences)) {
-    return Response.error(res, Response.BAD_REQUEST, "preferences  undefined");
+    return Response.error(res, Response.BAD_REQUEST, "preferences undefined");
   }
 
   if (!user.preferences) {
@@ -114,7 +114,30 @@ exports.updateUserPreferences = function (req, res, user) {
 
 };
 
-exports.updateUserAction = function() {
+exports.postUserAction = function(req, res, user) {
+
+  if (!req.body.action) {
+    return Response.error(res, Response.BAD_REQUEST, "action undefined");
+  }
+
+  if (_.indexOf(config.user.actions_keys, req.body.action) == -1) {
+    return Response.error(res, Response.BAD_REQUEST,
+      "Invalid action '" + req.body.action + "'. You can use: " + config.user.actions_keys);
+  }
+
+  switch (req.body.action) {
+    case 'increase_points':
+      user = updateUserPoints(user);
+      user = updateActionCount(user, req.body.reason);
+      break;
+  }
+
+  user.save(function (err) {
+    if (err) {
+      return Response.error(res, Response.MONGODB_ERROR, err);
+    }
+    return Response.success(res, Response.HTTP_OK, user);
+  });
 
 };
 

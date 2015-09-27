@@ -36,6 +36,10 @@ var all = {
       'noeggs',
       'nofish',
       'nosoya'
+    ],
+
+    actions_keys: [
+      'increase_points'
     ]
   },
 

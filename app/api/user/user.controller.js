@@ -83,10 +83,8 @@ exports.putCurrentUser = function (req, res) {
 
 /**
  * @api {put} /users/me/preferences Put the current user
- * @apiName GetCurrentUser
+ * @apiName PutUserPreferences
  * @apiGroup User
- *
- * @apiParam {post} preference A preference (key / value)
  *
  * @apiParamExample {json} Request-Example:
  * {
@@ -110,8 +108,19 @@ exports.putCurrentUserPreferences = function (req, res) {
   return UserTool.updateUserPreferences(req, res, req.user);
 };
 
-exports.putCurrentUserAction = function (req, res) {
-  UserTool.updateUserAction(req, res, req.user);
+/**
+ * @api {post} /users/me/action Put the current user
+ * @apiName PostUserAction
+ * @apiGroup User
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *    'action': 'increase_points'
+ * }
+ *
+ */
+exports.postUserAction = function (req, res) {
+  UserTool.postUserAction(req, res, req.user);
 };
 
 /**
