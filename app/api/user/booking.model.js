@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 
 var BookingSchema = new Schema({
   date: {
-    type: String,
+    type: String, // in milliseconds (see moment millisecond)
     required: true
   },
   when: {

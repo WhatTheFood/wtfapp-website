@@ -131,9 +131,18 @@ exports.postUserAction = function (req, res, user) {
     return Response.error(res, Response.BAD_REQUEST, "action undefined");
   }
 
+  if (!req.body.reason) {
+    return Response.error(res, Response.BAD_REQUEST, "reason undefined");
+  }
+
   if (_.indexOf(config.user.actions_keys, req.body.action) == -1) {
     return Response.error(res, Response.BAD_REQUEST,
       "Invalid action '" + req.body.action + "'. You can use: " + config.user.actions_keys);
+  }
+
+  if (_.indexOf(config.user.actions_reasons, req.body.reason) == -1) {
+    return Response.error(res, Response.BAD_REQUEST,
+      "Invalid reason '" + req.body.reason + "'. You can use: " + config.user.actions_reasons);
   }
 
   switch (req.body.action) {

@@ -1,32 +1,16 @@
-/**
- * Module dependencies.
- */
+'use strict';
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var Feedback = require('./feedback.model.js');
+
 /*
- * Dish feedback Schema
+ * Dish Feedback Schema
  */
 var dishFeedbackSchema = new Schema({
   thrown: {type: Number},
-  user_id: {type: String},
-});
-
-/*
- * Menu feedback Schema
- */
-var menuFeedbackSchema = new Schema({
-  ate_alone: {type: Boolean},
-  convivial_restaurant: {type: Boolean},
-  enough_time_to_eat: {type: Boolean},
-  seasoning: {type: Number},
-  cooking: {type: Number},
-  took_twice: {type: Boolean},
-  enjoyed_my_meal: {type: Number},
-  usually_enjoyis_meal: {type: Number},
-  bread_thrown: {type: Number},
-  user_id: {type: Number, required: false }
+  user_id: {type: String}
 });
 
 /**
@@ -51,7 +35,7 @@ var mealSchema = new Schema({
 var menuSchema = new Schema({
   date: {type: Date},
   meal: {type: [mealSchema]},
-  feedback: {type: [menuFeedbackSchema], select: false}
+  feedback: [ Schema.Types.Mixed ], default : {} // TODO: use Feedback
 });
 
 /**
