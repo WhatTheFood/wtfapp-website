@@ -82,7 +82,7 @@ exports.putCurrentUser = function (req, res) {
 };
 
 /**
- * @api {put} /users/me/preferences Put the current user
+ * @api {put} /users/me/preferences Put the current user preferences
  * @apiName PutUserPreferences
  * @apiGroup User
  *
@@ -109,7 +109,7 @@ exports.putCurrentUserPreferences = function (req, res) {
 };
 
 /**
- * @api {post} /users/me/action Put the current user
+ * @api {post} /users/me/action Post an action for the user
  * @apiName PostUserAction
  * @apiGroup User
  *

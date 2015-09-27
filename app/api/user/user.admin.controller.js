@@ -121,7 +121,7 @@ exports.postRole = function (req, res) {
 /**
  * @api {put} /users/:id Update a user
  * @apiName PutUser
- * @apiGroup UserAdmin
+ * @apiGroup User Admin
  *
  * @apiParam id The user id
  *
