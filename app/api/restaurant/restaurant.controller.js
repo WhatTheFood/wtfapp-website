@@ -146,15 +146,16 @@ exports.getRestaurants = function (req, res) {
       maxDistance: maxDistance,
       query: {menus: {$exists: true, $ne: []}}
     }, function (err, geoResults) {
+      if (err) {
+        return Response.error(res, Response.MONGODB_ERROR, err);
+      }
+
       var restaurants = [];
       for (var i = 0, length = geoResults.length; i < length; i++) {
         var geoResult = geoResults[i];
         var restaurant = geoResult.obj;
         restaurant.distance = geoResult.dis;
         restaurants.push(restaurant);
-      }
-      if (err) {
-        return Response.error(res, Response.MONGODB_ERROR, err);
       }
       return Response.success(res, Response.HTTP_OK, restaurants);
     });
