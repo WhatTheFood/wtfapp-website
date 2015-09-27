@@ -135,7 +135,7 @@ exports.getRestaurants = function (req, res) {
 
   if (req.query.lat && req.query.lng) { // geospatial querying
     var geoJsonTarget = [Number(req.query.lat), Number(req.query.lng)];
-    var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
+    var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 1000;
 
     RestaurantModel.aggregate(
     [{
