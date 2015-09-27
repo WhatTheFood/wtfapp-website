@@ -137,30 +137,30 @@ exports.getRestaurant = function (req, res, feedback) {
 exports.getRestaurants = function (req, res) {
 
   if (req.query.lat && req.query.lng) { // geospatial querying
-    var geoJsonTarget = {
-      type: 'Point',
-      coordinates: [Number(req.query.lng), Number(req.query.lat)]
-    };
-    var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 0.5;
+    var geoJsonTarget = [Number(req.query.lat), Number(req.query.lng)];
+    var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 1000;
 
-    RestaurantModel.geoNear(geoJsonTarget, {
-      is_enable: true,
-      spherical: true,
-      maxDistance: maxDistance,
-      query: {menus: {$exists: true, $ne: []}}
-    }, function (err, geoResults) {
+    RestaurantModel.aggregate(
+    [{
+      "$geoNear": {
+        "near": geoJsonTarget,
+        "maxDistance": maxDistance,
+        "distanceField": "distance",
+        "spherical": true,
+        "distanceMultiplier": 6378.137,
+        "query": {
+          'is_enable': true,
+          menus: {$exists: true, $ne: []}
+        }
+      }
+    }], function (err, geoResults) {
+
+      // handling errors
       if (err) {
         return Response.error(res, Response.MONGODB_ERROR, err);
       }
 
-      var restaurants = [];
-      for (var i = 0, length = geoResults.length; i < length; i++) {
-        var geoResult = geoResults[i];
-        var restaurant = geoResult.obj;
-        restaurant.distance = geoResult.dis;
-        restaurants.push(restaurant);
-      }
-      return Response.success(res, Response.HTTP_OK, restaurants);
+      return Response.success(res, Response.HTTP_OK, geoResults);
     });
   }
   else { // regular query
