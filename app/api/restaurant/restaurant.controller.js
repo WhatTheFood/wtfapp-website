@@ -189,9 +189,11 @@ exports.refreshAll = function (req, res) {
       async.each(data.restaurants, function (element, callback) {
         RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
           if (restaurant === null) {
+            console.log("Creation : " + element.id);
             new RestaurantModel(element).save();
           }
           else {
+            console.log("Update : " + element.id);
             restaurant.set(element);
             restaurant.save(function (err) {
               if (err) {
