@@ -121,7 +121,7 @@ exports.postRole = function (req, res) {
 /**
  * @api {put} /users/:id Update a user
  * @apiName PutUser
- * @apiGroup UserAdmin
+ * @apiGroup User Admin
  *
  * @apiParam id The user id
  *
@@ -155,48 +155,7 @@ exports.putUser = function (req, res) {
       return Response.error(res, Response.USER_NOT_FOUND, err);
     }
 
-    if (req.body.email)
-      user.email = req.body.email;
-
-    if (req.body.password) {
-      user = UserTool.updateUserPassword(user, req.body.password);
-    }
-
-    if (req.body.first_name) {
-      user.first_name = req.body.first_name;
-    }
-
-    if (req.body.last_name) {
-      user.last_name = req.body.last_name;
-    }
-
-    if (req.body.password) {
-      user = UserTool.updateUserPassword(user, req.body.password);
-    }
-
-    // -- We want to update a preference
-    if (req.body.preference) {
-      user = UserTool.updateUserPreferences(user, req.body.preference);
-    }
-
-    // -- We want to run an action
-    if (req.body.action) {
-      switch (req.body.action) {
-        case 'increase_points':
-          user = UserTool.updateUserPoints(user);
-          user = UserTool.updateActionCount(user, req.body.reason);
-          break;
-      }
-    }
-
-    return user.save(function (err) {
-      if (!err) {
-        return Response.success(res, Response.HTTP_OK, user);
-      }
-      else {
-        return Response.error(res, Response.USER_NOT_FOUND, err);
-      }
-    });
+    return UserTool.putUser(req, res, user);
   });
 
 };

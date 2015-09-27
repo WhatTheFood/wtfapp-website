@@ -27,9 +27,9 @@ var Response = require('../../services/response.js');
          "hashedPassword":"0n9z8uRd/R3z64wqxoVPz4psEa6dAfXnOBV6JjnQDf8NUF0Zh0fgh6SpYI1CPg9819WGvY6KXOrmXFqsY64Y0g==",
          "salt":"xdM3xXsrdTpH0me/as3uaw==",
          "__v":0,
-         "preferences":[
-
-         ],
+         "preferences": {
+          "vegetarian": true
+         },
          "avatar":"",
          "last_name":"",
          "first_name":"",
@@ -50,7 +50,18 @@ exports.getCurrentUser = function (req, res) {
  * @apiName GetCurrentUser
  * @apiGroup User
  *
- * @apiParam {post} User the user
+ * @apiParam {post} first_name
+ * @apiParam {post} last_name
+ * @apiParam {post} email
+ * @apiParam {post} password
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *    'first_name': '',
+ *    'last_name': '',
+ *    'password': '',
+ *    'email: '',
+ * }
  *
  * @apiSuccess User The current user.
  *
@@ -78,32 +89,57 @@ exports.getCurrentUser = function (req, res) {
  * Can't fail with a 404 because we check if the user is authenticate before call this function
  */
 exports.putCurrentUser = function (req, res) {
-
+  return UserTool.putUser(req, res, req.user);
 };
 
 /**
- * @api {put} /users/me/preferences Put the current user
- * @apiName GetCurrentUser
+ * @api {put} /users/me/preferences Put the current user preferences
+ * @apiName PutUserPreferences
  * @apiGroup User
- *
- * @apiParam {post} preference A preference (key / value)
  *
  * @apiParamExample {json} Request-Example:
  * {
  *    preferences: {
- *      'menu': false,
- *      'test': true
+ *      'vegetarian': false,
+        'vegan': false,
+        'nopork': false,
+        'noveal': false,
+        'nogluten': false,
+        'nocrustacean': false,
+        'noeggs': false,
+        'nofish': false,
+        'nosoya': false
  *    }
  * }
+ *
+ * @apiError 5001 Mongodb error
+ * @apiError 1001 Bad request
  *
  * @apiSuccess User The current user.
  *
  */
 exports.putCurrentUserPreferences = function (req, res) {
+  return UserTool.updateUserPreferences(req, res, req.user);
+};
 
-  var user = req.user;
-
-  user = UserTool.updadeUserPreferences(user, preference);
+/**
+ * @api {post} /users/me/action Post an action for the user
+ * @apiName PostUserAction
+ * @apiGroup User
+ *
+ * @apiParam {post} action The type of the action. Can be : 'increase_points'
+ *
+ * @apiError 5001 Mongodb error
+ * @apiError 1001 Bad request
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *    'action': 'increase_points'
+ * }
+ *
+ */
+exports.postUserAction = function (req, res) {
+  UserTool.postUserAction(req, res, req.user);
 };
 
 /**
@@ -132,8 +168,15 @@ exports.getCurrentUserFriends = function (req, res) {
  * @apiName AddCurrentUserDestination
  * @apiGroup User
  *
- * @apiParam restaurantId the id of the restaurant
- * @apiParam when         when the user will come to the restaurant
+ * @apiParam {post} restaurantId the id of the restaurant
+ * @apiParam {post} when         when the user will come to the restaurant
+ *
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *    'restaurantId': 765,
+ *    'when': 12:00
+ * }
  *
  * @apiSuccess Booking The created booking
  *
@@ -362,6 +405,11 @@ exports.getUser = function (req, res) {
  * @api {post} /users Create a new user
  * @apiName PostUser
  * @apiGroup User
+ *
+ * @apiParam {post} email The user email
+ * @apiParam {post} first_name
+ * @apiParam {post} last_name
+ * @apiParam {post} password
  *
  * @apiError 1002 Invalid user
  * @apiError 1004 User already exists

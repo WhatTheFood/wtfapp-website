@@ -11,7 +11,7 @@ var Response = require('../../services/response.js');
 /**
  * @api {get} /restaurants/admin/ Get all restaurants for the administrator
  * @apiName GetRestaurantsForAdmin
- * @apiGroup RestaurantAdmin
+ * @apiGroup Restaurant Admin
  *
  * @apiPermission admin
  *
@@ -34,7 +34,7 @@ exports.getRestaurantsForAdmin = function(req, res) {
 /**
  * @api {post} /restaurants/admin/enable Enable the restaurant
  * @apiName EnableRestaurant
- * @apiGroup RestaurantAdmin
+ * @apiGroup Restaurant Admin
  *
  * @apiParam restaurantId the restaurant id
  *
@@ -72,7 +72,7 @@ exports.postEnableRestaurant = function(req, res) {
 /**
  * @api {post} /restaurants/admin/disable Disable the restaurant
  * @apiName DisableRestaurant
- * @apiGroup RestaurantAdmin
+ * @apiGroup Restaurant Admin
  *
  * @apiParam restaurantId the restaurant id
  *
@@ -110,7 +110,7 @@ exports.postDisableRestaurant = function(req, res) {
 /**
  * @api {post} /restaurants/refresh Populate database
  * @apiName Refresh
- * @apiGroup RestaurantAdmin
+ * @apiGroup Restaurant Admin
  *
  * @apiError 5002 Async error
  */

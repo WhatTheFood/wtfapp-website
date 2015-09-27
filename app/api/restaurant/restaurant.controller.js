@@ -259,9 +259,8 @@ exports.voteOnRestaurantQueue = function (req, res) {
   });
 };
 
-/// TODO: refactor
 /**
- * @api {post} /restaurants/:id/menu Add feedback
+ * @api {post} /restaurants/:id/feedback Add feedback
  * @apiName AddFeedback
  * @apiGroup Restaurant
 
@@ -276,6 +275,7 @@ exports.voteOnRestaurantQueue = function (req, res) {
  */
 exports.addFeedback = function (req, res) {
 
+  // TODO: refaire
   RestaurantModel.findOne({'id': req.params.id}, function (err, restaurant) {
 
     if (err) {
