@@ -35,11 +35,20 @@ var all = {
       'nocrustacean',
       'noeggs',
       'nofish',
-      'nosoya'
+      'nosoya',
+      'nopotato',
+      'nomilk',
+      'nonut',
+      'nopeanut'
     ],
 
     actions_keys: [
       'increase_points'
+    ],
+
+    actions_reasons: [
+      'lunch-quizz',
+      'queue-status'
     ]
   },
 

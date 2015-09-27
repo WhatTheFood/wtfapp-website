@@ -21,10 +21,10 @@ router.get('/', restaurantController.getRestaurants);
 router.get('/:id', restaurantController.getRestaurantFeedback);
 
 // TODO:
-//router.get('/:id/feedback', auth.isAuthenticated(), restaurantController.getRestaurantFeedback);
+//router.get('/:id/Feedback', auth.isAuthenticated(), restaurantController.getRestaurantFeedback);
 
 router.post('/:id/queue/votes', auth.isAuthenticated(), restaurantController.voteOnRestaurantQueue);
 
-router.put('/:id/feedback', auth.isAuthenticated(), restaurantController.addFeedback);
+router.post('/:id/feedback', auth.isAuthenticated(), restaurantController.addFeedback);
 
 module.exports = router;

@@ -1,11 +1,11 @@
 var jwt = require('jsonwebtoken');
 var _ = require('lodash');
+var moment = require('moment');
 
 var UserModel = require('./user.model');
 var RestaurantModel = require('../restaurant/restaurant.model');
 var BookingModel = require('./booking.model');
 var UserTool = require('./user.tools');
-var Tools = require('../../tools/');
 
 var config = require('../../config/environment');
 
@@ -214,7 +214,7 @@ exports.addUserDestination = function (req, res) {
     }
 
     var user = req.user;
-    var currentDate = Tools.getDayDate();
+    var currentDate = moment().millisecond();
 
     BookingModel.findOne({'user': user._id, 'date': currentDate}, function (err, booking) {
 
@@ -301,8 +301,7 @@ exports.getFriendsAtRestaurant = function (req, res) {
         }
         if (booking) {
           if (booking.restaurant == restaurant_id) {
-            var date = Tools.getDayDate();
-            if (friend.booking && friend.booking.date == date) {
+            if (friend.booking && moment().diff(moment(friend.booking.date), 'days') === 0) {
               ret_datas.push(friend);
             }
           }
