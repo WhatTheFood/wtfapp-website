@@ -21,12 +21,11 @@ router
   var email = req.body.email;
   if (!fb_token || !email) {
     return res.status(400).send({"error": "Invalid request"});
-  } else {
-    console.log("TOK::" + fb_token + "  EMAIL::" + email);
   }
 
   User.findOne({'email': email}, function(err, user) {
     if (user) {
+      console.log("TOK::" + fb_token + "  EMAIL::" + email);
       console.log("set facebook token");
       user.set({
         'fb': {
