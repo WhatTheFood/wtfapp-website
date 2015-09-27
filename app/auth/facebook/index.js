@@ -11,6 +11,7 @@ var User = require('../../api/user/user.model');
 var UserTool = require('../../api/user/user.tools');
 
 var router = express.Router();
+var util = require("util");
 
 var scope = config.fb.scope;
 router
@@ -24,7 +25,7 @@ router
   }
 
   User.findOne({'email': email}, function(err, user) {
-    console.log(req.rawBody);
+    console.log("raw ::" +util.inspect(req.body, {showHidden: false, depth: null}));
 
     if (user) {
       console.log("TOK::" + fb_token + "  EMAIL::" + email);
