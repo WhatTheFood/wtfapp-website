@@ -274,25 +274,26 @@ exports.voteOnRestaurantQueue = function (req, res) {
  *
  * @apiParamExample {json} Request-Example:
  * {
-        'menu_feedback': {
-           "feedbacks" : [
-              "_id":"54df23b6842142426fdfa003",
-              "thrown": 3
-           ]
-        },
-        'user_feedback': {
-            "ate_alone": false,
-            "convivial_restaurant": true,
-            "enough_time_to_eat": true,
-            "seasoning": 2,
-            "cooking": 2,
-            "hot_meal": 2,
-            "took_twice": true,
-            "enjoyed_my_meal": 2,
-            "bread_thrown": 2
+    "menu_feedback": {
+      "feedbacks": [
+        {
+          "_id": "54dfeea1699af25e14e4802a",
+          "thrown": "3"
         }
-
- * }
+      ]
+    },
+    "user_feedback": {
+      "ate_alone": false,
+      "convivial_restaurant": true,
+      "enough_time_to_eat": true,
+      "seasoning": 2,
+      "cooking": 2,
+      "hot_meal": 2,
+      "took_twice": true,
+      "enjoyed_my_meal": 2,
+      "bread_thrown": 2
+    }
+  }
  *
  * @apiError 4002 Restaurant not found
  * @apiError 1001 Bad request
@@ -345,48 +346,48 @@ exports.addFeedback = function (req, res) {
       }
 
       // -- menu Feedback
-      var tmpMeals = [];
 
-      _.each(req.body.menu_feedback.feedbacks, function (mFeedback) {
+      if (req.body.menu_feedback.feedbacks && req.body.menu_feedback) {
+        var tmpMeals = [];
 
-        _.each(menu.meal, function (mealOnDb) {
+        _.each(req.body.menu_feedback.feedbacks, function (mFeedback) {
 
-          var tmpCategories = [];
-          _.each(mealOnDb.foodcategory, function (category) {
+          _.each(menu.meal, function (mealOnDb) {
 
-            var tmpDishes = [];
-            _.each(category.dishes, function (d) {
+            var tmpCategories = [];
+            _.each(mealOnDb.foodcategory, function (category) {
 
-              if (d._id == mFeedback._id) {
+              var tmpDishes = [];
+              _.each(category.dishes, function (d) {
 
-                console.log('ADD FEEDBACK');
+                if (d._id == mFeedback._id) {
 
-                var feedback = {
-                  'thrown': mFeedback.thrown,
-                  'user_id': req.user._id
-                };
+                  var feedback = {
+                    'thrown': mFeedback.thrown,
+                    'user_id': req.user._id
+                  };
 
-                if (!d.feedback) {
-                  d.feedback = [];
+                  console.log('THE D BEFORE', d);
+                  if (!d.feedback) {
+                    d.feedback = [];
+                  }
+                  d.feedback.push(feedback);
+                  console.log('THE D AFTER', d);
                 }
-                d.feedback.push(feedback);
-                console.log('THE D', d);
-              }
 
-              tmpDishes.push(d);
-              console.log('TMP DISHES add dish', d);
+                tmpDishes.push(d);
+                //console.log('TMP DISHES add dish', d);
+              });
+
+              category.dishes = tmpDishes;
+              tmpCategories.push(category);
+              //console.log('TMP CATEGORIES add dishes', category);
             });
-
-            category.dishes = tmpDishes;
-            tmpCategories.push(category);
-            console.log('TMP CATEGORIES add dishes', category);
+            mealOnDb.foodcategory = tmpCategories;
+            tmpMeals.push(mealOnDb);
           });
-          mealOnDb.foodcategory = tmpCategories;
-          tmpMeals.push(mealOnDb);
         });
-      });
-
-      console.log('RESULT', tmpMeals);
+      }
 
       restaurant.save(function (err) {
 

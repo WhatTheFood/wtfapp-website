@@ -23,7 +23,7 @@ var mealSchema = new Schema({
     name: {type: String},
     dishes: [{
       name: {type: String},
-      feedback: {type: [dishFeedbackSchema], select: false}
+      feedback: {type: [dishFeedbackSchema], select: true}
     }]
   }]
 });
