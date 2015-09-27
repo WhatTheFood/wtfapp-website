@@ -144,7 +144,7 @@ exports.getRestaurants = function (req, res) {
         "maxDistance": maxDistance,
         "distanceField": "distance",
         "spherical": true,
-        "distanceMultiplier": 3963.2,
+        "distanceMultiplier": 6378.137,
         "query": {
           'is_enable': true,
           menus: {$exists: true, $ne: []}
