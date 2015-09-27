@@ -8,13 +8,19 @@ var config = require('../../config/environment');
 var Response = require('../../services/response.js');
 
 exports.updateUserInfosWithFacebook = function (user, callback) {
-  if (user.facebook_token) {
+  if (user.fb.access_token) {
     Facebook.updateUserBasicInfos(user, callback);
   }
   else {
     console.log("User does not have facebook token.");
     callback(false, "An error occured");
   }
+};
+
+exports.createUserToken = function (user) {
+  var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
+  user.set({'token': token});
+  return user;
 };
 
 exports.getUserFriends = function (user, callback) {
