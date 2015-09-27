@@ -50,7 +50,18 @@ exports.getCurrentUser = function (req, res) {
  * @apiName GetCurrentUser
  * @apiGroup User
  *
- * @apiParam {post} User the user
+ * @apiParam {post} first_name
+ * @apiParam {post} last_name
+ * @apiParam {post} email
+ * @apiParam {post} password
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *    'first_name': '',
+ *    'last_name': '',
+ *    'password': '',
+ *    'email: '',
+ * }
  *
  * @apiSuccess User The current user.
  *
@@ -78,7 +89,7 @@ exports.getCurrentUser = function (req, res) {
  * Can't fail with a 404 because we check if the user is authenticate before call this function
  */
 exports.putCurrentUser = function (req, res) {
-
+  return UserTool.putUser(req, res, req.user);
 };
 
 /**
@@ -101,6 +112,9 @@ exports.putCurrentUser = function (req, res) {
  *    }
  * }
  *
+ * @apiError 5001 Mongodb error
+ * @apiError 1001 Bad request
+ *
  * @apiSuccess User The current user.
  *
  */
@@ -112,6 +126,11 @@ exports.putCurrentUserPreferences = function (req, res) {
  * @api {post} /users/me/action Post an action for the user
  * @apiName PostUserAction
  * @apiGroup User
+ *
+ * @apiParam {post} action The type of the action. Can be : 'increase_points'
+ *
+ * @apiError 5001 Mongodb error
+ * @apiError 1001 Bad request
  *
  * @apiParamExample {json} Request-Example:
  * {
@@ -149,8 +168,15 @@ exports.getCurrentUserFriends = function (req, res) {
  * @apiName AddCurrentUserDestination
  * @apiGroup User
  *
- * @apiParam restaurantId the id of the restaurant
- * @apiParam when         when the user will come to the restaurant
+ * @apiParam {post} restaurantId the id of the restaurant
+ * @apiParam {post} when         when the user will come to the restaurant
+ *
+ *
+ * @apiParamExample {json} Request-Example:
+ * {
+ *    'restaurantId': 765,
+ *    'when': 12:00
+ * }
  *
  * @apiSuccess Booking The created booking
  *
@@ -379,6 +405,11 @@ exports.getUser = function (req, res) {
  * @api {post} /users Create a new user
  * @apiName PostUser
  * @apiGroup User
+ *
+ * @apiParam {post} email The user email
+ * @apiParam {post} first_name
+ * @apiParam {post} last_name
+ * @apiParam {post} password
  *
  * @apiError 1002 Invalid user
  * @apiError 1004 User already exists

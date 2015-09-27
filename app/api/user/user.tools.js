@@ -48,23 +48,34 @@ exports.getUserFriends = function (user, callback) {
 
 /**
  * This function will update the user.
- * Can be three type of updates : user, action or preference
- * @param req
- * @param res
- * @param user
- * @param type
  */
-exports.updateUser = function (req, res, user, type) {
+exports.putUser = function (req, res, user) {
 
-  if (type === 'user') {
-
+  if (req.body.email) {
+    user.email = req.body.email;
   }
-  else if (type === 'action') {
 
+  if (req.body.password) {
+    user = updateUserPassword(user, req.body.password);
   }
-  else if (type === 'preference') {
 
+  if (req.body.first_name) {
+    user.first_name = req.body.first_name;
   }
+
+  if (req.body.last_name) {
+    user.last_name = req.body.last_name;
+  }
+
+  return user.save(function (err) {
+    if (!err) {
+      return Response.success(res, Response.HTTP_OK, user);
+    }
+    else {
+      return Response.error(res, Response.USER_NOT_FOUND, err);
+    }
+
+  });
 
 };
 
@@ -114,7 +125,7 @@ exports.updateUserPreferences = function (req, res, user) {
 
 };
 
-exports.postUserAction = function(req, res, user) {
+exports.postUserAction = function (req, res, user) {
 
   if (!req.body.action) {
     return Response.error(res, Response.BAD_REQUEST, "action undefined");
@@ -180,7 +191,6 @@ var updateUserPoints = function (user) {
 
   return user;
 };
-
 
 
 /**

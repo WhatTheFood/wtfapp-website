@@ -141,8 +141,6 @@ exports.postRole = function (req, res) {
  */
 exports.putUser = function (req, res) {
 
-  return Response.error(req, Response.BAD_REQUEST, "Not implemented yet");
-   // TODO
   if (_.isUndefined(req.params.id)) {
     return Response.error(req, Response.BAD_REQUEST, "id not provide");
   }
@@ -157,30 +155,7 @@ exports.putUser = function (req, res) {
       return Response.error(res, Response.USER_NOT_FOUND, err);
     }
 
-    if (req.body.email)
-      user.email = req.body.email;
-
-    if (req.body.password) {
-      user = UserTool.updateUserPassword(user, req.body.password);
-    }
-
-    if (req.body.first_name) {
-      user.first_name = req.body.first_name;
-    }
-
-    if (req.body.last_name) {
-      user.last_name = req.body.last_name;
-    }
-
-
-    return user.save(function (err) {
-      if (!err) {
-        return Response.success(res, Response.HTTP_OK, user);
-      }
-      else {
-        return Response.error(res, Response.USER_NOT_FOUND, err);
-      }
-    });
+    return UserTool.putUser(req, res, user);
   });
 
 };
