@@ -26,21 +26,22 @@ var all = {
   userRoles: ['guest', 'user', 'crous', 'admin'],
 
   user: {
-    preferences_keys: [ // The keys that can be used for the user preferences
-      'vegetarian',
-      'vegan',
-      'nopork',
-      'noveal',
-      'nogluten',
-      'nocrustacean',
-      'noeggs',
-      'nofish',
-      'nosoya',
-      'nopotato',
-      'nomilk',
-      'nonut',
-      'nopeanut'
-    ],
+    preferences_keys: { // The keys that can be used for the user preferences and the type that the value should be. Handle string, boolean and object
+      'vegetarian': "boolean",
+      'vegan': "boolean",
+      'nopork': "boolean",
+      'noveal': "boolean",
+      'nogluten': "boolean",
+      'nocrustacean': "boolean",
+      'noeggs': "boolean",
+      'nofish': "boolean",
+      'nosoya': "boolean",
+      'nopotato': "boolean",
+      'nomilk': "boolean",
+      'nonut': "boolean",
+      'nopeanut': "boolean",
+      'favorite_ru': "string"
+    },
 
     actions_keys: [
       'increase_points'
