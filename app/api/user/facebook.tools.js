@@ -2,7 +2,7 @@ var FB = require('fb');
 
 exports.updateUserBasicInfos = function (user, callback) {
 
-  token = user.facebook_token;
+  token = user.fb.access_token;
 
   FB.api('me',
     {
