@@ -4,7 +4,6 @@ var express = require('express');
 var passport = require('passport');
 
 var auth = require('../auth.service');
-var fbhandler = require('./handler');
 var config = require('../../config/environment');
 
 var User = require('../../api/user/user.model');
@@ -35,11 +34,6 @@ router
           'access_token': fb_token
         }
       }).save();
-
-      if (!user.token) {
-        console.log("create user token");
-        user = UserTool.createUserToken(user);
-      }
     } else {
       user = new User({
         'email': email,
@@ -48,14 +42,13 @@ router
           'access_token':fb_token
         }
       });
-      user = UserTool.createUserToken(user);
     }
 
     user.save(function(err) {
       console.log("Go to update user infos");
       UserTool.updateUserInfosWithFacebook(user, function(result, data) {
         if (result === true) {
-          return res.status(200).send({'user_token': data.token, 'user_id': data.id});
+          return res.status(200).send({'token': auth.signToken(user._id, user.role)});
         } else {
           console.log(user.fb.access_token);
           return res.status(400).send(data);

@@ -46,7 +46,7 @@ exports.updateUserBasicInfos = function (user, callback) {
 
 exports.getUserFacebookFriends = function (user, callback) {
 
-  var token = user.facebook_token;
+  var token = user.fb.access_token;
 
   FB.api('/me/friends',
     {
