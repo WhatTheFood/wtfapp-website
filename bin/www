@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('wtf:server');
 var http = require('http');
+var config = require('../app/config/environment');
+
 http.globalAgent.maxSockets = Infinity;
 
 /**
@@ -26,7 +28,12 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(config.port, config.ip, function () {
+  console.log('---------------------------------------------------------------------------------------------');
+  console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
+  console.log('---------------------------------------------------------------------------------------------');
+});
+
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -90,7 +97,7 @@ function onListening() {
 
   debug('Listening on ' + bind);
   if (process.env.NODE_ENV === 'development') {
-    console.log(app._router);
-    require('../app/services/document')(app._router.stack);
+    var expressListRoutes   = require('express-list-routes');
+    expressListRoutes({ prefix: '/' }, 'API:', app._router );
   }
 }
