@@ -39,7 +39,8 @@ var all = {
       'nopotato',
       'nomilk',
       'nonut',
-      'nopeanut'
+      'nopeanut',
+      'ru_favori'
     ],
 
     actions_keys: [
