@@ -19,12 +19,6 @@ exports.updateUserInfosWithFacebook = function (user, callback) {
   }
 };
 
-exports.createUserToken = function (user) {
-  var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 600 });
-  user.set({'token': token});
-  return user;
-};
-
 exports.getUserFriends = function (user, callback) {
 
   Facebook.getUserFacebookFriends(user, function (err, friends) {
