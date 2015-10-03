@@ -108,7 +108,8 @@ exports.putCurrentUser = function (req, res) {
         'nocrustacean': false,
         'noeggs': false,
         'nofish': false,
-        'nosoya': false
+        'nosoya': false,
+        'favorite_ru': 'dwuduh82' // the restaurant id
  *    }
  * }
  *
