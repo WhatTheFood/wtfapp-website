@@ -22,8 +22,8 @@ module.exports = {
   },
   fb: {
     // TODO: change. Tests
-    id: '443752652477113',
-    secret: 'b1a0ecaea0082605ff94fe181805b023',
+    id: '443745395811172',
+    secret: '5562a41fbfad069e13aef46bf5b0d63d',
     callbackUrl: '/auth/facebook/callback',
     scope: [ "profile", "email", "friends" ] // TODO: setup correct values
   }

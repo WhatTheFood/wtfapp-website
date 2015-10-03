@@ -3,12 +3,14 @@ var _ = require('lodash');
 var UserModel = require('./user.model');
 var Facebook = require('./facebook.tools.js');
 
-var config = require('../../config/environment');
+var jwt = require('jsonwebtoken');
+var secret = require('../../config/secret');
 
+var config = require('../../config/environment');
 var Response = require('../../services/response.js');
 
 exports.updateUserInfosWithFacebook = function (user, callback) {
-  if (user.facebook_token) {
+  if (user.fb.access_token) {
     Facebook.updateUserBasicInfos(user, callback);
   }
   else {

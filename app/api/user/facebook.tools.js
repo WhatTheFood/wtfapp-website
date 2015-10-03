@@ -2,7 +2,7 @@ var FB = require('fb');
 
 exports.updateUserBasicInfos = function (user, callback) {
 
-  token = user.facebook_token;
+  token = user.fb.access_token;
 
   FB.api('me',
     {
@@ -26,7 +26,7 @@ exports.updateUserBasicInfos = function (user, callback) {
           'first_name': res.first_name,
           'last_name': res.last_name,
           'facebook_id': res.id,
-          'avatar': "http://graph.facebook.com/" + res.id + "/picture",
+          'avatar': "http://graph.facebook.com/" + res.id + "/picture?width=300&height=300",
         });
 
         user.save(function (err) {
@@ -46,7 +46,7 @@ exports.updateUserBasicInfos = function (user, callback) {
 
 exports.getUserFacebookFriends = function (user, callback) {
 
-  var token = user.facebook_token;
+  var token = user.fb.access_token;
 
   FB.api('/me/friends',
     {
