@@ -19,7 +19,7 @@ var all = {
 
   // TODO: Secret for session, you will want to change this and make it an environment variable
   secrets: {
-    session: '188sqw9098w109()@$3842$@@(#":{P}'
+    session: process.env.SESSION_SECRET || '188sqw9098w109()@$3842$@@(#":{P}'
   },
 
   // List of user roles
