@@ -108,8 +108,10 @@ exports.updateUserPreferences = function (req, res, user) {
       return Response.error(res, Response.BAD_REQUEST, "Invalid preference key " + key);
     }
 
+    console.log(key, "/", value, "/", typeof(value));
+
     // typeof value is always a string in nodejs...
-    if ((preference === "boolean" && value != "true" && value != "false")
+    if ((preference === "boolean" && value != "true" && value != "false" && value != true && value != false)
       || (preference === "string" && typeof value !== "string")
       || (preference === "object" && typeof value !== "object")) {
 
@@ -118,7 +120,7 @@ exports.updateUserPreferences = function (req, res, user) {
         "Invalid preference value for key " + key + ". Must be a " + preference + " not a " + typeof value);
 
     }
-    else if (_.isEmpty(value)) {
+    else if (preference !== "boolean" && _.isEmpty(value)) {
       return Response.error(res,
         Response.BAD_REQUEST,
         "Invalid preference value for key " + key + ". Must be a " + preference + " not empty");
