@@ -119,6 +119,8 @@ exports.USER_ALREADY_EXISTS           = [ 1004, exports.HTTP_BAD_REQUEST, 'Email
 exports.MONGODB_ERROR                 = [ 5001, exports.HTTP_INTERNAL_SERVER_ERROR, "Mongodb error" ];
 exports.ASYNC_ERROR                   = [ 5002, exports.HTTP_INTERNAL_SERVER_ERROR, "Async task error" ];
 
+exports.MENU_UPDATE_ERROR             = [ 5003, exports.HTTP_INTERNAL_SERVER_ERROR, "Menu Refresh task error" ];
+
 //
 exports.UNKNOWN_ERROR                 = [ 500, exports.HTTP_INTERNAL_SERVER_ERROR, "Unknown internal server error"];
 

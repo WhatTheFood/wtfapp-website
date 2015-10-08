@@ -2,15 +2,9 @@ var jwt = require('jsonwebtoken');
 var _ = require('lodash');
 var moment = require('moment');
 
-var UserModel = require('./user.model');
-var RestaurantModel = require('../restaurant/restaurant.model');
-var BookingModel = require('./booking.model');
-var UserTool = require('./user.tools');
-
 var config = require('../../config/environment');
 
 var Response = require('../../services/response.js');
-var statsController = {};
 
 /**
  * @api {get} /stats/me get the stats for the current user
@@ -25,7 +19,7 @@ var statsController = {};
  *
  * Can't fail with a 404 because we check if the user is authenticate before call this function
  */
-statsController.getStats = function (req, res) {
+exports.getStats = function (req, res) {
   var stats = {
     me: {
       score: 42

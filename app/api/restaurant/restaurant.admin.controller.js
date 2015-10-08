@@ -3,6 +3,7 @@ var async = require('async');
 
 var _ = require('lodash');
 
+var MenuModel = require('../menu/menu.model.js');
 var RestaurantModel = require('./restaurant.model');
 var UserModel = require('../user/user.model');
 
@@ -20,7 +21,7 @@ var Response = require('../../services/response.js');
  * @apiSuccess [Restaurant] The list of the restaurants
  *
  */
-exports.getRestaurantsForAdmin = function(req, res) {
+exports.getRestaurantsForAdmin = function (req, res) {
 
   return RestaurantModel.find({}, function (err, restaurants) {
     if (err || _.isUndefined(restaurants)) {
@@ -45,7 +46,7 @@ exports.getRestaurantsForAdmin = function(req, res) {
  * @apiSuccess [Restaurant] The restaurant
  *
  */
-exports.postEnableRestaurant = function(req, res) {
+exports.postEnableRestaurant = function (req, res) {
 
   if (_.isUndefined(req.body.restaurantId)) {
     return Response.error(res, Response.BAD_REQUEST, "You must set the restaurant id on the body");
@@ -83,20 +84,20 @@ exports.postEnableRestaurant = function(req, res) {
  * @apiSuccess [Restaurant] The restaurant
  *
  */
-exports.postDisableRestaurant = function(req, res) {
+exports.postDisableRestaurant = function (req, res) {
 
   if (_.isUndefined(req.body.restaurantId)) {
     return Response.error(res, Response.BAD_REQUEST, "You must set the restaurant id on the body");
   }
 
-  RestaurantModel.findOne({'id': req.body.restaurantId }, function(err, restaurant) {
+  RestaurantModel.findOne({'id': req.body.restaurantId}, function (err, restaurant) {
 
     if (err || _.isUndefined(restaurant)) {
       return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
 
     restaurant.is_enable = false;
-    restaurant.save(function(err) {
+    restaurant.save(function (err) {
       if (err) {
         return Response.error(res, Response.MONGODB_ERROR, err);
       }
@@ -123,28 +124,81 @@ exports.refreshAll = function (req, res) {
   request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
-
+      var today = new Date().toISOString().slice(0,10);
+      MenuModel.remove().where("date").gt(today).exec(); //XXX
       /* update */
       async.each(data.restaurants, function (element, callback) {
 
+        // For each restaurant
+        // Save the menus
+        var menus = [];
+
+        if (element.menus.length > 0) {
+          var menu = {};
+          menu.idRestaurant = element.id; // External CROUS ID
+          element.menus.forEach(function (iMenu) {
+            menu.date = iMenu.date;
+            menu.dishes = [];
+            if (menu.date <= today)
+              return;
+
+            iMenu.meal.forEach(function (meal) {
+              menu.name = meal.name;
+              meal.foodcategory.forEach(function (foodcategory) {
+                foodcategory.dishes.forEach(function (dish) {
+                  var pDish = {};
+                  pDish.category = foodcategory.name;
+                  pDish.name = dish.name;
+                  pDish.feedbacks = [];
+                  menu.dishes.push(pDish);
+                })
+                menus.push(menu);
+                menu.feedbacks=[{
+                  "ate_alone": false,
+                    "convivial_restaurant": true,
+                    "enough_time_to_eat": true,
+                    "seasoning": 2,
+                    "cooking": 2,
+                    "hot_meal": 2,
+                    "took_twice": true,
+                    "enjoyed_my_meal": 2,
+                    "bread_thrown": 2,
+                    date:new Date().toISOString(),
+                  uid: "test@test.fr"
+                }];//XXX DEBUG
+                var Menu = new MenuModel(menu);
+                Menu.save(function (err, m) {
+                  if (err) {
+                    return Response.error(res, Response.MENU_UPDATE_ERROR, err);
+                  }
+
+                });
+              });
+            })
+          })
+        }
+
+
         RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
-          if (restaurant === null) {
-            new RestaurantModel(element).save(function() {
-              callback(null);
-            });
-          }
-          else {
-            restaurant.set(element);
-            restaurant.save(function (err) {
-              if (err) {
-                callback(err);
-              }
-              else {
+            // Save or update the restaurant
+            if (restaurant === null) {
+              new RestaurantModel(element).save(function () {
                 callback(null);
-              }
-            });
+              });
+            }
+            else {
+              restaurant.set(element);
+              restaurant.save(function (err) {
+                if (err) {
+                  callback(err);
+                }
+                else {
+                  callback(null);
+                }
+              });
+            }
           }
-        });
+        );
       }, function (err) {
 
         if (err)
@@ -152,7 +206,7 @@ exports.refreshAll = function (req, res) {
 
         return Response.success(res, Response.HTTP_OK);
 
-      });
+      })
 
     }
   });
