@@ -63,7 +63,11 @@ var UserSchema = new Schema({
   },
   queueFeedbacksCount: 0,
   lunchFeedbacksCount: 0,
-  points: 0
+  points: 0,
+
+
+  lastMenuFeedback: {},
+  lastQueueFeeback : {}
 });
 
 UserSchema.statics.POINTS_PER_ACTION = 5;

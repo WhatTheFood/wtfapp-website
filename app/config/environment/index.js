@@ -55,6 +55,10 @@ var all = {
 
   // Number of points give to a user at an action
   POINTS_PER_ACTION: 5,
+  // Delay between two votes
+  VOTE_MIN_DELAY_IN_HOURS: 4,
+
+  DEBUG: true,
 
   // MongoDB connection options
   mongo: {

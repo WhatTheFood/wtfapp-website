@@ -4,10 +4,13 @@ var async = require('async');
 var _ = require('lodash');
 var moment = require('moment');
 
-var FeedbackModel = require('../restaurant/feedback.model.js');
+var MenuFeedbackModel = require('./menufeedback.model.js');
 var MenuModel = require('./menu.model.js');
 
 var Response = require('../../services/response.js');
+
+var config = require('../../config/environment');
+
 
 /**
  * @api {post} /menus/:id/feedback Add Feedback
@@ -20,14 +23,9 @@ var Response = require('../../services/response.js');
  * @apiParam {post} feedback The feedback
  *
  * @apiParamExample {json} Request-Example:
- * {
+ * feedback={
     "menu_feedback": {
-      "feedbacks": [
-        {
-          "_id": "54dfeea1699af25e14e4802a", // the dishes id
-          "thrown": "3"
-        }
-      ]
+
     },
     "user_feedback": {
       "ate_alone": false,
@@ -48,55 +46,52 @@ var Response = require('../../services/response.js');
  * @apiSuccess {Restaurant} The restaurant
  */
 exports.addFeedback = function (req, res) {
-//db.menus.update({"_id" : ObjectId("561f49fee70430d80aebd7b7"), "dishes.name":"salade", "dishes.feedbacks.uid": { $not: {$eq: "fel"} } }, { $push : { "dishes.$.feedbacks" : { uid: "fel"} } } );
-  var date = moment();
 
-  if (_.isUndefined(req.body.user_feedback)) {
-    return Response.error(res, Response.BAD_REQUEST, "You must specify a user_feedback");
+  if (_.isUndefined(req.body.feedback)) {
+    return Response.error(res, Response.BAD_REQUEST, "You must specify a feedback");
   }
+  var id = req.params.id;
 
-  var feedback = req.body.user_feedback;
-  console.log(feedback,req.params.id);
-
-  MenuModel.findById(req.params.id, function (err, doc) {
-    console.log("find by id",err,doc);
-  });
-
-
-  //MenuModel.findOne({'id': req.params.id}, function (err, menu) {
-  MenuModel.findOneAndUpdate(
-    // {'id': req.params.id}
-    {
-      _id: req.params.id
-/*
-      , "dishes.feedbacks.uid": {
-        "$not": {
-          "$eq": "sfel"
-        }
-      }
-      */
+  MenuModel.findById(id, function (err, menu) {
+    if (err) {
+      return Response.error(res, Response.BAD_REQUEST, err);
+    } else if (!menu) {
+      return Response.error(res, Response.MENU_NOT_FOUND);
     }
-    ,
-    {
-      "dishes.name": feedback.dish,
-      "$push": {
-        "dishes.$.feedbacks": feedback
-      }
+    var user = req.user;
+
+    var date = moment();
+    var scorePoints = config.POINTS_PER_ACTION;
+
+    if (!config.DEBUG && date.diff(new moment(user.lastMenuFeedback),'hours') < config.VOTE_MIN_DELAY_IN_HOURS ){
+      return Response.error(res, Response.BAD_USER_VOTE_DELAY);
     }
-    ,
-    {new: true}
-    ,
-    function (err, menu) {
-      console.log('findAndModify',err,menu)
+
+    var feedback = JSON.parse(req.body.feedback)
+
+    var menuFeedback = {
+      timestamp: date,
+      userId : user._id,
+      feedback:feedback,
+      menuId: menu._id,
+      points: scorePoints
+    };
+    var menuFeedbackModel = new MenuFeedbackModel(menuFeedback);
+    menuFeedbackModel.save(function(err,menufb){
+
       if (err) {
         return Response.error(res, Response.BAD_REQUEST, err);
       }
 
-      if (!menu) {
-        return Response.error(res, Response.MENU_NOT_FOUND);
-      }
+      // user.update({lastMenuFeedback:date, "$inc": {points:scorePoints}}).exec();
+      user.lastMenuFeedback = date;
+      user.points+=scorePoints;
+      user.save();
 
+      console.log("USER : ",user.points);
       return Response.success(res, Response.HTTP_CREATED, {});
-    }
-  );
+    });
+  });
+
+
 };

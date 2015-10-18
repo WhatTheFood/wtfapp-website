@@ -115,6 +115,8 @@ exports.USER_VALIDATION_ERROR         = [ 1002, exports.HTTP_BAD_REQUEST, "Inval
 exports.INVALID_PASSWORD_CONSTRAINT   = [ 1003, exports.HTTP_BAD_REQUEST, 'must be at least 5 characters and at most 30.' ];
 exports.USER_ALREADY_EXISTS           = [ 1004, exports.HTTP_BAD_REQUEST, 'Email already used' ];
 
+exports.BAD_USER_VOTE_DELAY           = [ 1100, exports.HTTP_BAD_REQUEST, 'Already Voted' ];
+
 // HTTP_INTERNAL_SERVER_ERROR
 exports.MONGODB_ERROR                 = [ 5001, exports.HTTP_INTERNAL_SERVER_ERROR, "Mongodb error" ];
 exports.ASYNC_ERROR                   = [ 5002, exports.HTTP_INTERNAL_SERVER_ERROR, "Async task error" ];
