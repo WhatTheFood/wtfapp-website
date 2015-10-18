@@ -25,6 +25,6 @@ router.get('/:id', restaurantController.getRestaurantFeedback);
 
 router.post('/:id/queue/votes', auth.isAuthenticated(), restaurantController.voteOnRestaurantQueue);
 
-router.post('/:id/feedback', auth.isAuthenticated(), restaurantController.addFeedback);
+// XXX --> moved into menu router.post('/:id/feedback', auth.isAuthenticated(), restaurantController.addFeedback);
 
 module.exports = router;

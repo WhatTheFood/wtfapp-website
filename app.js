@@ -21,6 +21,8 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
+mongoose.set('debug', true)
+
 // Setup server
 var app = express();
 

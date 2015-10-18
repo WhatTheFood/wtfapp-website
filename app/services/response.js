@@ -120,6 +120,7 @@ exports.MONGODB_ERROR                 = [ 5001, exports.HTTP_INTERNAL_SERVER_ERR
 exports.ASYNC_ERROR                   = [ 5002, exports.HTTP_INTERNAL_SERVER_ERROR, "Async task error" ];
 
 exports.MENU_UPDATE_ERROR             = [ 5003, exports.HTTP_INTERNAL_SERVER_ERROR, "Menu Refresh task error" ];
+exports.MENU_NOT_FOUND                = [ 5004, exports.HTTP_INTERNAL_SERVER_ERROR, "Menu not found"]
 
 //
 exports.UNKNOWN_ERROR                 = [ 500, exports.HTTP_INTERNAL_SERVER_ERROR, "Unknown internal server error"];

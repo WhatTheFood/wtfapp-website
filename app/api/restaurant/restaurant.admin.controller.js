@@ -116,7 +116,7 @@ exports.postDisableRestaurant = function (req, res) {
  * @apiError 5002 Async error
  */
 exports.refreshAll = function (req, res) {
-
+  console.time("refresh");
   /* get json file and parse it */
   // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
   // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
@@ -125,7 +125,10 @@ exports.refreshAll = function (req, res) {
     if (!error && response.statusCode == 200) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
       var today = new Date().toISOString().slice(0,10);
-      MenuModel.remove().where("date").gt(today).exec(); //XXX
+
+      // MenuModel.where("date").gt(today).remove().exec(); //XXX
+      MenuModel.remove({date: {$gt: today}}).exec()
+
       /* update */
       async.each(data.restaurants, function (element, callback) {
 
@@ -207,7 +210,7 @@ exports.refreshAll = function (req, res) {
         return Response.success(res, Response.HTTP_OK);
 
       })
-
+      console.timeEnd("refresh")
     }
   });
 
@@ -251,12 +254,26 @@ exports.putUser = function (req, res) {
       return Response.error(res, Response.USER_NOT_FOUND, err);
     }
 
-    if (req.body.email)
-      user.email = req.body.email;
-
+    // first we check the password constraint
     if (req.body.password) {
-      user = updateUserPassword(user, req.body.password);
+      var response = updateUserPassword(user, req.body.password);
+      if (response){
+        return response;
+      }
     }
+
+    // then -- We want to update a preference
+    if (req.body.preference) {
+      var response = updateUserPreferences(user, req.body.preference);
+      if (response){
+        return response;
+      }
+    }
+
+    if (req.body.email) {
+      user.email = req.body.email;
+    }
+
 
     if (req.body.first_name) {
       user.first_name = req.body.first_name;
@@ -264,15 +281,6 @@ exports.putUser = function (req, res) {
 
     if (req.body.last_name) {
       user.last_name = req.body.last_name;
-    }
-
-    if (req.body.password) {
-      user = updateUserPassword(user, req.body.password);
-    }
-
-    // -- We want to update a preference
-    if (req.body.preference) {
-      user = updateUserPreferences(user, req.body.preference);
     }
 
     // -- We want to run an action

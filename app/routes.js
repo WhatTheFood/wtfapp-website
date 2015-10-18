@@ -9,6 +9,7 @@ module.exports = function(app) {
   app.use('/api/users', require('./api/user'));
   app.use('/api/restaurants', require('./api/restaurant'));
   app.use('/api/stats', require('./api/stats'));
+  app.use('/api/menus', require('./api/menu'));
 
   app.use('/api/auth', require('./auth'));
 
