@@ -10,5 +10,8 @@ var Response = require('../../services/response.js');
 
 router.post('/:id/feedback', auth.isAuthenticated(), menuController.addFeedback);
 
+router.get('/restaurant/:idRestaurant', auth.isAuthenticated(), menuController.getMenusForRestaurant);
+
+router.get('/list', auth.isAuthenticated(), menuController.getMenus);
 
 module.exports = router;

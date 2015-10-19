@@ -83,7 +83,7 @@ exports.addFeedback = function (req, res) {
         return Response.error(res, Response.BAD_REQUEST, err);
       }
 
-      // user.update({lastMenuFeedback:date, "$inc": {points:scorePoints}}).exec();
+      // FIXME : this is safe & sync but it helps CHEATING :  user.update({lastMenuFeedback:date, "$inc": {points:scorePoints}}).exec();
       user.lastMenuFeedback = date;
       user.points+=scorePoints;
       user.save();
@@ -93,5 +93,51 @@ exports.addFeedback = function (req, res) {
     });
   });
 
-
 };
+
+/**
+ * e.g.
+ * curl http://localhost:5000/api/menus/restaurant/177
+ * @param req
+ * @param res
+ */
+exports.getMenusForRestaurant = function (req, res) {
+  var DATE_FORMAT = "YYYY-MM-DD";
+  var idRestaurant = req.params.idRestaurant;
+  var dateMin = moment();
+  var dateMax = dateMin.clone().add(7,'d');
+  MenuModel.find({
+    idRestaurant:idRestaurant,
+    date: {
+      "$gte": dateMin.format(DATE_FORMAT),
+      "$lte": dateMax.format(DATE_FORMAT)
+    }
+  }).limit(10).sort({date: 1, name:1}).then(function(menus) {
+      return Response.success(res, Response.HTTP_OK, menus);
+    }
+  );
+
+}
+
+
+/**
+ * e.g.
+ * curl http://localhost:5000/api/menus/restaurant/177
+ * @param req
+ * @param res
+ */
+exports.getMenus = function (req, res) {
+  var DATE_FORMAT = "YYYY-MM-DD";
+  var dateMin = moment();
+  var dateMax = dateMin.clone().add(7,'d');
+  MenuModel.find({
+    date: {
+      "$gte": dateMin.format(DATE_FORMAT),
+      "$lte": dateMax.format(DATE_FORMAT)
+    }
+  }).sort({idRestaurant:1, date: 1, name:1}).then(function(menus) {
+      return Response.success(res, Response.HTTP_OK, menus);
+    }
+  );
+
+}

@@ -152,32 +152,19 @@ exports.refreshAll = function (req, res) {
                   var pDish = {};
                   pDish.category = foodcategory.name;
                   pDish.name = dish.name;
-                  pDish.feedbacks = [];
                   menu.dishes.push(pDish);
                 })
                 menus.push(menu);
-                menu.feedbacks=[{
-                  "ate_alone": false,
-                    "convivial_restaurant": true,
-                    "enough_time_to_eat": true,
-                    "seasoning": 2,
-                    "cooking": 2,
-                    "hot_meal": 2,
-                    "took_twice": true,
-                    "enjoyed_my_meal": 2,
-                    "bread_thrown": 2,
-                    date:new Date().toISOString(),
-                  uid: "test@test.fr"
-                }];//XXX DEBUG
-                var Menu = new MenuModel(menu);
-                Menu.save(function (err, m) {
-                  if (err) {
-                    return Response.error(res, Response.MENU_UPDATE_ERROR, err);
-                  }
-
-                });
               });
-            })
+            });
+
+
+            var Menu = new MenuModel(menu);
+            Menu.save(function (err, m) {
+              if (err) {
+                return Response.error(res, Response.MENU_UPDATE_ERROR, err);
+              }
+            });
           })
         }
 

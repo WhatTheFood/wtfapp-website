@@ -8,7 +8,7 @@ var MenuSchema = new Schema({
 
   date:{},
 
-  idRestaurant: {},
+  idRestaurant: Number,
   name:{},
   dishes:[{}],
   feedbacks:[{}]
