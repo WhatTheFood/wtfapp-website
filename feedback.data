@@ -1,0 +1,16 @@
+feedback={
+    "menu_feedback": {
+
+    },
+    "user_feedback": {
+      "ate_alone": false,
+      "convivial_restaurant": true,
+      "enough_time_to_eat": true,
+      "seasoning": 2,
+      "cooking": 2,
+      "hot_meal": 2,
+      "took_twice": true,
+      "enjoyed_my_meal": 2,
+      "bread_thrown": 2
+    }
+  }

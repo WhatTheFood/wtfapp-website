@@ -19,7 +19,7 @@ var all = {
 
   // TODO: Secret for session, you will want to change this and make it an environment variable
   secrets: {
-    session: '188sqw9098w109()@$3842$@@(#":{P}'
+    session: process.env.SESSION_SECRET || '188sqw9098w109()@$3842$@@(#":{P}'
   },
 
   // List of user roles
@@ -55,6 +55,10 @@ var all = {
 
   // Number of points give to a user at an action
   POINTS_PER_ACTION: 5,
+  // Delay between two votes
+  VOTE_MIN_DELAY_IN_HOURS: 4,
+
+  DEBUG: true,
 
   // MongoDB connection options
   mongo: {
