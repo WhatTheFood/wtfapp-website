@@ -16,7 +16,7 @@ WTF = {
 
   mkindexes: function () {
     db.restaurants.createIndex({id: 1});
-    db.restaurants.createIndex( {coordinates: "2dsphere"} );
+    db.restaurants.createIndex( {geolocation: "2dsphere"} );
   }
 };
 

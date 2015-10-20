@@ -5,16 +5,15 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var MenuSchema = new Schema({
-
   date:{},
 
   idRestaurant: Number,
   name:{},
   dishes:[{}],
-  feedbacks:[{}]
 })
 
 
+MenuSchema.index({idRestaurant:1}).index({date:1}).index({timestamp:1});
 /*
  date: {
  type: String, // in milliseconds (see moment millisecond)

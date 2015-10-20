@@ -104,6 +104,8 @@ var restaurantSchema = new Schema({
   }
 });
 
+restaurantSchema.index( {geolocation: "2dsphere"}).index( {id:1});
+
 /**
  * Restaurant methods
  */

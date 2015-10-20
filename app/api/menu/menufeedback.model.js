@@ -11,4 +11,6 @@ var MenuFeedbackSchema = new Schema({
   scorePoints: Number
 });
 
+MenuFeedbackSchema.index({menuId:1}).index({userId:1}).index({timestamp:1});
+
 module.exports = mongoose.model('MenuFeedback', MenuFeedbackSchema);
