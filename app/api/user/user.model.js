@@ -20,6 +20,7 @@ var Schema = mongoose.Schema;
  */
 
 var UserSchema = new Schema({
+  favorite_ru: 0,
   email: {
     type: String,
     unique: true,
@@ -55,9 +56,7 @@ var UserSchema = new Schema({
     type: String,
     default: ""
   },
-  booking: {
-    type : Schema.Types.Mixed, default : {}
-  },
+
   preferences: {
     type : Schema.Types.Mixed, default : {}
   },

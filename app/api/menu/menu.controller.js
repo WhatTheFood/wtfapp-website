@@ -67,7 +67,7 @@ exports.addFeedback = function (req, res) {
       return Response.error(res, Response.BAD_USER_VOTE_DELAY);
     }
 
-    var feedback = JSON.parse(req.body.feedback)
+    var feedback = req.body.feedback;
 
     var menuFeedback = {
       timestamp: date,

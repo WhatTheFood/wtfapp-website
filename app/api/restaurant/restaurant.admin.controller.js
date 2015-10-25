@@ -108,6 +108,35 @@ exports.postDisableRestaurant = function (req, res) {
 
 };
 
+
+var getDishCategoryFromName = function(categoryName){
+    switch (categoryName.toLowerCase()) {
+      case "entrées":
+      case "entrée":
+      case "entrees":
+      case "entree":
+        return "STARTER";
+        break;
+      case "plats":
+      case "plat":
+      case "grillades":
+      case "grillade":
+      case "steak":
+      case "pizza":
+      case "pizzas":
+        return "MAIN";
+        break;
+      case "desserts":
+      case "dessert":
+      case "glace":
+        return "DESERT";
+        break;
+      default:
+        return "OTHER";
+    }
+  }
+
+
 /**
  * @api {post} /restaurants/refresh Populate database
  * @apiName Refresh
@@ -117,6 +146,8 @@ exports.postDisableRestaurant = function (req, res) {
  */
 exports.refreshAll = function (req, res) {
   console.time("refresh");
+
+
   /* get json file and parse it */
   // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
   // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
@@ -150,7 +181,8 @@ exports.refreshAll = function (req, res) {
               meal.foodcategory.forEach(function (foodcategory) {
                 foodcategory.dishes.forEach(function (dish) {
                   var pDish = {};
-                  pDish.category = foodcategory.name;
+                  pDish.category = getDishCategoryFromName(foodcategory.name);
+                  pDish.categoryName = foodcategory.name;
                   pDish.name = dish.name;
                   menu.dishes.push(pDish);
                 })

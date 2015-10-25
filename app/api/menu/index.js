@@ -8,7 +8,7 @@ var Response = require('../../services/response.js');
 
 
 
-router.post('/:id/feedback', auth.isAuthenticated(), menuController.addFeedback);
+router.put('/:id/feedback', auth.isAuthenticated(), menuController.addFeedback);
 
 router.get('/restaurant/:idRestaurant', auth.isAuthenticated(), menuController.getMenusForRestaurant);
 
