@@ -43,6 +43,8 @@ if (process.env.NODE_ENV !== 'development') {
   });
 }
 
+var adminController = require ('./app/api/restaurant/restaurant.admin.controller');
+adminController.refreshAll({},{send: function(res){console.log("update ok",res)}});
 
 // Expose app
 module.exports = app;
