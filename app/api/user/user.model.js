@@ -20,6 +20,7 @@ var Schema = mongoose.Schema;
  */
 
 var UserSchema = new Schema({
+  favorite_ru: 0,
   email: {
     type: String,
     unique: true,
@@ -55,15 +56,17 @@ var UserSchema = new Schema({
     type: String,
     default: ""
   },
-  booking: {
-    type : Schema.Types.Mixed, default : {}
-  },
+
   preferences: {
     type : Schema.Types.Mixed, default : {}
   },
   queueFeedbacksCount: 0,
   lunchFeedbacksCount: 0,
-  points: 0
+  points: 0,
+
+
+  lastMenuFeedback: {},
+  lastQueueFeeback : {}
 });
 
 UserSchema.statics.POINTS_PER_ACTION = 5;

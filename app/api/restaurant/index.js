@@ -16,7 +16,7 @@ router.get('/refresh', auth.hasRole('admin'), restaurantAdminController.refreshA
 
 // -- normal routes
 
-router.get('/', restaurantController.getRestaurants);
+router.get('/',auth.isAuthenticated(), restaurantController.getRestaurants);
 
 router.get('/:id', restaurantController.getRestaurantFeedback);
 
@@ -25,6 +25,6 @@ router.get('/:id', restaurantController.getRestaurantFeedback);
 
 router.post('/:id/queue/votes', auth.isAuthenticated(), restaurantController.voteOnRestaurantQueue);
 
-router.post('/:id/feedback', auth.isAuthenticated(), restaurantController.addFeedback);
+// XXX --> moved into menu router.post('/:id/feedback', auth.isAuthenticated(), restaurantController.addFeedback);
 
 module.exports = router;

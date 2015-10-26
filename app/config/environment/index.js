@@ -19,28 +19,29 @@ var all = {
 
   // TODO: Secret for session, you will want to change this and make it an environment variable
   secrets: {
-    session: '188sqw9098w109()@$3842$@@(#":{P}'
+    session: process.env.SESSION_SECRET || '188sqw9098w109()@$3842$@@(#":{P}'
   },
 
   // List of user roles
   userRoles: ['guest', 'user', 'crous', 'admin'],
 
   user: {
-    preferences_keys: [ // The keys that can be used for the user preferences
-      'vegetarian',
-      'vegan',
-      'nopork',
-      'noveal',
-      'nogluten',
-      'nocrustacean',
-      'noeggs',
-      'nofish',
-      'nosoya',
-      'nopotato',
-      'nomilk',
-      'nonut',
-      'nopeanut'
-    ],
+    preferences_keys: { // The keys that can be used for the user preferences and the type that the value should be. Handle string, boolean and object
+      'vegetarian': "boolean",
+      'vegan': "boolean",
+      'nopork': "boolean",
+      'noveal': "boolean",
+      'nogluten': "boolean",
+      'nocrustacean': "boolean",
+      'noeggs': "boolean",
+      'nofish': "boolean",
+      'nosoya': "boolean",
+      'nopotato': "boolean",
+      'nomilk': "boolean",
+      'nonut': "boolean",
+      'nopeanut': "boolean",
+      'favorite_ru': "string"
+    },
 
     actions_keys: [
       'increase_points'
@@ -54,6 +55,10 @@ var all = {
 
   // Number of points give to a user at an action
   POINTS_PER_ACTION: 5,
+  // Delay between two votes
+  VOTE_MIN_DELAY_IN_HOURS: 4,
+
+  DEBUG: true,
 
   // MongoDB connection options
   mongo: {

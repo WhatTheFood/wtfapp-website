@@ -21,6 +21,8 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
 
+mongoose.set('debug', true)
+
 // Setup server
 var app = express();
 
@@ -41,6 +43,8 @@ if (process.env.NODE_ENV !== 'development') {
   });
 }
 
+var adminController = require ('./app/api/restaurant/restaurant.admin.controller');
+adminController.refreshAll({},{send: function(res){console.log("update ok",res)}});
 
 // Expose app
 module.exports = app;

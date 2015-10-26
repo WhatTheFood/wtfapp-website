@@ -4,3 +4,6 @@ npm-debug.log
 *.sublime*
 .python-version
 /apidoc
+
+*.iml
+tmp/

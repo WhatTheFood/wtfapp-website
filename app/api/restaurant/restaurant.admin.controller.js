@@ -3,6 +3,7 @@ var async = require('async');
 
 var _ = require('lodash');
 
+var MenuModel = require('../menu/menu.model.js');
 var RestaurantModel = require('./restaurant.model');
 var UserModel = require('../user/user.model');
 
@@ -20,7 +21,7 @@ var Response = require('../../services/response.js');
  * @apiSuccess [Restaurant] The list of the restaurants
  *
  */
-exports.getRestaurantsForAdmin = function(req, res) {
+exports.getRestaurantsForAdmin = function (req, res) {
 
   return RestaurantModel.find({}, function (err, restaurants) {
     if (err || _.isUndefined(restaurants)) {
@@ -45,7 +46,7 @@ exports.getRestaurantsForAdmin = function(req, res) {
  * @apiSuccess [Restaurant] The restaurant
  *
  */
-exports.postEnableRestaurant = function(req, res) {
+exports.postEnableRestaurant = function (req, res) {
 
   if (_.isUndefined(req.body.restaurantId)) {
     return Response.error(res, Response.BAD_REQUEST, "You must set the restaurant id on the body");
@@ -83,20 +84,20 @@ exports.postEnableRestaurant = function(req, res) {
  * @apiSuccess [Restaurant] The restaurant
  *
  */
-exports.postDisableRestaurant = function(req, res) {
+exports.postDisableRestaurant = function (req, res) {
 
   if (_.isUndefined(req.body.restaurantId)) {
     return Response.error(res, Response.BAD_REQUEST, "You must set the restaurant id on the body");
   }
 
-  RestaurantModel.findOne({'id': req.body.restaurantId }, function(err, restaurant) {
+  RestaurantModel.findOne({'id': req.body.restaurantId}, function (err, restaurant) {
 
     if (err || _.isUndefined(restaurant)) {
       return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
 
     restaurant.is_enable = false;
-    restaurant.save(function(err) {
+    restaurant.save(function (err) {
       if (err) {
         return Response.error(res, Response.MONGODB_ERROR, err);
       }
@@ -107,6 +108,35 @@ exports.postDisableRestaurant = function(req, res) {
 
 };
 
+
+var getDishCategoryFromName = function(categoryName){
+    switch (categoryName.toLowerCase()) {
+      case "entrées":
+      case "entrée":
+      case "entrees":
+      case "entree":
+        return "STARTER";
+        break;
+      case "plats":
+      case "plat":
+      case "grillades":
+      case "grillade":
+      case "steak":
+      case "pizza":
+      case "pizzas":
+        return "MAIN";
+        break;
+      case "desserts":
+      case "dessert":
+      case "glace":
+        return "DESERT";
+        break;
+      default:
+        return "OTHER";
+    }
+  }
+
+
 /**
  * @api {post} /restaurants/refresh Populate database
  * @apiName Refresh
@@ -115,6 +145,8 @@ exports.postDisableRestaurant = function(req, res) {
  * @apiError 5002 Async error
  */
 exports.refreshAll = function (req, res) {
+  console.time("refresh");
+
 
   /* get json file and parse it */
   // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
@@ -123,28 +155,72 @@ exports.refreshAll = function (req, res) {
   request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
+      var today = new Date().toISOString().slice(0,10);
+
+      // MenuModel.where("date").gt(today).remove().exec(); //XXX
+      MenuModel.remove({date: {$gt: today}}).exec()
 
       /* update */
       async.each(data.restaurants, function (element, callback) {
 
-        RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
-          if (restaurant === null) {
-            new RestaurantModel(element).save(function() {
-              callback(null);
+        // For each restaurant
+        // Save the menus
+        var menus = [];
+
+        if (element.menus.length > 0) {
+          var menu = {};
+          menu.idRestaurant = element.id; // External CROUS ID
+          element.menus.forEach(function (iMenu) {
+            menu.date = iMenu.date;
+            menu.dishes = [];
+            if (menu.date <= today)
+              return;
+
+            iMenu.meal.forEach(function (meal) {
+              menu.name = meal.name;
+              meal.foodcategory.forEach(function (foodcategory) {
+                foodcategory.dishes.forEach(function (dish) {
+                  var pDish = {};
+                  pDish.category = getDishCategoryFromName(foodcategory.name);
+                  pDish.categoryName = foodcategory.name;
+                  pDish.name = dish.name;
+                  menu.dishes.push(pDish);
+                })
+                menus.push(menu);
+              });
             });
-          }
-          else {
-            restaurant.set(element);
-            restaurant.save(function (err) {
+
+
+            var Menu = new MenuModel(menu);
+            Menu.save(function (err, m) {
               if (err) {
-                callback(err);
-              }
-              else {
-                callback(null);
+                return Response.error(res, Response.MENU_UPDATE_ERROR, err);
               }
             });
+          })
+        }
+
+
+        RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
+            // Save or update the restaurant
+            if (restaurant === null) {
+              new RestaurantModel(element).save(function () {
+                callback(null);
+              });
+            }
+            else {
+              restaurant.set(element);
+              restaurant.save(function (err) {
+                if (err) {
+                  callback(err);
+                }
+                else {
+                  callback(null);
+                }
+              });
+            }
           }
-        });
+        );
       }, function (err) {
 
         if (err)
@@ -152,8 +228,8 @@ exports.refreshAll = function (req, res) {
 
         return Response.success(res, Response.HTTP_OK);
 
-      });
-
+      })
+      console.timeEnd("refresh")
     }
   });
 
@@ -197,12 +273,26 @@ exports.putUser = function (req, res) {
       return Response.error(res, Response.USER_NOT_FOUND, err);
     }
 
-    if (req.body.email)
-      user.email = req.body.email;
-
+    // first we check the password constraint
     if (req.body.password) {
-      user = updateUserPassword(user, req.body.password);
+      var response = updateUserPassword(user, req.body.password);
+      if (response){
+        return response;
+      }
     }
+
+    // then -- We want to update a preference
+    if (req.body.preference) {
+      var response = updateUserPreferences(user, req.body.preference);
+      if (response){
+        return response;
+      }
+    }
+
+    if (req.body.email) {
+      user.email = req.body.email;
+    }
+
 
     if (req.body.first_name) {
       user.first_name = req.body.first_name;
@@ -210,15 +300,6 @@ exports.putUser = function (req, res) {
 
     if (req.body.last_name) {
       user.last_name = req.body.last_name;
-    }
-
-    if (req.body.password) {
-      user = updateUserPassword(user, req.body.password);
-    }
-
-    // -- We want to update a preference
-    if (req.body.preference) {
-      user = updateUserPreferences(user, req.body.preference);
     }
 
     // -- We want to run an action
