@@ -240,7 +240,7 @@ exports.refreshAll = function (req, res) {
  * @apiSuccess Restaurant The restaurant
  */
 exports.voteOnRestaurantQueue = function (req, res) {
-
+  console.log(req);
   var user = req.user;
   RestaurantModel.findOne({'id': req.params.id}, function (err, restaurant) {
 
@@ -251,6 +251,7 @@ exports.voteOnRestaurantQueue = function (req, res) {
       return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
     restaurant.voteOnQueue(user, Number(req.body.timeSlotIndex));
+    restaurant.queue.updatedAt = new Date();
     updateUserActionCount(user);
 
     restaurant.save(function (err) {

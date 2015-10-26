@@ -16,7 +16,7 @@ router.get('/refresh', auth.hasRole('admin'), restaurantAdminController.refreshA
 
 // -- normal routes
 
-router.get('/', restaurantController.getRestaurants);
+router.get('/',auth.isAuthenticated(), restaurantController.getRestaurants);
 
 router.get('/:id', restaurantController.getRestaurantFeedback);
 

@@ -8,7 +8,7 @@ var MenuFeedbackSchema = new Schema({
   userId: {},
   menuId:{},
   feedback:{},
-  scorePoints: Number
+  scorePoints: 0
 });
 
 MenuFeedbackSchema.index({menuId:1}).index({userId:1}).index({timestamp:1});
