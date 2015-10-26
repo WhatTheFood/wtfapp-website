@@ -40,7 +40,7 @@ var all = {
       'nomilk': "boolean",
       'nonut': "boolean",
       'nopeanut': "boolean",
-      'favorite_ru': "string"
+      'favoriteRu': "number"
     },
 
     actions_keys: [

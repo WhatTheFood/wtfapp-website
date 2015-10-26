@@ -20,7 +20,7 @@ var Schema = mongoose.Schema;
  */
 
 var UserSchema = new Schema({
-  favorite_ru: 0,
+  favoriteRu: 0,
   email: {
     type: String,
     unique: true,
