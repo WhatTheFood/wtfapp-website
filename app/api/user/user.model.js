@@ -108,6 +108,24 @@ UserSchema
     };
   });
 
+// Public profile information
+UserSchema
+  .virtual('public_profile')
+  .get(function () {
+    return {
+      '_id': this._id,
+      'first_name': this.first_name,
+      'last_name': this.last_name,
+      'role': this.role,
+      'avatar': this.avatar,
+      'points': this.points,
+      'booking': this.booking,
+      'preferences': this.preferences,
+      'favoriteRu':this.favoriteRu
+    };
+  });
+
+
 // Non-sensitive info we'll be putting in the token
 UserSchema
   .virtual('token')

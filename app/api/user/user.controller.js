@@ -42,7 +42,7 @@ var Response = require('../../services/response.js');
  * Can't fail with a 404 because we check if the user is authenticate before call this function
  */
 exports.getCurrentUser = function (req, res) {
-  return Response.success(res, Response.HTTP_OK, req.user);
+  return Response.success(res, Response.HTTP_OK, UserTool.transformToPrivate(req.user));
 };
 
 /**

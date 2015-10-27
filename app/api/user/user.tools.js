@@ -71,7 +71,7 @@ exports.putUser = function (req, res, user) {
 
   return user.save(function (err) {
     if (!err) {
-      return Response.success(res, Response.HTTP_OK, user);
+      return Response.success(res, Response.HTTP_OK, exports.transformToPrivate(user));
     }
     else {
       return Response.error(res, Response.USER_NOT_FOUND, err);
@@ -140,7 +140,7 @@ exports.updateUserPreferences = function (req, res, user) {
     if (err) {
       return Response.error(res, Response.MONGODB_ERROR, err);
     }
-    return Response.success(res, Response.HTTP_OK, user);
+    return Response.success(res, Response.HTTP_OK, exports.transformToPrivate(user));
   });
 
 };
@@ -176,7 +176,7 @@ exports.postUserAction = function (req, res, user) {
     if (err) {
       return Response.error(res, Response.MONGODB_ERROR, err);
     }
-    return Response.success(res, Response.HTTP_OK, user);
+    return Response.success(res, Response.HTTP_OK, exports.transformToPrivate(user));
   });
 
 };
@@ -235,4 +235,16 @@ exports.transformToPublic = function (users) {
   });
 
   return final;
+};
+
+
+/**
+ * Transform a user in db into a not too private user for the net
+ * @param users
+ * @returns {Array}
+ */
+exports.transformToPrivate = function (user) {
+  var u = JSON.parse(JSON.stringify(user));
+  u.hashedPassword= u.provider = u.salt= undefined;
+  return u;
 };
