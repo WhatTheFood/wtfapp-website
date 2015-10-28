@@ -21,6 +21,7 @@ var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
   favoriteRu: 0,
+
   email: {
     type: String,
     unique: true,
@@ -108,9 +109,9 @@ UserSchema
     };
   });
 
-// Public profile information
+// Private profile information
 UserSchema
-  .virtual('public_profile')
+  .virtual('private_profile')
   .get(function () {
     return {
       '_id': this._id,

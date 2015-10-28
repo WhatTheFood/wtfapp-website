@@ -243,16 +243,23 @@ exports.voteOnRestaurantQueue = function (req, res) {
   console.log(req);
   var user = req.user;
   RestaurantModel.findOne({'id': req.params.id}, function (err, restaurant) {
-
     if (err) {
       return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
     if (!restaurant) {
       return Response.error(res, Response.RESTAURANT_NOT_FOUND, err);
     }
+    var queueFeedback = {
+      currentRu: restaurant.id,
+      updatedAt: new Date()
+    }
+
     restaurant.voteOnQueue(user, Number(req.body.timeSlotIndex));
-    restaurant.queue.updatedAt = new Date();
+    restaurant.queue.updatedAt = queueFeedback.updatedAt;
     updateUserActionCount(user);
+
+    user.lastQueueFeeback = queueFeedback;
+    user.save();
 
     restaurant.save(function (err) {
       if (err) {
@@ -260,6 +267,7 @@ exports.voteOnRestaurantQueue = function (req, res) {
       }
       return Response.success(res, Response.HTTP_OK, restaurant);
     });
+
   });
 };
 
