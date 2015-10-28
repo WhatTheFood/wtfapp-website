@@ -71,7 +71,7 @@ exports.putUser = function (req, res, user) {
 
   return user.save(function (err) {
     if (!err) {
-      return Response.success(res, Response.HTTP_OK, user);
+      return Response.success(res, Response.HTTP_OK, exports.transformToPrivate(user));
     }
     else {
       return Response.error(res, Response.USER_NOT_FOUND, err);
@@ -100,7 +100,8 @@ exports.updateUserPreferences = function (req, res, user) {
 
   var preferences = {};
 
-  _.forEach(req.body.preferences, function (value, key) {
+  _.forEach(req.body.preferences, function (pref) {
+    var key= pref.key,value=pref.value;
 
     var preference = config.user.preferences_keys[key];
 
@@ -110,33 +111,36 @@ exports.updateUserPreferences = function (req, res, user) {
 
     console.log(key, "/", value, "/", typeof(value));
 
-    // typeof value is always a string in nodejs...
-    if ((preference === "boolean" && value != "true" && value != "false" && value != true && value != false)
-      || (preference === "string" && typeof value !== "string")
-      || (preference === "object" && typeof value !== "object")) {
+    // Favorite RU
+    if (key == "favoriteRu"){
+      user.favoriteRu = parseInt(value,10);
+    } else {
+      // typeof value is always a string in nodejs...
+      if ((preference === "boolean" && value != "true" && value != "false" && value != true && value != false)
+        || (preference === "string" && typeof value !== "string")
+        || (preference === "object" && typeof value !== "object")) {
 
-      return Response.error(res,
-        Response.BAD_REQUEST,
-        "Invalid preference value for key " + key + ". Must be a " + preference + " not a " + typeof value);
+        return Response.error(res,
+          Response.BAD_REQUEST,
+          "Invalid preference value for key " + key + ". Must be a " + preference + " not a " + typeof value);
 
+      }
+      else if (preference !== "boolean" && _.isEmpty(value)) {
+        return Response.error(res,
+          Response.BAD_REQUEST,
+          "Invalid preference value for key " + key + ". Must be a " + preference + " not empty");
+      }
+      preferences[key] = value;
+      preferences = _.merge(user.preferences, preferences);
+      user.preferences = {};
+      user.preferences = preferences;
     }
-    else if (preference !== "boolean" && _.isEmpty(value)) {
-      return Response.error(res,
-        Response.BAD_REQUEST,
-        "Invalid preference value for key " + key + ". Must be a " + preference + " not empty");
-    }
-    preferences[key] = value;
   });
-
-  preferences = _.merge(user.preferences, preferences);
-  user.preferences = {};
-  user.preferences = preferences;
-
   user.save(function (err) {
     if (err) {
       return Response.error(res, Response.MONGODB_ERROR, err);
     }
-    return Response.success(res, Response.HTTP_OK, user);
+    return Response.success(res, Response.HTTP_OK, exports.transformToPrivate(user));
   });
 
 };
@@ -172,7 +176,7 @@ exports.postUserAction = function (req, res, user) {
     if (err) {
       return Response.error(res, Response.MONGODB_ERROR, err);
     }
-    return Response.success(res, Response.HTTP_OK, user);
+    return Response.success(res, Response.HTTP_OK, exports.transformToPrivate(user));
   });
 
 };
@@ -231,4 +235,16 @@ exports.transformToPublic = function (users) {
   });
 
   return final;
+};
+
+
+/**
+ * Transform a user in db into a not too private user for the net
+ * @param users
+ * @returns {Array}
+ */
+exports.transformToPrivate = function (user) {
+  var u = JSON.parse(JSON.stringify(user));
+  u.hashedPassword= u.provider = u.salt= undefined;
+  return u;
 };

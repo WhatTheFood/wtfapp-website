@@ -20,7 +20,8 @@ var Schema = mongoose.Schema;
  */
 
 var UserSchema = new Schema({
-  favorite_ru: 0,
+  favoriteRu: 0,
+
   email: {
     type: String,
     unique: true,
@@ -107,6 +108,24 @@ UserSchema
       'booking': this.booking
     };
   });
+
+// Private profile information
+UserSchema
+  .virtual('private_profile')
+  .get(function () {
+    return {
+      '_id': this._id,
+      'first_name': this.first_name,
+      'last_name': this.last_name,
+      'role': this.role,
+      'avatar': this.avatar,
+      'points': this.points,
+      'booking': this.booking,
+      'preferences': this.preferences,
+      'favoriteRu':this.favoriteRu
+    };
+  });
+
 
 // Non-sensitive info we'll be putting in the token
 UserSchema
