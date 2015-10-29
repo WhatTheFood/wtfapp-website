@@ -175,8 +175,8 @@ exports.getCurrentUserFriends = function (req, res) {
  *
  * @apiParamExample {json} Request-Example:
  * {
- *    'restaurantId': 765,
- *    'when': 12:00
+ *    "restaurantId": 765,
+ *    "when": "12:00"
  * }
  *
  * @apiSuccess Booking The created booking
@@ -215,7 +215,7 @@ exports.addUserDestination = function (req, res) {
     }
 
     var user = req.user;
-    var currentDate = moment().millisecond();
+    var currentDate = moment().format("YYYY-MM-DD");
 
     BookingModel.findOne({'user': user._id, 'date': currentDate}, function (err, booking) {
 
@@ -286,15 +286,16 @@ exports.getFriendsAtRestaurant = function (req, res) {
     }
 
     var ret_datas = [];
-    var num = res_friends.length;
 
-    if (!num) {
+    if (!res_friends) {
       return Response.success(res, Response.HTTP_OK, []);
     }
 
+    var num = res_friends.length;
+
     res_friends.forEach(function (friend) {
       BookingModel.findOne({
-        user: friend.id
+        user: friend._id
         //date: date,  restaurant: restaurant_id
       }, function (err, booking) {
         if (err) {
@@ -302,7 +303,7 @@ exports.getFriendsAtRestaurant = function (req, res) {
         }
         if (booking) {
           if (booking.restaurant == restaurant_id) {
-            if (friend.booking && moment().diff(moment(friend.booking.date), 'days') === 0) {
+            if (moment().diff(moment(booking.date), 'days') === 0) {
               ret_datas.push(friend);
             }
           }

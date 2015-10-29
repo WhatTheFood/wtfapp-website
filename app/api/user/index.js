@@ -28,8 +28,8 @@ router.route('/me/friends')
 router.route('/me/friends/restaurant')
   .put(auth.isAuthenticated(), userController.getFriendsAtRestaurant);
 
-router.route('/me/restaurant/')
-  .put(auth.isAuthenticated(), userController.addUserDestination);
+router.route('/me/restaurant')
+  .post(auth.isAuthenticated(), userController.addUserDestination);
 
 
 /* user */
