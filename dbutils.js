@@ -8,16 +8,23 @@ prompt = function(){
 }
 
 WTF = {
-  updateRole: function(email,role){
+  updateUserRole: function(email,role){
     var user = db.users.findOne({email: email});
     user.role = role;
     db.users.save(user);
   },
 
-  mkindexes: function () {
-    db.restaurants.createIndex({id: 1});
-    db.restaurants.createIndex( {geolocation: "2dsphere"} );
+  setUserFavoriteRu: function (email,idFavoriteRu) {
+    var me = db.users.findOne({email: email});
+    me.favoriteRu=idFavoriteRu;
+    db.users.save(me);
+  },
+  resetUserCurrentRu: function (email) {
+    var me = db.users.findOne({email: email});
+    me.lastQueueFeeback.updatedAt = ISODate("2015-02-20T00:00:00.000Z")
+    db.users.save(me);
   }
+
 };
 
 
