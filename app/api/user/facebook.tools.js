@@ -25,7 +25,7 @@ exports.updateUserBasicInfos = function (user, callback) {
         user.set({
           'first_name': res.first_name,
           'last_name': res.last_name,
-          'facebook_id': res.id,
+          'fb.id': res.id,
           'avatar': "http://graph.facebook.com/" + res.id + "/picture?width=300&height=300",
         });
 
@@ -47,8 +47,7 @@ exports.updateUserBasicInfos = function (user, callback) {
 exports.getUserFacebookFriends = function (user, callback) {
 
   var token = user.fb.access_token;
-
-  FB.api('/me/friends',
+  FB.api('/me/friends?fields=picture',
     {
       access_token: token
     },
