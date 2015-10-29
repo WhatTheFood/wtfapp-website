@@ -33,7 +33,7 @@ exports.getUserFriends = function (user, callback) {
       var nb2 = friends.data.length;
 
       friends.data.forEach(function (friend) {
-        UserModel.findOne({'facebook_id': friend.id}, function (err, user) {
+        UserModel.findOne({'fb.id': friend.id}, function (err, user) {
 
           if (user) {
             datas.push(user);
@@ -231,7 +231,7 @@ exports.transformToPublic = function (users) {
 
   var final = [];
   _.each(users, function (user) {
-    final.push(user.public_profile);
+    final.push(user);
   });
 
   return final;
