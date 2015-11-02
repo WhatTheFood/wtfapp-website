@@ -138,7 +138,7 @@ exports.getRestaurants = function (req, res) {
 
   if (req.query.lat && req.query.lng) { // geospatial querying
     var geoJsonTarget = [Number(req.query.lat), Number(req.query.lng)];
-    var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 1000;
+    var maxDistance = req.query.maxDistance ? Number(req.query.maxDistance) : 10000;
 
     RestaurantModel.aggregate(
     [{
@@ -186,7 +186,8 @@ exports.refreshAll = function (req, res) {
   // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
   // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
   // old fake : http://thepbm.ovh.org/static/json/crous-poitiers.min.json
-  request('https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js', function (error, response, body) {
+  //  https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
+  request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
 

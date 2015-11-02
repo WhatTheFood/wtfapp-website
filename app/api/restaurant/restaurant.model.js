@@ -22,8 +22,7 @@ var mealSchema = new Schema({
   foodcategory: [{
     name: {type: String},
     dishes: [{
-      name: {type: String},
-      feedback: {type: [dishFeedbackSchema], select: true}
+      name: {type: String}
     }]
   }]
 });
@@ -59,6 +58,14 @@ var restaurantSchema = new Schema({
   area: {type: String},
   opening: {type: String},
   closing: {type: String},
+
+  score: {},
+
+  name: {type: String},
+  address: {type: String},
+  metros: {},
+  openings: {},
+
   //type: {type: String, default: ''}, OR
   /*type: {
    type: { type: String }

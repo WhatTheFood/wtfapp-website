@@ -146,6 +146,45 @@ var getDishCategoryFromName = function(categoryName){
  */
 exports.refreshAll = function (req, res) {
   console.time("refresh");
+  var fixedRestaurant={
+    174: {
+      name: "Censier",
+      address: "31, rue G. St Hilaire - 5ème",
+      metros: ["Censier Daubenton"],
+      openings: {
+        midi: "11h30-14h00"
+      }
+    },
+    178: {
+      name: "Dauphine",
+      address: "2, boulevard Lannes - 16ème",
+      metros: ["Porte Dauphine"],
+      openings: {
+        midi: "11h20-14h15",
+        cafeteria: "8h00-17h45"
+      }
+    },
+
+    179: {
+      name: "Halle aux farines",
+      address: "Université Paris 7 - Denis Diderot - 13ème",
+      metros: ["Bibliothèque François Mitterrand"],
+      openings: {
+        midi: "11h30-14h00"
+      }
+    },
+  };
+
+  function fixRestaurantModel(restaurant){
+    var fixed = fixedRestaurant[restaurant.id];
+    if (fixed){
+      for (var field in fixed){
+        restaurant[field] = fixed[field];
+      }
+    } else {
+      restaurant.menus = undefined;
+    }
+  }
 
 
   /* get json file and parse it */
@@ -157,20 +196,20 @@ exports.refreshAll = function (req, res) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
       var today = new Date().toISOString().slice(0,10);
 
-      // MenuModel.where("date").gt(today).remove().exec(); //XXX
-      MenuModel.remove({date: {$gt: today}}).exec()
+      console.log("to delete: ",MenuModel.where("date").gt(today).count().exec())
+      MenuModel.where("date").gt(today).remove().exec();
 
       /* update */
-      async.each(data.restaurants, function (element, callback) {
+      async.each(data.restaurants, function (resto, callback) {
 
         // For each restaurant
         // Save the menus
         var menus = [];
 
-        if (element.menus.length > 0) {
+        if (resto.menus.length > 0) {
           var menu = {};
-          menu.idRestaurant = element.id; // External CROUS ID
-          element.menus.forEach(function (iMenu) {
+          menu.idRestaurant = resto.id; // External CROUS ID
+          resto.menus.forEach(function (iMenu) {
             menu.date = iMenu.date;
             menu.dishes = [];
             if (menu.date <= today)
@@ -195,21 +234,25 @@ exports.refreshAll = function (req, res) {
             Menu.save(function (err, m) {
               if (err) {
                 return Response.error(res, Response.MENU_UPDATE_ERROR, err);
+              } else {
               }
             });
           })
         }
 
+        // fix restaurant model
 
-        RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
+        fixRestaurantModel(resto);
+
+        RestaurantModel.findOne({"id": resto.id}, function (err, restaurant) {
             // Save or update the restaurant
             if (restaurant === null) {
-              new RestaurantModel(element).save(function () {
+              new RestaurantModel(resto).save(function () {
                 callback(null);
               });
             }
             else {
-              restaurant.set(element);
+              restaurant.set(resto);
               restaurant.save(function (err) {
                 if (err) {
                   callback(err);
@@ -235,6 +278,7 @@ exports.refreshAll = function (req, res) {
 
   return Response.success(res, Response.HTTP_OK, {});
 };
+
 
 /**
  * @api {put} /users/:id Update a user
