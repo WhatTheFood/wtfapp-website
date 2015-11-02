@@ -83,10 +83,10 @@ exports.getUserFacebookFriendsPromised = function (token) {
         else {
           console.log('error', res.error);
         }
-        Q.reject(res.error);
+        d.reject(res.error);
       }
       else {
-        Q.resolve(res.data)
+        d.resolve(res.data)
       }
     })
 
