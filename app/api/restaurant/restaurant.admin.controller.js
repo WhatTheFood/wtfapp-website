@@ -171,7 +171,8 @@ exports.refreshAll = function (req, res) {
       metros: ["Bibliothèque François Mitterrand"],
       openings: {
         midi: "11h30-14h00"
-      }
+      },
+      photo: "/assets/RU179.jpg"
     },
   };
 
