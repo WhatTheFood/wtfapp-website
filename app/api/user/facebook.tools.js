@@ -1,4 +1,5 @@
 var FB = require('fb');
+var Q = require('q');
 
 exports.updateUserBasicInfos = function (user, callback) {
 
@@ -66,3 +67,30 @@ exports.getUserFacebookFriends = function (user, callback) {
       }
     })
 };
+
+
+exports.getUserFacebookFriendsPromised = function (token) {
+  var d = Q.defer();
+  FB.api('/me/friends?fields=picture',
+    {
+      access_token: token
+    },
+    function (res) {
+      if (res && res.error) {
+        if (res.error.code === 'ETIMEDOUT') {
+          console.log('request timeout');
+        }
+        else {
+          console.log('error', res.error);
+        }
+        Q.reject(res.error);
+      }
+      else {
+        Q.resolve(res.data)
+      }
+    })
+
+  return d.promise;
+};
+
+
