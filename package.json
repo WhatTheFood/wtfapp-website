@@ -34,6 +34,7 @@
     "passport-local": "^1.0.0",
     "passport-localapikey": "0.0.3",
     "passport-token": "*",
+    "q": "^1.4.1",
     "railway": "*",
     "request": "*",
     "serve-favicon": "*",
