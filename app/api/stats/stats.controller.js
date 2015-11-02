@@ -36,20 +36,26 @@ exports.getStats = function (req, res) {
   };
 
 
-  FacebookTools.getUserFacebookFriendsPromised(user.fb.access_token)
+  FacebookTools
+    .getUserFacebookFriendsPromised(user.fb.access_token)
     .then(function (friends) {
+      console.log(friends);
       var friendIds = friends.map(function (friend) {return friend.id});
       return friendIds;
     })
     .then(function (friendsIds) {
+      console.log(friendsIds);
       return UserModel.find({"fb.id": {$in: friendsIds}}).sort({points: -1}).limit(10);
     })
     .then(function (sortedFriends){
+      console.log(sortedFriends);
       stats.friends.scores = sortedFriends;
     })
     .then(function(){
       console.log(sortedFriends);
-  })
+    })
+
+
   /*
   RestaurantModel.find({is_enable: true}).select("points").select("title")
     .exec().then(function (restaurants) {
