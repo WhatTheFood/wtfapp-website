@@ -109,32 +109,32 @@ exports.postDisableRestaurant = function (req, res) {
 };
 
 
-var getDishCategoryFromName = function(categoryName){
-    switch (categoryName.toLowerCase()) {
-      case "entrées":
-      case "entrée":
-      case "entrees":
-      case "entree":
-        return "STARTER";
-        break;
-      case "plats":
-      case "plat":
-      case "grillades":
-      case "grillade":
-      case "steak":
-      case "pizza":
-      case "pizzas":
-        return "MAIN";
-        break;
-      case "desserts":
-      case "dessert":
-      case "glace":
-        return "DESERT";
-        break;
-      default:
-        return "OTHER";
-    }
+var getDishCategoryFromName = function (categoryName) {
+  switch (categoryName.toLowerCase()) {
+    case "entrées":
+    case "entrée":
+    case "entrees":
+    case "entree":
+      return "STARTER";
+      break;
+    case "plats":
+    case "plat":
+    case "grillades":
+    case "grillade":
+    case "steak":
+    case "pizza":
+    case "pizzas":
+      return "MAIN";
+      break;
+    case "desserts":
+    case "dessert":
+    case "glace":
+      return "DESERT";
+      break;
+    default:
+      return "OTHER";
   }
+}
 
 
 /**
@@ -146,7 +146,7 @@ var getDishCategoryFromName = function(categoryName){
  */
 exports.refreshAll = function (req, res) {
   console.time("refresh");
-  var fixedRestaurant={
+  var fixedRestaurant = {
     174: {
       name: "Censier",
       address: "31, rue G. St Hilaire - 5ème",
@@ -154,7 +154,14 @@ exports.refreshAll = function (req, res) {
       openings: {
         midi: "11h30-14h00"
       },
-      photo: {src:"/assets/RU174.jpg"}
+      photo: {src: "/assets/RU174.jpg"},
+
+      topic: "La petite touche orientale avec ces kebabs délicieux",
+      longdesc: [
+        "Après une première ouverture quelque peu mouvementée à la suite d'une manif étudiante en 63 qui le réclamait au plus vite, une équipe de 24 personnes ultra soudées vous accueille aujourd'hui dans ce RU.",
+        "Ici tout est frais ! Tous les jours, les légumes sont râpés minutieusement par les cuistos, les plats chauds sont cuisinés avec amour et les pizzas sont cuites au four devant vous et rien que pour vous. Il y en a pour tous les goûts: cuisine du terroir, cuisine du monde, pizzas, viandes et poissons. Mais la grande spécialité du RU, et c'est assez rare pour le préciser, ce sont les kebabs, servis avec leur assiette de salade et de frites.  Un petit délice qui ravira vos papilles !",
+        "Le RU, qui accueille les nombreux étudiants de l'Université Sorbonne Nouvelle située à deux pas et ceux des Ecoles Supérieures présentes dans le quartier, est idéalement placé, entre le Jardin des Plantes et la Grande Mosquée, pour une petite balade digestive. Qui ne serait pas Toqué de ce RU ?!"
+      ]
     },
     178: {
       name: "Dauphine",
@@ -164,7 +171,13 @@ exports.refreshAll = function (req, res) {
         midi: "11h20-14h15",
         cafeteria: "8h00-17h45"
       },
-      photo: {src:"/assets/RU178.jpg"}
+      photo: {src: "/assets/RU178.jpg"},
+      shortdesc: "Le RU qui a la classe avec son offre alléchante",
+      longdesc: [
+        "Le RU Dauphine a la classe ! Ancien siège de l'OTAN, il a été entièrement rénové pour en faire un endroit plaisant et chaleureux au cœur de la célèbre Université de Dauphine.",
+        "L’offre est une des plus variées et alléchantes avec 5 principaux pôles : pizzas croustillantes, pates succulentes, petits plats vapeurs, plats cuisinés et grillades, le tout fait sur place. Si vous n’arrivez pas à trouver votre bonheur parmi ces 5 pôles, il vous reste l’option CROUS express avec ces paninis, hamburgers et frites.",
+        "Les 38 personnes en cuisine, qui travaillent en étroite coopération avec une toute nouvelle équipe du CROUS super motivée, prêtent une attention toute particulière à ses convives. L’équipe au complet souhaite faire de ce grand RU plus qu’un simple self en perfectionnant l’offre et en proposant des animations hautes en couleurs et en goût. Il paraît même que le CROUS a déjà sorti le tapis rouge pour accueillir un défilé de mode 100% dauphinois ! Qui ne serait pas Toqué de ce RU ?!"
+      ]
     },
 
     179: {
@@ -174,14 +187,21 @@ exports.refreshAll = function (req, res) {
       openings: {
         midi: "11h30-14h00"
       },
-      photo: {src:"/assets/RU179.jpg"}
+      photo: {src: "/assets/RU179.jpg"},
+
+      shortdesc: "Le RU le plus design à l’incroyable vue sur la Seine",
+      longdesc: [
+        "Situé sur l’ancien site des grands moulins de Paris, le RU de la Halle aux Farine entrepose aujourd’hui bien plus que de la farine ! C'est aujourd’hui un openspace design et chaleureux, totalement rénové, qui offre une très belle vue sur la Seine et ses quais.",
+        "Au menu : des pizzas tout droit sorties du four traditionnel, des petits plats cuisinés sur place dans les stands « Brasserie » et « Plats du jour » et des généreux bars à desserts et à salade (crudités fraîches garanties !). Le petit plus c’est la possibilité d’agrémenter son plat avec une large gamme de sauces gardées au chaud dans des marmites (au poivre, provençale, etc.).",
+        "L’équipe du RU est tellement cool qu’elle propose de temps à autre des animations culinaires et gastronomiques. Il n’est pas rare de retrouver dans vos assiettes universitaires le plat d’un chef étoilé mijoté par les cuistots en collaboration avec ce dernier. Qui ne serait pas Toqué de ce RU ?!"
+      ]
     },
   };
 
-  function fixRestaurantModel(restaurant){
+  function fixRestaurantModel(restaurant) {
     var fixed = fixedRestaurant[restaurant.id];
-    if (fixed){
-      for (var field in fixed){
+    if (fixed) {
+      for (var field in fixed) {
         restaurant[field] = fixed[field];
       }
     } else {
@@ -197,9 +217,9 @@ exports.refreshAll = function (req, res) {
   request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
-      var today = new Date().toISOString().slice(0,10);
+      var today = new Date().toISOString().slice(0, 10);
 
-      console.log("to delete: ",MenuModel.where("date").gt(today).count().exec())
+      console.log("to delete: ", MenuModel.where("date").gt(today).count().exec())
       MenuModel.where("date").gt(today).remove().exec();
 
       /* update */
@@ -323,7 +343,7 @@ exports.putUser = function (req, res) {
     // first we check the password constraint
     if (req.body.password) {
       var response = updateUserPassword(user, req.body.password);
-      if (response){
+      if (response) {
         return response;
       }
     }
@@ -331,7 +351,7 @@ exports.putUser = function (req, res) {
     // then -- We want to update a preference
     if (req.body.preference) {
       var response = updateUserPreferences(user, req.body.preference);
-      if (response){
+      if (response) {
         return response;
       }
     }

@@ -59,7 +59,8 @@ var restaurantSchema = new Schema({
   opening: {type: String},
   closing: {type: String},
 
-  score: {},
+  score: {type: Number},
+  points: {type: Number},
 
   name: {type: String},
   address: {type: String},
@@ -108,7 +109,10 @@ var restaurantSchema = new Schema({
     }],
     updatedAt: {type: Date},
     timeSlots: {type: [String]}
-  }
+  },
+
+  shortdec:{},
+  longdesc:{}
 });
 
 restaurantSchema.index( {geolocation: "2dsphere"}).index( {id:1});

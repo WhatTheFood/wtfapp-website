@@ -261,7 +261,8 @@ exports.voteOnRestaurantQueue = function (req, res) {
 
     user.lastQueueFeeback = queueFeedback;
     user.save();
-
+    restaurant.score = restaurant.score || 0;
+    restaurant.score += UserModel.POINTS_PER_ACTION;
     restaurant.save(function (err) {
       if (err) {
         return Response.error(res, Response.BAD_REQUEST, err);
