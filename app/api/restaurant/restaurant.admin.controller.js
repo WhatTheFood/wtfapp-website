@@ -156,7 +156,7 @@ exports.refreshAll = function (req, res) {
       },
       photo: {src: "/assets/RU174.jpg"},
 
-      topic: "La petite touche orientale avec ces kebabs délicieux",
+      shortdesc: "La petite touche orientale avec ces kebabs délicieux",
       longdesc: [
         "Après une première ouverture quelque peu mouvementée à la suite d'une manif étudiante en 63 qui le réclamait au plus vite, une équipe de 24 personnes ultra soudées vous accueille aujourd'hui dans ce RU.",
         "Ici tout est frais ! Tous les jours, les légumes sont râpés minutieusement par les cuistos, les plats chauds sont cuisinés avec amour et les pizzas sont cuites au four devant vous et rien que pour vous. Il y en a pour tous les goûts: cuisine du terroir, cuisine du monde, pizzas, viandes et poissons. Mais la grande spécialité du RU, et c'est assez rare pour le préciser, ce sont les kebabs, servis avec leur assiette de salade et de frites.  Un petit délice qui ravira vos papilles !",
