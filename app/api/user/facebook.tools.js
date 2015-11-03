@@ -72,8 +72,7 @@ exports.getUserFacebookFriends = function (user, callback) {
 exports.getUserFacebookFriendsPromised = function (token) {
 
   var d = Q.defer();
-  d.resolve([])
-  return d.promise;
+  
   FB.api('/me/friends?fields=picture',
     {
       access_token: token
