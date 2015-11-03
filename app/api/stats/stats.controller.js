@@ -52,8 +52,8 @@ exports.getStats = function (req, res) {
       return UserModel.find({"fb.id": {$in: friendsIds}}).sort({points: -1}).limit(10);
     })
     .then(function (sortedFriends) {
-        if (sortedFriends.length == 0) { // Adds myself to the list
-          sortedFriends.push(user);
+        if (sortedFriends.length == 0) {
+          sortedFriends.push(user);// Adds myself to the list
         }
         console.log("sortedFriends", sortedFriends);
         stats.friends.scores = sortedFriends.map(function (u) {

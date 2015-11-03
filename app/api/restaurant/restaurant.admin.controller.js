@@ -153,7 +153,8 @@ exports.refreshAll = function (req, res) {
       metros: ["Censier Daubenton"],
       openings: {
         midi: "11h30-14h00"
-      }
+      },
+      photo: {src:"/assets/RU174.jpg"}
     },
     178: {
       name: "Dauphine",
@@ -162,7 +163,8 @@ exports.refreshAll = function (req, res) {
       openings: {
         midi: "11h20-14h15",
         cafeteria: "8h00-17h45"
-      }
+      },
+      photo: {src:"/assets/RU178.jpg"}
     },
 
     179: {
@@ -172,7 +174,7 @@ exports.refreshAll = function (req, res) {
       openings: {
         midi: "11h30-14h00"
       },
-      photo: "/assets/RU179.jpg"
+      photo: {src:"/assets/RU179.jpg"}
     },
   };
 
