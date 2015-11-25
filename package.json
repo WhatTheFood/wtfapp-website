@@ -25,7 +25,7 @@
     "lodash": "^3.10.1",
     "method-override": "^2.3.5",
     "moment": "^2.10.6",
-    "mongoose": "4.1.9",
+    "mongoose": "4.2.2",
     "mongoose-unique-validator": "*",
     "morgan": "*",
     "passport": "*",
