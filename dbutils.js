@@ -159,7 +159,6 @@ menus.forEach(function(m){
 });
 
 
-var nbUserByRestaurant = {};
 
 var results = [];
 feedbacks.forEach(function(f){
@@ -184,4 +183,16 @@ var feedbackByMenuId = {};
 
 
 
-////db.menus.update({"_id" : ObjectId("561f49fee70430d80aebd7b7"), "dishes.name":"salade", "dishes.feedbacks.uid": { $not: {$eq: "fel"} } }, { $push : { "dishes.$.feedbacks" : { uid: "fel"} } } );
+var printResults=function(results){
+  results.forEach(function(row){
+    print(row.ru, ";",
+      row.repas, ";",
+      row.date, ";",
+      new Date(row.timeFeedback).toISOString(), ";",
+      row.iduser, ";",
+      JSON.stringify(row.feedback), ";",
+      JSON.stringify(row.dishes))
+  })
+}
+
+printResults(results);
