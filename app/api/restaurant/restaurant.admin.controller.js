@@ -214,9 +214,14 @@ exports.refreshAll = function (req, res) {
   // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
   // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
   // old fake : http://thepbm.ovh.org/static/json/crous-poitiers.min.json
-  request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
+  true && request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
+      var data = JSON.parse(
+        body
+          .replace(new RegExp('\r?\n', 'g'), ' ') // replace carriage returns with whitespace
+          .replace(new RegExp('\t+', 'g'), '') // replace tabulation with whitespace
+      );
+      
       var today = new Date().toISOString().slice(0, 10);
 
       console.log("to delete: ", MenuModel.where("date").gt(today).count().exec())
