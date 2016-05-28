@@ -27,7 +27,7 @@ exports.updateUserBasicInfos = function (user, callback) {
           'first_name': res.first_name,
           'last_name': res.last_name,
           'fb.id': res.id,
-          'avatar': "http://graph.facebook.com/" + res.id + "/picture?width=300&height=300",
+          'avatar': "https://graph.facebook.com/" + res.id + "/picture?width=300&height=300",
         });
 
         user.save(function (err) {
