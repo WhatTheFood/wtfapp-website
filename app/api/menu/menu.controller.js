@@ -85,10 +85,11 @@ exports.addFeedback = function (req, res) {
 
       // FIXME : this is safe & sync but it helps CHEATING :  user.update({lastMenuFeedback:date, "$inc": {points:scorePoints}}).exec();
       user.lastMenuFeedback = date;
-      user.points+=scorePoints;
+
+      user.points = user.points == null || isNaN(user.point) ? scorePoints : user.points + scorePoints;
       user.save();
 
-      console.log("USER : ",user.points);
+      console.log("USER POINTS : ", user.points);
       return Response.success(res, Response.HTTP_CREATED, {});
     });
   });

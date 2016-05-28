@@ -279,7 +279,7 @@ exports.refreshAll = function (req, res) {
                 RestaurantModel.findOne({"id": resto.id}, function (err, restaurant) {
                         // Save or update the restaurant
                         if (restaurant === null) {
-                            console.log("saving", restaurant._id,restaurant.id, restaurant.name, restaurant.title);
+                            console.log("saving", resto._id, resto.id, resto.name, resto.title);
                             new RestaurantModel(resto).save(function () {
                                 callback(null);
                             });
