@@ -174,59 +174,6 @@ exports.getRestaurants = function (req, res) {
 };
 
 /**
- * @api {post} /restaurants/refresh Populate database
- * @apiName Refresh
- * @apiGroup Restaurant
- *
- * @apiError 5002 Async error
- */
-exports.refreshAll = function (req, res) {
-
-  /* get json file and parse it */
-  // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
-  // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
-  // old fake : http://thepbm.ovh.org/static/json/crous-poitiers.min.json
-  //  https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
-  request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      var data = JSON.parse(body.replace(new RegExp('\r?\n', 'g'), ' '));
-
-      /* update */
-      async.each(data.restaurants, function (element, callback) {
-        RestaurantModel.findOne({"id": element.id}, function (err, restaurant) {
-          if (restaurant === null) {
-            console.log("Creation : " + element.id);
-            new RestaurantModel(element).save();
-          }
-          else {
-            console.log("Update : " + element.id);
-            restaurant.set(element);
-            restaurant.save(function (err) {
-              if (err) {
-                callback(err);
-              }
-              else {
-                callback(null);
-              }
-            });
-          }
-        });
-      }, function (err) {
-
-        if (err)
-          return Response.error(res, Response.ASYNC_ERROR, err);
-
-        return Response.success(res, Response.HTTP_OK);
-
-      });
-
-    }
-  });
-
-  return Response.success(res, Response.HTTP_OK, {});
-};
-
-/**
  * @api {post} /restaurants/:id/queue/votes Vote on restaurant queue
  * @apiName VoteOnRestaurantQueue
  * @apiGroup Restaurant
