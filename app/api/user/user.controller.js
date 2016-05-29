@@ -272,7 +272,7 @@ exports.addUserDestination = function (req, res) {
  */
 exports.getFriendsAtRestaurant = function (req, res) {
 
-  var restaurant_id = req.body.restaurantId;
+  var restaurant_id = req.params.id;
   var user = req.user;
 
   if (!restaurant_id) {

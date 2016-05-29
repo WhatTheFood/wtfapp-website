@@ -41,7 +41,6 @@ exports.getStats = function (req, res) {
     return FacebookTools
         .getUserFacebookFriendsPromised(user)
         .then(function (friends) {
-            //console.log("friends", friends);
             var friendIds = friends.map(function (friend) {
                 return friend.id
             });
@@ -73,11 +72,10 @@ exports.getStats = function (req, res) {
             }
         )
         .then(function () {
-            return RestaurantModel.find({menus: {$exists: true}, is_enable: true}).select("points").select("title")
-                .exec();
+            return RestaurantModel.find({is_enable: true}).sort({points: -1}).limit(10).select("points").select("title");
         })
         .then(function (restaurants) {
-            //console.log(restaurants)
+            // console.log(restaurants)
             return restaurants.map(function (r) {
                 r.name = r.title;
                 r.score = r.points || 0;

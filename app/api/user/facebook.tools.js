@@ -17,7 +17,7 @@ exports.updateUserBasicInfos = function (user, callback) {
           callback(false, "Request timeout")
         }
         else {
-          console.log('error', res.error);
+          console.log('error xxxx', res.error);
           callback(false, res.error);
         }
         return false;
@@ -59,9 +59,9 @@ exports.getUserFacebookFriendsPromised = function (user) {
           console.log('request timeout');
         }
         else {
-          console.log('error', res.error);
+          console.log('error 2', res.error);
         }
-        d.resolve( []);
+        d.resolve(res.error);
       }
       else {
         d.resolve(res.data)

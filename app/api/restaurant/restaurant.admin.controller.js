@@ -207,8 +207,10 @@ exports.refreshAll = function (req, res) {
             for (var field in fixed) {
                 restaurant[field] = fixed[field];
             }
+            restaurant.is_enable = true;
         } else {
             restaurant.menus = undefined;
+            restaurant.is_enable = false;
         }
     }
 
@@ -217,7 +219,7 @@ exports.refreshAll = function (req, res) {
     // ori : http://www.stockcrous.fr/static/json/crous-paris.min.json
     // fake : https://s3-eu-west-1.amazonaws.com/crousdata.whatthefood/fakecrous.min.js
     // old fake : http://thepbm.ovh.org/static/json/crous-poitiers.min.json
-    false && request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
+    true && request('http://www.stockcrous.fr/static/json/crous-paris.min.json', function (error, response, body) {
         if (!error && response.statusCode == 200) {
             var data = JSON.parse(
                 body
@@ -270,7 +272,6 @@ exports.refreshAll = function (req, res) {
                         });
                     })
                 }
-
                 // fix restaurant model
 
                 fixRestaurantModel(resto);

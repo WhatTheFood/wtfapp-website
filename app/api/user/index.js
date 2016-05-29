@@ -25,8 +25,8 @@ router.route('/me/action')
 router.route('/me/friends')
   .get(auth.isAuthenticated(), userController.getCurrentUserFriends);
 
-router.route('/me/friends/restaurant')
-  .put(auth.isAuthenticated(), userController.getFriendsAtRestaurant);
+router.route('/me/friends/restaurant/:id')
+  .get(auth.isAuthenticated(), userController.getFriendsAtRestaurant);
 
 router.route('/me/restaurant')
   .post(auth.isAuthenticated(), userController.addUserDestination);

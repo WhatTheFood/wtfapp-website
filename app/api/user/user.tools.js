@@ -21,11 +21,11 @@ exports.updateUserInfosWithFacebook = function (user, callback) {
 
 exports.getUserFriends = function (user, callback) {
 
-  FacebookTools.getUserFacebookFriendsPromised(user, function (err, friends) {
+  FacebookTools.getUserFacebookFriendsPromised(user).then(function (friends) {
     var datas = [];
 
-    if (err) {
-      return callback(err, null);
+    if (friends.code == 190) {
+      return callback(friends, null);
     }
 
     if (friends && friends !== false) {
@@ -33,6 +33,7 @@ exports.getUserFriends = function (user, callback) {
       var nb2 = friends.data.length;
 
       friends.data.forEach(function (friend) {
+        console.log(friend.id);
         UserModel.findOne({'fb.id': friend.id}, function (err, user) {
 
           if (user) {
