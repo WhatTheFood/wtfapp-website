@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "nodemon": "./node_modules/.bin/nodemon",
     "xpostinstall": "./node_modules/.bin/apidoc -i app/ -o apidoc/"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "mongoose": "^4.2.8",
     "mongoose-unique-validator": "*",
     "morgan": "*",
+    "nodemon": "^1.9.2",
     "passport": "*",
     "passport-facebook": "^2.0.0",
     "passport-http": "*",

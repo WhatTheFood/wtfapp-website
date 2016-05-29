@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var UserModel = require('./user.model');
-var Facebook = require('./facebook.tools.js');
+var FacebookTools = require('./facebook.tools.js');
 
 var jwt = require('jsonwebtoken');
 var secret = require('../../config/secret');
@@ -11,7 +11,7 @@ var Response = require('../../services/response.js');
 
 exports.updateUserInfosWithFacebook = function (user, callback) {
   if (user.fb.access_token) {
-    Facebook.updateUserBasicInfos(user, callback);
+    FacebookTools.updateUserBasicInfos(user, callback);
   }
   else {
     console.log("User does not have facebook token.");
@@ -21,7 +21,7 @@ exports.updateUserInfosWithFacebook = function (user, callback) {
 
 exports.getUserFriends = function (user, callback) {
 
-  Facebook.getUserFacebookFriends(user, function (err, friends) {
+  FacebookTools.getUserFacebookFriendsPromised(user, function (err, friends) {
     var datas = [];
 
     if (err) {
@@ -109,7 +109,7 @@ exports.updateUserPreferences = function (req, res, user) {
       return Response.error(res, Response.BAD_REQUEST, "Invalid preference key " + key);
     }
 
-    console.log(key, "/", value, "/", typeof(value));
+    // console.log(key, "/", value, "/", typeof(value));
 
     // Favorite RU
     if (key == "favoriteRu"){

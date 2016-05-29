@@ -71,8 +71,8 @@ router.post('/', function(req, res, next) {
  */
 router.post('/apikey', function(req, res, next) {
 
-  console.log(req.body);
-  console.log(req.query);
+  // console.log(req.body);
+  // console.log(req.query);
 
   passport.authenticate('localapikey', function (err, user, info) {
     var error = err || info;

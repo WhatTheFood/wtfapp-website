@@ -45,34 +45,10 @@ exports.updateUserBasicInfos = function (user, callback) {
 
 };
 
-exports.getUserFacebookFriends = function (user, callback) {
-
-  var token = user.fb.access_token;
-  FB.api('/me/friends?fields=picture',
-    {
-      access_token: token
-    },
-    function (res) {
-      if (res && res.error) {
-        if (res.error.code === 'ETIMEDOUT') {
-          console.log('request timeout');
-        }
-        else {
-          console.log('error', res.error);
-        }
-        return callback(res.error, null);
-      }
-      else {
-        return callback(null, res);
-      }
-    })
-};
-
-
-exports.getUserFacebookFriendsPromised = function (token) {
+exports.getUserFacebookFriendsPromised = function (user) {
 
   var d = Q.defer();
-
+  var token = user.fb.access_token;
   FB.api('/me/friends?fields=picture',
     {
       access_token: token

@@ -148,7 +148,7 @@ exports.postUserAction = function (req, res) {
  * @apiName GetCurrentUserFriends
  * @apiGroup User
  *
- * @apiError 500 Facebook failed.
+ * @apiError 500 FacebookTools failed.
  *
  * @apiSuccess [User] A list of friends
  *

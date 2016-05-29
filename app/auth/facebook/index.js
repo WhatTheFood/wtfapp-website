@@ -24,11 +24,11 @@ router
   }
 
   User.findOne({'email': email}, function(err, user) {
-    console.log("raw ::" +util.inspect(req.body, {showHidden: false, depth: null}));
+    // console.log("raw ::" +util.inspect(req.body, {showHidden: false, depth: null}));
 
     if (user) {
-      console.log("TOK::" + fb_token + "  EMAIL::" + email);
-      console.log("set facebook token");
+      // console.log("TOK::" + fb_token + "  EMAIL::" + email);
+      //console.log("set facebook token");
       user.set({
         'fb': {
           'access_token': fb_token
@@ -45,12 +45,12 @@ router
     }
 
     user.save(function(err) {
-      console.log("Go to update user infos");
+      // console.log("Go to update user infos");
       UserTool.updateUserInfosWithFacebook(user, function(result, data) {
         if (result === true) {
           return res.status(200).send({'token': auth.signToken(user._id, user.role)});
         } else {
-          console.log(user.fb.access_token);
+          //console.log(user.fb.access_token);
           return res.status(400).send(data);
         }
       });

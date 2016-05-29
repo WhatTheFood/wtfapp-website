@@ -12,9 +12,9 @@ exports.setup = function (User, config) {
     // facebook will send back the tokens and profile
     function(access_token, refresh_token, profile, done) {
 
-      console.log('------------------------------------------------');
-      console.log(access_token, refresh_token, profile, done);
-      console.log('------------------------------------------------');
+      //console.log('------------------------------------------------');
+      //console.log(access_token, refresh_token, profile, done);
+      //console.log('------------------------------------------------');
 
       // asynchronous
       process.nextTick(function() {

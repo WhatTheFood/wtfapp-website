@@ -103,7 +103,7 @@ UserSchema
       'first_name': this.first_name,
       'last_name': this.last_name,
       'role': this.role,
-      'avatar': this.avatar,
+      'avatar': this.avatar.replace(/^http:/,"https:"),
       'points': this.points,
       'booking': this.booking
     };
@@ -118,7 +118,7 @@ UserSchema
       'first_name': this.first_name,
       'last_name': this.last_name,
       'role': this.role,
-      'avatar': this.avatar,
+      'avatar': this.avatar.replace(/^http:/,"https:"),
       'points': this.points,
       'booking': this.booking,
       'preferences': this.preferences,
